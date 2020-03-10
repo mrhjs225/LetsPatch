@@ -1,6 +1,7 @@
 package com.github.thwak.confix.patch;
 
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -22,6 +23,9 @@ import org.eclipse.text.edits.MalformedTreeException;
 import org.eclipse.text.edits.TextEdit;
 
 import com.github.thwak.confix.pool.Change;
+import com.github.thwak.confix.pool.Method;
+import com.github.thwak.confix.pool.Variable;
+import com.github.thwak.confix.pool.VariableType;
 import com.github.thwak.confix.tree.CodeVisitor;
 import com.github.thwak.confix.tree.Node;
 import com.github.thwak.confix.tree.Parser;
@@ -59,7 +63,38 @@ public class Patcher {
 		this.sourcePath = sourcePath;
 		updateDocInfo();
 	}
-
+	// jsjs function to print global and material information
+	public void printGlobal() {
+		Iterator<Method> mapIter = cStrategy.global.importsForMethods.keySet().iterator();
+		System.out.println("jsjs global");
+		Iterator<String> setIter1 = cStrategy.global.varNames.iterator();
+		while(setIter1.hasNext()) {
+			System.out.println("varname: " + setIter1.next());
+		}
+		while(mapIter.hasNext()) {
+			Method key1 = mapIter.next();
+			Iterator<String> setIter = cStrategy.global.importsForMethods.get(key1).iterator();
+			while(setIter.hasNext()) {
+				System.out.println("importsformethods: " + setIter.next());
+			}
+			System.out.println("importsformethods entire: " + key1 + " : " + cStrategy.global.methods.get(key1));
+		}
+		System.out.println("jsjs material");
+		setIter1 = cStrategy.materials.varNames.iterator();
+		while(setIter1.hasNext()) {
+			System.out.println("varname: " + setIter1.next());
+		}
+		mapIter = cStrategy.materials.importsForMethods.keySet().iterator();
+		while(mapIter.hasNext()) {
+			Method key1 = mapIter.next();
+			Iterator<String> setIter = cStrategy.materials.importsForMethods.get(key1).iterator();
+			while(setIter.hasNext()) {
+				System.out.println("importsformethods: " + setIter.next());
+			}
+			System.out.println("importsformethods entire: " + key1 + " : " + cStrategy.materials.methods.get(key1));
+		}
+	}
+	// jsjs function end
 	private void updateDocInfo() {
 		//TODO: need to pass source/class path for multiple changes.
 		Parser parser = new Parser(classPath, sourcePath);
