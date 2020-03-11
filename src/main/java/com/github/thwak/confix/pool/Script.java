@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import script.model.EditOp;
-
+// jsjs: group of change
 public class Script implements Serializable {
 	private static final long serialVersionUID = 5193028666977419501L;
 	public Map<Change, List<EditOp>> changes = new HashMap<>();

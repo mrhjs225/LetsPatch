@@ -14,8 +14,6 @@ import java.util.Properties;
 import java.util.Random;
 import java.util.Set;
 
-import org.eclipse.osgi.internal.resolver.SystemState;
-
 import com.github.thwak.confix.coverage.CoverageManager;
 import com.github.thwak.confix.coverage.TestResult;
 import com.github.thwak.confix.coverage.Tester;
@@ -27,8 +25,6 @@ import com.github.thwak.confix.patch.StrategyFactory;
 import com.github.thwak.confix.patch.TargetLocation;
 import com.github.thwak.confix.pool.Change;
 import com.github.thwak.confix.pool.ChangePool;
-import com.github.thwak.confix.pool.ChangePoolGenerator;
-import com.github.thwak.confix.pool.ContextIdentifier;
 import com.github.thwak.confix.tree.compiler.Compiler;
 import com.github.thwak.confix.util.IOUtils;
 

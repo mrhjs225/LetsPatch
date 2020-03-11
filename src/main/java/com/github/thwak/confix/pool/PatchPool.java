@@ -26,14 +26,14 @@ public class PatchPool implements Serializable {
 			patches.put(poolNames[i], new HashMap<String, Patch>());
 		}
 	}
-
+	// jsjs this part add context to patchpool
 	public void add(String bugId, Script script) {
 		for(String poolName : identifiers.keySet()) {
 			Map<String, Patch> map = patches.get(poolName);
 			if(!map.containsKey(bugId))
 				map.put(bugId, new Patch(bugId));
 			Patch patch = map.get(bugId);
-			for(Change c : script.changes.keySet()){
+			for(Change c : script.changes.keySet()) {
 				List<EditOp> ops = script.changes.get(c);
 				for(EditOp op : ops) {
 					Context context = getIdentifier(poolName).getContext(op);
