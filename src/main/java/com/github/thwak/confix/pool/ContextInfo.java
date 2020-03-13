@@ -31,7 +31,7 @@ public class ContextInfo implements Serializable {
 	public int getChangeCount(String type) {
 		return typeCount.containsKey(type) ? typeCount.get(type) : 0;
 	}
-
+	
 	public int getChangeFreq(int id) {
 		return changeFreq.containsKey(id) ? changeFreq.get(id) : 0;
 	}
@@ -52,7 +52,7 @@ public class ContextInfo implements Serializable {
 			typeCount.put(c.type, 1);
 		} else {
 			typeCount.put(c.type, typeCount.get(c.type)+1);
-		}
+		}		
 		sorted = false;
 	}
 

@@ -7,7 +7,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
 import java.util.Set;
@@ -16,6 +15,7 @@ import com.github.thwak.confix.patch.PatchUtils;
 import com.github.thwak.confix.pool.ChangePoolGenerator;
 import com.github.thwak.confix.pool.Context;
 import com.github.thwak.confix.pool.ContextIdentifier;
+import com.github.thwak.confix.pool.ContextInfo;
 import com.github.thwak.confix.pool.PLRTContextIdentifier;
 import com.github.thwak.confix.coverage.CoverageManager;
 import com.github.thwak.confix.coverage.TestResult;
@@ -70,7 +70,7 @@ public class Jinfix {
 		String[] classPathEntries = new String[] {"/home/hjsvm/hjsaprvm/jfreechart/target/classes"};
 		String[] sourcePathEntries = new String[] {"/home/hjsvm/hjsaprvm/jfreechart/src"};
 		
-		String path = "/home/hjsvm/hjsaprvm/ConFix/pool";
+		String path = "/home/hjsvm/hjsaprvm/condatabase/pool";
 		File beforePatchFile = new File(path+"/beforepatch");
 		File afterPatchFile = new File(path+"/afterpatch");
 		String[] beforeList = beforePatchFile.list();
@@ -79,16 +79,19 @@ public class Jinfix {
 			cpg.collect("test"+Integer.toString(i), new File(path+"/beforepatch/"+beforeList[i]), new File(path+"/afterpatch/"+afterList[i]), classPathEntries, sourcePathEntries);
 		}
 		ChangePool changePool = cpg.pool;
-		System.out.println(changePool.getChangeCount());
-		System.out.println(changePool.getContexts());
-		System.out.println(changePool.getChange(3));
-		System.out.println(changePool.getChange(5));
-		Iterator<Context> setIter = changePool.getContexts().iterator();
-		while(setIter.hasNext()) {
-			System.out.println(setIter.next());
-			System.out.println("work");
-		}
 		
+		// for context understanding
+//		Iterator<Context> setIter = changePool.getContexts().iterator();
+//		while(setIter.hasNext()) {
+//			Context keyContext = setIter.next();
+//			ContextInfo info = changePool.contexts.get(keyContext);
+//			System.out.println("context: "+ keyContext.hashString);
+//			System.out.println("changeid: " + changePool.getChangeIds(keyContext));
+//			for(int i = 0; i < changePool.getChangeIds(keyContext).size(); i++) {
+//				System.out.println("change"+i+": " + changePool.getChange(changePool.getChangeIds(keyContext).get(i)));
+//			}
+//		}
+
 		System.out.println("done");
 	}
 	

@@ -119,7 +119,7 @@ public class ConFix {
 			pStrategy.finishUpdate();
 			IOUtils.storeContent("coveredlines.txt", pStrategy.getLineInfo());
 			System.out.println("Done.");
-
+			
 			pool.poolName = poolPath.substring(poolPath.lastIndexOf('/')+1);
 
 			//Generating patch candidates.
