@@ -1,8 +1,10 @@
 package jsmain;
 
+import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -79,10 +81,10 @@ public class Jinfix {
 		File afterPatchFile = new File(path+"/afterpatch");
 		String[] beforeList = beforePatchFile.list();
 		String[] afterList = afterPatchFile.list();
-		for (int i = 0; i < beforeList.length; i++) {
-			cpg.collect("test"+Integer.toString(i), new File(path+"/beforepatch/"+beforeList[i]), new File(path+"/afterpatch/"+afterList[i]), classPathEntries, sourcePathEntries);
-		}
-		ChangePool changePool = cpg.pool;
+		// for (int i = 0; i < beforeList.length; i++) {
+		// 	cpg.collect("test"+Integer.toString(i), new File(path+"/beforepatch/"+beforeList[i]), new File(path+"/afterpatch/"+afterList[i]), classPathEntries, sourcePathEntries);
+		// }
+		// ChangePool changePool = cpg.pool;
 
 		// for context understanding
 //		Iterator<Context> setIter = changePool.getContexts().iterator();
@@ -96,12 +98,13 @@ public class Jinfix {
 //			}
 //		}
 
-		checkingPreviousContext();
+		// checkingPreviousContext();
+		extractContextStatistics();
 
 		System.out.println("done");
 	}
 
-	// for checking previous ConFix paper's context database
+	// jinseok: for checking previous ConFix paper's context database
 	public static void checkingPreviousContext() {
 		for (String poolPath : poolList) {
 			loadChangePool(poolPath);
@@ -130,6 +133,7 @@ public class Jinfix {
 					System.out.println("	list" + j + ": " + contextInfo.getChanges().get(j));	// this integer using to find hashmapid in changepool
 					System.out.println("	freq" + j + ": " + contextInfo.getChangeFreq().get(contextInfo.getChanges().get(j)));
 				}
+
 				System.out.println("changes content: " + contextInfo.getChanges().get(0));
 				System.out.println("change: " + pool.hashIdMap.get(contextInfo.getChanges().get(0)));
 				pool.loadChange(contextInfo.getChanges().get(0));
@@ -138,6 +142,32 @@ public class Jinfix {
 			}
 		}
 	}
+
+	//jinseok: for extracting statistics information from previous ConFix context database
+	public static void extractContextStatistics() {
+		int fileNum = 0;
+		for (String poolPath : poolList) {
+			loadChangePool(poolPath);
+			Iterator<Context> keyContext = pool.contexts.keySet().iterator();
+			int numberOfContext = pool.contexts.keySet().size();
+			int number = 0;
+			ContextInfo contextInfo;
+			try {
+				BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream("/home/hjsvm/hjsaprvm/ConFix/pool/statistics" + fileNum + ".txt"));
+				while(keyContext.hasNext()) {
+					contextInfo = pool.contexts.get(keyContext.next());
+					String str = number + ", " + contextInfo.getChanges().size() + "\n";
+					bos.write(str.getBytes());
+					number++;
+				}
+				bos.close();
+			} catch (Exception e) {
+				System.out.println(e.toString());
+			}
+			fileNum++;
+		}
+	}
+
 	private static void loadChangePool(String poolPath) {
 		pool = new ChangePool();
 		pool.loadFrom(new File(poolPath));
