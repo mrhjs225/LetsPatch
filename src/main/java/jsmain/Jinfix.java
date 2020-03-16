@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
 import java.util.Random;
@@ -27,6 +28,7 @@ import com.github.thwak.confix.patch.Patcher;
 import com.github.thwak.confix.patch.StrategyFactory;
 import com.github.thwak.confix.patch.TargetLocation;
 import com.github.thwak.confix.pool.Change;
+import com.github.thwak.confix.pool.ChangeOrigin;
 import com.github.thwak.confix.pool.ChangePool;
 import com.github.thwak.confix.tree.compiler.Compiler;
 import com.github.thwak.confix.util.IOUtils;
@@ -71,7 +73,6 @@ public class Jinfix {
 		String[] classPathEntries = new String[] {"/home/hjsvm/hjsaprvm/jfreechart/target/classes"};
 		String[] sourcePathEntries = new String[] {"/home/hjsvm/hjsaprvm/jfreechart/src"};
 		Random r = new Random(seed);
-		// load coverage
 
 		String path = "/home/hjsvm/hjsaprvm/condatabase/pool";
 		File beforePatchFile = new File(path+"/beforepatch");
@@ -82,13 +83,6 @@ public class Jinfix {
 			cpg.collect("test"+Integer.toString(i), new File(path+"/beforepatch/"+beforeList[i]), new File(path+"/afterpatch/"+afterList[i]), classPathEntries, sourcePathEntries);
 		}
 		ChangePool changePool = cpg.pool;
-
-		for (String poolPath : poolList) {
-			loadChangePool(poolPath);
-			System.out.println("jinfix: "+poolPath);
-			System.out.println(pool.contexts.size());
-		}
-
 
 		// for context understanding
 //		Iterator<Context> setIter = changePool.getContexts().iterator();
@@ -102,9 +96,48 @@ public class Jinfix {
 //			}
 //		}
 
+		checkingPreviousContext();
+
 		System.out.println("done");
 	}
-	
+
+	// for checking previous ConFix paper's context database
+	public static void checkingPreviousContext() {
+		for (String poolPath : poolList) {
+			loadChangePool(poolPath);
+			System.out.println("--------------------------new pool------------------------");
+			Iterator<Context> keyContext = pool.contexts.keySet().iterator();
+			Context tempContext;
+			ContextInfo contextInfo;
+			Iterator<Integer> keyInteger;
+			Integer tempInteger;
+			Change tempChange;
+			ChangeOrigin changeOrigin = new ChangeOrigin();
+
+			for (int i = 0; i < 2; i++) {
+				tempContext = keyContext.next();
+				contextInfo = pool.contexts.get(tempContext);
+				keyInteger = contextInfo.getChangeFreq().keySet().iterator();
+				tempInteger = keyInteger.next();
+				
+
+				System.out.println("----------context----------");
+				System.out.println("context: " + tempContext);
+				System.out.println("freq: " + contextInfo.getFreq());
+				System.out.println("listsize: " + contextInfo.getChanges().size());
+				System.out.println("changeFreqsize: " + contextInfo.getChangeFreq().size());
+				for (int j = 0; j < contextInfo.getChanges().size(); j++) {
+					System.out.println("	list" + j + ": " + contextInfo.getChanges().get(j));	// this integer using to find hashmapid in changepool
+					System.out.println("	freq" + j + ": " + contextInfo.getChangeFreq().get(contextInfo.getChanges().get(j)));
+				}
+				System.out.println("changes content: " + contextInfo.getChanges().get(0));
+				System.out.println("change: " + pool.hashIdMap.get(contextInfo.getChanges().get(0)));
+				pool.loadChange(contextInfo.getChanges().get(0));
+				tempChange = pool.changes.get(contextInfo.getChanges().get(0));
+				System.out.println(tempChange);
+			}
+		}
+	}
 	private static void loadChangePool(String poolPath) {
 		pool = new ChangePool();
 		pool.loadFrom(new File(poolPath));

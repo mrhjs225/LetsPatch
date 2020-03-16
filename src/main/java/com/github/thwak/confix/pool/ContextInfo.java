@@ -28,6 +28,11 @@ public class ContextInfo implements Serializable {
 		return freq;
 	}
 
+	//jinseok: to get changeFreq
+	public Map<Integer, Integer> getChangeFreq() {
+		return changeFreq;
+	}
+
 	public int getChangeCount(String type) {
 		return typeCount.containsKey(type) ? typeCount.get(type) : 0;
 	}
