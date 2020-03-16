@@ -1,13 +1,16 @@
 package jsmain;
 
 import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -18,17 +21,10 @@ import java.util.Set;
 import com.github.thwak.confix.patch.PatchUtils;
 import com.github.thwak.confix.pool.ChangePoolGenerator;
 import com.github.thwak.confix.pool.Context;
-import com.github.thwak.confix.pool.ContextIdentifier;
 import com.github.thwak.confix.pool.ContextInfo;
 import com.github.thwak.confix.pool.PLRTContextIdentifier;
 import com.github.thwak.confix.coverage.CoverageManager;
-import com.github.thwak.confix.coverage.TestResult;
-import com.github.thwak.confix.coverage.Tester;
-import com.github.thwak.confix.patch.PatchInfo;
-import com.github.thwak.confix.patch.PatchStrategy;
-import com.github.thwak.confix.patch.Patcher;
-import com.github.thwak.confix.patch.StrategyFactory;
-import com.github.thwak.confix.patch.TargetLocation;
+
 import com.github.thwak.confix.pool.Change;
 import com.github.thwak.confix.pool.ChangeOrigin;
 import com.github.thwak.confix.pool.ChangePool;
@@ -99,7 +95,8 @@ public class Jinfix {
 //		}
 
 		// checkingPreviousContext();
-		extractContextStatistics();
+		// extractContextStatistics();
+		extractContextInformation();
 
 		System.out.println("done");
 	}
@@ -123,17 +120,16 @@ public class Jinfix {
 				keyInteger = contextInfo.getChangeFreq().keySet().iterator();
 				tempInteger = keyInteger.next();
 				
-
 				System.out.println("----------context----------");
 				System.out.println("context: " + tempContext);
 				System.out.println("freq: " + contextInfo.getFreq());
 				System.out.println("listsize: " + contextInfo.getChanges().size());
 				System.out.println("changeFreqsize: " + contextInfo.getChangeFreq().size());
+
 				for (int j = 0; j < contextInfo.getChanges().size(); j++) {
 					System.out.println("	list" + j + ": " + contextInfo.getChanges().get(j));	// this integer using to find hashmapid in changepool
 					System.out.println("	freq" + j + ": " + contextInfo.getChangeFreq().get(contextInfo.getChanges().get(j)));
 				}
-
 				System.out.println("changes content: " + contextInfo.getChanges().get(0));
 				System.out.println("change: " + pool.hashIdMap.get(contextInfo.getChanges().get(0)));
 				pool.loadChange(contextInfo.getChanges().get(0));
@@ -146,14 +142,17 @@ public class Jinfix {
 	//jinseok: for extracting statistics information from previous ConFix context database
 	public static void extractContextStatistics() {
 		int fileNum = 0;
+
 		for (String poolPath : poolList) {
 			loadChangePool(poolPath);
 			Iterator<Context> keyContext = pool.contexts.keySet().iterator();
 			int numberOfContext = pool.contexts.keySet().size();
 			int number = 0;
 			ContextInfo contextInfo;
+
 			try {
 				BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream("/home/hjsvm/hjsaprvm/ConFix/pool/statistics" + fileNum + ".txt"));
+				
 				while(keyContext.hasNext()) {
 					contextInfo = pool.contexts.get(keyContext.next());
 					String str = number + ", " + contextInfo.getChanges().size() + "\n";
@@ -167,6 +166,48 @@ public class Jinfix {
 			fileNum++;
 		}
 	}
+
+	public static void extractContextInformation() {
+		String poolPath = poolList.get(1);
+		loadChangePool(poolPath);
+		Iterator<Context> keyContext = pool.contexts.keySet().iterator();
+		int number = 0;
+		ContextInfo contextInfo;
+		ArrayList<Integer> checkList = new ArrayList<>();
+
+		try {
+			BufferedReader bufReader = new BufferedReader(new FileReader(new File("/home/hjsvm/hjsaprvm/ConFix/pool/plrtCheck.txt")));
+			BufferedWriter bufWriter = new BufferedWriter(new FileWriter(new File("/home/hjsvm/hjsaprvm/ConFix/pool/plrtAnalyze.txt")));
+			String line = "";
+
+			while((line = bufReader.readLine()) != null) {
+				checkList.add(Integer.parseInt(line));
+			}
+			
+			while(keyContext.hasNext()) {
+				Context tempContext = keyContext.next();
+				if (checkList.contains(number)) {
+					contextInfo = pool.contexts.get(tempContext);
+					bufWriter.write("-------------------------------------------\n");
+					bufWriter.write("Context: " + tempContext + "\n");
+					bufWriter.write("Number of change: " + contextInfo.getChanges().size() + "\n");
+
+					for (int i = 0; i < 10; i += 2) {
+						int changeInt = contextInfo.getChanges().get(i);
+						pool.loadChange(changeInt);
+						bufWriter.write("Change's id number: " + changeInt + "\n");
+						bufWriter.write(pool.changes.get(changeInt).toString() + "\n");
+					}
+				}
+				number++;
+			}
+			bufReader.close();
+			bufWriter.close();
+		} catch (Exception e) {
+			System.out.println(e.toString());
+		}
+	}
+
 
 	private static void loadChangePool(String poolPath) {
 		pool = new ChangePool();
@@ -217,29 +258,5 @@ public class Jinfix {
 		pStrategyKey = PatchUtils.getStringProperty(props, "patch.strategy", "flfreq");
 		cStrategyKey = PatchUtils.getStringProperty(props, "concretize.strategy", "tc");
 		flMetric = PatchUtils.getStringProperty(props, "fl.metric", "ochiai");
-	}
-	
-	private static void loadTests() {
-		String trigger = IOUtils.readFile("tests.trigger");
-		String relevant = IOUtils.readFile("tests.relevant");
-		String all = IOUtils.readFile("tests.all");
-		Set<String> testSet = new HashSet<>();
-		String[] tests = trigger.split("\n");
-		numOfTriggers = tests.length;
-		for(String test : tests){
-			//Get the class name only for trigger tests.
-			if(!test.startsWith("#"))
-				testSet.add(test.split("::")[0]);
-		}
-		triggerTests.addAll(testSet);
-		relTests.addAll(Arrays.asList(relevant.split("\n")));
-		allTests.addAll(Arrays.asList(all.split("\n")));
-		File f = new File("tests.broken");
-		if(f.exists()) {
-			String broken = IOUtils.readFile("tests.broken");
-			tests = broken.split("\n");
-			for(String t : tests)
-				brokenTests.add(t.replace("::", "#"));
-		}
 	}
 }
