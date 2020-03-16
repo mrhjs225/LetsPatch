@@ -9,6 +9,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Properties;
+import java.util.Random;
 import java.util.Set;
 
 import com.github.thwak.confix.patch.PatchUtils;
@@ -69,7 +70,9 @@ public class Jinfix {
 		cpg.pool.setPoolDir(new File("/home/hjsvm/hjsaprvm/ConFix/pool"));
 		String[] classPathEntries = new String[] {"/home/hjsvm/hjsaprvm/jfreechart/target/classes"};
 		String[] sourcePathEntries = new String[] {"/home/hjsvm/hjsaprvm/jfreechart/src"};
-		
+		Random r = new Random(seed);
+		// load coverage
+
 		String path = "/home/hjsvm/hjsaprvm/condatabase/pool";
 		File beforePatchFile = new File(path+"/beforepatch");
 		File afterPatchFile = new File(path+"/afterpatch");
@@ -79,7 +82,14 @@ public class Jinfix {
 			cpg.collect("test"+Integer.toString(i), new File(path+"/beforepatch/"+beforeList[i]), new File(path+"/afterpatch/"+afterList[i]), classPathEntries, sourcePathEntries);
 		}
 		ChangePool changePool = cpg.pool;
-		
+
+		for (String poolPath : poolList) {
+			loadChangePool(poolPath);
+			System.out.println("jinfix: "+poolPath);
+			System.out.println(pool.contexts.size());
+		}
+
+
 		// for context understanding
 //		Iterator<Context> setIter = changePool.getContexts().iterator();
 //		while(setIter.hasNext()) {
@@ -95,6 +105,13 @@ public class Jinfix {
 		System.out.println("done");
 	}
 	
+	private static void loadChangePool(String poolPath) {
+		pool = new ChangePool();
+		pool.loadFrom(new File(poolPath));
+		pool.maxLoadCount = maxPoolLoad;
+		System.out.println("Pool:"+poolPath);
+	}
+
 	private static void loadProperties(String fileName) {
 		Properties props = new Properties();
 		File f = new File(fileName);

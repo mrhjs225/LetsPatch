@@ -38,7 +38,10 @@ public class PatchStrategy {
 	protected PatchStrategy() {
 		super();
 	}
-
+	//js: to access changepool
+	public ChangePool accessPool() {
+		return pool;
+	}
 	public PatchStrategy(CoverageManager manager, ChangePool pool, ContextIdentifier collector) {
 		this(manager, pool, collector, new Random());
 	}

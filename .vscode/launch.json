@@ -1,0 +1,49 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Debug (Launch) - Current File",
+            "request": "launch",
+            "mainClass": "${file}"
+        },
+        {
+            "type": "java",
+            "name": "Debug (Launch)-CoverageAnalyzer<confix>",
+            "request": "launch",
+            "mainClass": "com.github.thwak.confix.coverage.CoverageAnalyzer",
+            "projectName": "confix"
+        },
+        {
+            "type": "java",
+            "name": "Debug (Launch)-SampleTestRunner<confix>",
+            "request": "launch",
+            "mainClass": "com.github.thwak.confix.coverage.SampleTestRunner",
+            "projectName": "confix"
+        },
+        {
+            "type": "java",
+            "name": "Debug (Launch)-SingleTestClassRunner<confix>",
+            "request": "launch",
+            "mainClass": "com.github.thwak.confix.coverage.SingleTestClassRunner",
+            "projectName": "confix"
+        },
+        {
+            "type": "java",
+            "name": "Debug (Launch)-ConFix<confix>",
+            "request": "launch",
+            "mainClass": "com.github.thwak.confix.main.ConFix",
+            "projectName": "confix"
+        },
+        {
+            "type": "java",
+            "name": "Debug (Launch)-Jinfix<confix>",
+            "request": "launch",
+            "mainClass": "jsmain.Jinfix",
+            "projectName": "confix"
+        }
+    ]
+}

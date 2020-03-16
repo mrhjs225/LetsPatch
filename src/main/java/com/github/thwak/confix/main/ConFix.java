@@ -94,7 +94,6 @@ public class ConFix {
 		Change oldApplied = null;
 		String locPoolPath = "";
 		StringBuffer sbLoc = new StringBuffer("Pool,CheckedLines,CheckedLoc,CheckedChange,AppliedChange");
-
 		int totalCompileError = 0;
 		int totalTestFailure = 0;
 		int totalCandidateNum = 0;
