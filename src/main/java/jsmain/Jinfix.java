@@ -11,6 +11,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -65,118 +66,143 @@ public class Jinfix {
 	public static String sourcePathString;
 	
 	public static void main(String[] args) {
-		loadProperties("/home/hjsvm/hjsaprvm/ConFix/samples/confix.properties");
-		ChangePoolGenerator cpg = new ChangePoolGenerator(new PLRTContextIdentifier());
-		cpg.pool.setPoolDir(new File("/home/hjsvm/hjsaprvm/ConFix/pool"));
-		setPathEntries(targetProjectName);
-		String[] classPathEntries = new String[] {classPathString};
-		String[] sourcePathEntries = new String[] {sourcePathString};
 		String path = "/home/hjsvm/hjsaprvm/condatabase/commitfile";
-		File beforePatchFile;
-		File afterPatchFile;
-		String [] beforeList;
-		String [] afterList;
+
+		loadProperties("/home/hjsvm/hjsaprvm/ConFix/samples/confix.properties");
+		setPathEntries(targetProjectName);
+		generateChangePool(path);
+		targetProjectName = "derby";
+		setPathEntries(targetProjectName);
+		generateChangePool(path);
+		targetProjectName = "groovy";
+		setPathEntries(targetProjectName);
+		generateChangePool(path);
+		targetProjectName = "hama";
+		setPathEntries(targetProjectName);
+		generateChangePool(path);
+		targetProjectName = "ivy";
+		setPathEntries(targetProjectName);
+		generateChangePool(path);
+		targetProjectName = "lucene";
+		setPathEntries(targetProjectName);
+		generateChangePool(path);
+		targetProjectName = "mahout";
+		setPathEntries(targetProjectName);
+		generateChangePool(path);
 		
-		for (File info: new File(path + "/" + targetProjectName).listFiles()) {
-			if (info.isDirectory()) {
-				beforePatchFile = new File(info.getPath() + "/beforeCommit");
-				afterPatchFile = new File(info.getPath() + "/afterCommit");
-				beforeList = beforePatchFile.list();
-				afterList = afterPatchFile.list();
-				for (int i = 0; i < beforeList.length; i++) {
-					cpg.collect(info.getName() + ":" + info.getPath() + "/afterCommit/" + afterList[i], new File(info.getPath() + "/beforeCommit/"+beforeList[i]), new File(info.getPath() + "/afterCommit/"+afterList[i]), classPathEntries, sourcePathEntries);
-				}
-			} else {
-			}
-		}
-		// for context understanding
-		// ChangePool changePool = cpg.pool;
-		// Iterator<Context> setIter = changePool.getContexts().iterator();
-		// while(setIter.hasNext()) {
-		// 	Context keyContext = setIter.next();
-		// 	ContextInfo info = changePool.contexts.get(keyContext);
-		// 	System.out.println("context: "+ keyContext.hashString);
-		// 	System.out.println("changeid: " + changePool.getChangeIds(keyContext));
-		// 	for(int i = 0; i < changePool.getChangeIds(keyContext).size(); i++) {
-		// 		System.out.println("change"+i+": " + changePool.getChange(changePool.getChangeIds(keyContext).get(i)));
-		// 	}
+		//for check ConFix context database
+		// for (String poolPath : poolList) {
+		// 	checkingPreviousContext(poolPath);
 		// }
-		// checkingPreviousContext();
+
+		// checkingPreviousContext("/home/hjsvm/hjsaprvm/ConFix/pool");
 
 		System.out.println("done");
 	}
 
+	// to generate changePool
+	public static void generateChangePool(String path) {
+		ChangePoolGenerator cpg = new ChangePoolGenerator(new PLRTContextIdentifier());
+		cpg.pool.setPoolDir(new File("/home/hjsvm/hjsaprvm/ConFix/pool"));
+		String[] classPathEntries = new String[] {classPathString};
+		String[] sourcePathEntries = new String[] {sourcePathString};
+		File beforePatchFile;
+		File afterPatchFile;
+		ArrayList<String> beforeList = new ArrayList<>();
+		ArrayList<String> afterList = new ArrayList<>();
+
+		for (File info: new File(path + "/" + targetProjectName).listFiles()) {
+			if (info.isDirectory()) {
+				int i = 0;
+				beforeList.clear();
+				afterList.clear();
+				beforePatchFile = new File(info.getPath() + "/beforeCommit");
+				afterPatchFile = new File(info.getPath() + "/afterCommit");
+				beforeList = new ArrayList<>(Arrays.asList(beforePatchFile.list()));
+				afterList = new ArrayList<>(Arrays.asList(afterPatchFile.list()));
+				try {
+					for (i = 0; i < beforeList.size(); i++) {
+						if(beforeList.get(i).endsWith(".java") && afterList.contains(beforeList.get(i))) {
+							cpg.collect(info.getName() + ":" + info.getPath() + "/afterCommit/" + beforeList.get(i), new File(info.getPath() + "/beforeCommit/" + beforeList.get(i)), new File(info.getPath() + "/afterCommit/"+beforeList.get(i)), classPathEntries, sourcePathEntries);
+
+						}
+					}
+				} catch(Exception e) {
+					System.out.println("i: " + i);
+					System.out.println("id:" + info.getName() + ":" + info.getPath() + "/afterCommit/");
+				}
+			} else {
+			}
+		}
+		cpg.pool.storeTo(new File("/home/hjsvm/hjsaprvm/ConFix/pool"), true);
+		pool = cpg.pool;
+	}
+
 	// to set classPathEntries and sourcePathEntries
 	public static void setPathEntries(String targetProject) {
-		String basicPath = "/home/hjsvm/hjsaprvm/commitfile";
+		String basicPath = "/home/hjsvm/hjsaprvm/condatabase/";
 		if(targetProject.equals("collections")) {
-			classPathString = basicPath + "/target";
-			sourcePathString = basicPath + "/src";
+			classPathString = basicPath + "commons-collections" + "/target";
+			sourcePathString = basicPath + "commons-collections" + "/src";
 		} else if (targetProject.equals("derby")) {
-			classPathString = basicPath + "/bin";
-			sourcePathString = basicPath + "/java";
+			classPathString = basicPath + targetProject + "/bin";
+			sourcePathString = basicPath + targetProject + "/java";
 		} else if (targetProject.equals("groovy")) {
-			classPathString = basicPath + "/bin";
-			sourcePathString = basicPath + "/src";
+			classPathString = basicPath + targetProject + "/bin";
+			sourcePathString = basicPath + targetProject + "/src";
 		} else if (targetProject.equals("hama")) {
 			classPathString = "";
-			sourcePathString = basicPath + "/core/src";
+			sourcePathString = basicPath + targetProject + "/core/src";
 		} else if (targetProject.equals("ivy")) {
-			classPathString = basicPath + "/bin/src";
-			sourcePathString = basicPath + "/src";
+			classPathString = basicPath + "ant-ivy" + "/bin/src";
+			sourcePathString = basicPath + "ant-ivy" + "/src";
 		} else if (targetProject.equals("lucene")) {
-			classPathString = basicPath + "/bin";
-			sourcePathString = basicPath + "/lucene";
+			classPathString = basicPath + "lucene-solr" + "/bin";
+			sourcePathString = basicPath + "lucene-solr" + "/lucene";
 		} else if (targetProject.equals("mahout")) {
 			classPathString = "";
-			sourcePathString = basicPath + "/core/src";
+			sourcePathString = basicPath + targetProject + "/core/src";
 		}
-
 	}
 
 	// jinseok: for checking previous ConFix paper's context database
-	public static void checkingPreviousContext() {
-		for (String poolPath : poolList) {
-			loadChangePool(poolPath);
-			System.out.println("--------------------------new pool------------------------");
-			Iterator<Context> keyContext = pool.contexts.keySet().iterator();
-			Context tempContext;
-			ContextInfo contextInfo;
-			Iterator<Integer> keyInteger;
-			Change tempChange;
+	public static void checkingPreviousContext(String poolPath) {
+		loadChangePool(poolPath);
+		System.out.println("--------------------------new pool------------------------");
+		Iterator<Context> keyContext = pool.contexts.keySet().iterator();
+		Context tempContext;
+		ContextInfo contextInfo;
+		Change tempChange;
 
-			for (int i = 0; i < 2; i++) {
-				tempContext = keyContext.next();
-				contextInfo = pool.contexts.get(tempContext);
-				keyInteger = contextInfo.getChangeFreq().keySet().iterator();
-				tempInteger = keyInteger.next();
-				
-				System.out.println("----------context----------");
-				System.out.println("context: " + tempContext);
-				System.out.println("freq: " + contextInfo.getFreq());
-				System.out.println("listsize: " + contextInfo.getChanges().size());
-				System.out.println("changeFreqsize: " + contextInfo.getChangeFreq().size());
+		for (int i = 0; i < 2; i++) {
+			tempContext = keyContext.next();
+			contextInfo = pool.contexts.get(tempContext);
+			
+			System.out.println("----------context----------");
+			System.out.println("context: " + tempContext);
+			System.out.println("freq: " + contextInfo.getFreq());
+			System.out.println("listsize: " + contextInfo.getChanges().size());
+			System.out.println("changeFreqsize: " + contextInfo.getChangeFreq().size());
 
-				for (int j = 0; j < contextInfo.getChanges().size(); j++) {
-					System.out.println("	list" + j + ": " + contextInfo.getChanges().get(j));	// this integer using to find hashmapid in changepool
-					System.out.println("	freq" + j + ": " + contextInfo.getChangeFreq().get(contextInfo.getChanges().get(j)));
-				}
-				System.out.println("changes content: " + contextInfo.getChanges().get(0));
-				System.out.println("change: " + pool.hashIdMap.get(contextInfo.getChanges().get(0)));
-				pool.loadChange(contextInfo.getChanges().get(0));
-				tempChange = pool.changes.get(contextInfo.getChanges().get(0));
-				System.out.println(tempChange);
-				System.out.println("id: " + tempChange.id);
-				System.out.println("type: " + tempChange.type);
-				System.out.println("node: " + tempChange.node.value);
-				System.out.println("node: " + tempChange.node.id);
-				System.out.println("node: " + tempChange.node.kind);
-				System.out.println("node: " + tempChange.node.parent.value);
-				System.out.println("location: " + tempChange.location.value);
-				System.out.println("code: " + tempChange.code);
-				System.out.println("locationCOde: " + tempChange.locationCode);
-				
+			for (int j = 0; j < contextInfo.getChanges().size(); j++) {
+				System.out.println("	list" + j + ": " + contextInfo.getChanges().get(j));	// this integer using to find hashmapid in changepool
+				System.out.println("	freq" + j + ": " + contextInfo.getChangeFreq().get(contextInfo.getChanges().get(j)));
 			}
+			System.out.println("changes content: " + contextInfo.getChanges().get(0));
+			System.out.println("change: " + pool.hashIdMap.get(contextInfo.getChanges().get(0)));
+			pool.loadChange(contextInfo.getChanges().get(0));
+			tempChange = pool.changes.get(contextInfo.getChanges().get(0));
+			System.out.println(tempChange);
+			System.out.println("id: " + tempChange.id);
+			System.out.println("type: " + tempChange.type);
+			System.out.println("node: " + tempChange.node.value);
+			System.out.println("node: " + tempChange.node.id);
+			System.out.println("node: " + tempChange.node.kind);
+			System.out.println("node: " + tempChange.node.parent.value);
+			System.out.println("location: " + tempChange.location.value);
+			System.out.println("code: " + tempChange.code);
+			System.out.println("locationCOde: " + tempChange.locationCode);
+			
 		}
 	}
 
