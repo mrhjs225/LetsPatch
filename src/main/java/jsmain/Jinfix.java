@@ -15,7 +15,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
-import java.util.Random;
 import java.util.Set;
 
 import com.github.thwak.confix.patch.PatchUtils;
@@ -28,8 +27,6 @@ import com.github.thwak.confix.coverage.CoverageManager;
 import com.github.thwak.confix.pool.Change;
 import com.github.thwak.confix.pool.ChangeOrigin;
 import com.github.thwak.confix.pool.ChangePool;
-import com.github.thwak.confix.tree.compiler.Compiler;
-import com.github.thwak.confix.util.IOUtils;
 
 public class Jinfix {
 	public static String testClassPath;
@@ -63,42 +60,78 @@ public class Jinfix {
 	public static String flMetric;
 	public static int maxPoolLoad;
 	public static int maxChangeCount;
+	public static String targetProjectName;
+	public static String classPathString;
+	public static String sourcePathString;
 	
 	public static void main(String[] args) {
 		loadProperties("/home/hjsvm/hjsaprvm/ConFix/samples/confix.properties");
 		ChangePoolGenerator cpg = new ChangePoolGenerator(new PLRTContextIdentifier());
 		cpg.pool.setPoolDir(new File("/home/hjsvm/hjsaprvm/ConFix/pool"));
-		String[] classPathEntries = new String[] {"/home/hjsvm/hjsaprvm/jfreechart/target/classes"};
-		String[] sourcePathEntries = new String[] {"/home/hjsvm/hjsaprvm/jfreechart/src"};
-		Random r = new Random(seed);
-
-		String path = "/home/hjsvm/hjsaprvm/condatabase/pool";
-		File beforePatchFile = new File(path+"/beforepatch");
-		File afterPatchFile = new File(path+"/afterpatch");
-		String[] beforeList = beforePatchFile.list();
-		String[] afterList = afterPatchFile.list();
-		// for (int i = 0; i < beforeList.length; i++) {
-		// 	cpg.collect("test"+Integer.toString(i), new File(path+"/beforepatch/"+beforeList[i]), new File(path+"/afterpatch/"+afterList[i]), classPathEntries, sourcePathEntries);
-		// }
-		// ChangePool changePool = cpg.pool;
-
+		setPathEntries(targetProjectName);
+		String[] classPathEntries = new String[] {classPathString};
+		String[] sourcePathEntries = new String[] {sourcePathString};
+		String path = "/home/hjsvm/hjsaprvm/condatabase/commitfile";
+		File beforePatchFile;
+		File afterPatchFile;
+		String [] beforeList;
+		String [] afterList;
+		
+		for (File info: new File(path + "/" + targetProjectName).listFiles()) {
+			if (info.isDirectory()) {
+				beforePatchFile = new File(info.getPath() + "/beforeCommit");
+				afterPatchFile = new File(info.getPath() + "/afterCommit");
+				beforeList = beforePatchFile.list();
+				afterList = afterPatchFile.list();
+				for (int i = 0; i < beforeList.length; i++) {
+					cpg.collect(info.getName() + ":" + info.getPath() + "/afterCommit/" + afterList[i], new File(info.getPath() + "/beforeCommit/"+beforeList[i]), new File(info.getPath() + "/afterCommit/"+afterList[i]), classPathEntries, sourcePathEntries);
+				}
+			} else {
+			}
+		}
 		// for context understanding
-//		Iterator<Context> setIter = changePool.getContexts().iterator();
-//		while(setIter.hasNext()) {
-//			Context keyContext = setIter.next();
-//			ContextInfo info = changePool.contexts.get(keyContext);
-//			System.out.println("context: "+ keyContext.hashString);
-//			System.out.println("changeid: " + changePool.getChangeIds(keyContext));
-//			for(int i = 0; i < changePool.getChangeIds(keyContext).size(); i++) {
-//				System.out.println("change"+i+": " + changePool.getChange(changePool.getChangeIds(keyContext).get(i)));
-//			}
-//		}
-
+		// ChangePool changePool = cpg.pool;
+		// Iterator<Context> setIter = changePool.getContexts().iterator();
+		// while(setIter.hasNext()) {
+		// 	Context keyContext = setIter.next();
+		// 	ContextInfo info = changePool.contexts.get(keyContext);
+		// 	System.out.println("context: "+ keyContext.hashString);
+		// 	System.out.println("changeid: " + changePool.getChangeIds(keyContext));
+		// 	for(int i = 0; i < changePool.getChangeIds(keyContext).size(); i++) {
+		// 		System.out.println("change"+i+": " + changePool.getChange(changePool.getChangeIds(keyContext).get(i)));
+		// 	}
+		// }
 		// checkingPreviousContext();
-		// extractContextStatistics();
-		extractContextInformation();
 
 		System.out.println("done");
+	}
+
+	// to set classPathEntries and sourcePathEntries
+	public static void setPathEntries(String targetProject) {
+		String basicPath = "/home/hjsvm/hjsaprvm/commitfile";
+		if(targetProject.equals("collections")) {
+			classPathString = basicPath + "/target";
+			sourcePathString = basicPath + "/src";
+		} else if (targetProject.equals("derby")) {
+			classPathString = basicPath + "/bin";
+			sourcePathString = basicPath + "/java";
+		} else if (targetProject.equals("groovy")) {
+			classPathString = basicPath + "/bin";
+			sourcePathString = basicPath + "/src";
+		} else if (targetProject.equals("hama")) {
+			classPathString = "";
+			sourcePathString = basicPath + "/core/src";
+		} else if (targetProject.equals("ivy")) {
+			classPathString = basicPath + "/bin/src";
+			sourcePathString = basicPath + "/src";
+		} else if (targetProject.equals("lucene")) {
+			classPathString = basicPath + "/bin";
+			sourcePathString = basicPath + "/lucene";
+		} else if (targetProject.equals("mahout")) {
+			classPathString = "";
+			sourcePathString = basicPath + "/core/src";
+		}
+
 	}
 
 	// jinseok: for checking previous ConFix paper's context database
@@ -110,9 +143,7 @@ public class Jinfix {
 			Context tempContext;
 			ContextInfo contextInfo;
 			Iterator<Integer> keyInteger;
-			Integer tempInteger;
 			Change tempChange;
-			ChangeOrigin changeOrigin = new ChangeOrigin();
 
 			for (int i = 0; i < 2; i++) {
 				tempContext = keyContext.next();
@@ -135,6 +166,16 @@ public class Jinfix {
 				pool.loadChange(contextInfo.getChanges().get(0));
 				tempChange = pool.changes.get(contextInfo.getChanges().get(0));
 				System.out.println(tempChange);
+				System.out.println("id: " + tempChange.id);
+				System.out.println("type: " + tempChange.type);
+				System.out.println("node: " + tempChange.node.value);
+				System.out.println("node: " + tempChange.node.id);
+				System.out.println("node: " + tempChange.node.kind);
+				System.out.println("node: " + tempChange.node.parent.value);
+				System.out.println("location: " + tempChange.location.value);
+				System.out.println("code: " + tempChange.code);
+				System.out.println("locationCOde: " + tempChange.locationCode);
+				
 			}
 		}
 	}
@@ -146,13 +187,11 @@ public class Jinfix {
 		for (String poolPath : poolList) {
 			loadChangePool(poolPath);
 			Iterator<Context> keyContext = pool.contexts.keySet().iterator();
-			int numberOfContext = pool.contexts.keySet().size();
 			int number = 0;
 			ContextInfo contextInfo;
 
 			try {
 				BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream("/home/hjsvm/hjsaprvm/ConFix/pool/statistics" + fileNum + ".txt"));
-				
 				while(keyContext.hasNext()) {
 					contextInfo = pool.contexts.get(keyContext.next());
 					String str = number + ", " + contextInfo.getChanges().size() + "\n";
@@ -164,6 +203,44 @@ public class Jinfix {
 				System.out.println(e.toString());
 			}
 			fileNum++;
+		}
+	}
+
+	public static void extractContextCommit() {
+		String poolPath = poolList.get(1);
+		loadChangePool(poolPath);
+		Iterator<Context> keyContext = pool.contexts.keySet().iterator();
+		int number = 0;
+		ContextInfo contextInfo;
+		ArrayList<Integer> checkList = new ArrayList<>();
+
+		try {
+			BufferedReader bufReader = new BufferedReader(new FileReader(new File("/home/hjsvm/hjsaprvm/ConFix/pool/plrtCheck.txt")));
+			BufferedWriter bufWriter = new BufferedWriter(new FileWriter(new File("/home/hjsvm/hjsaprvm/ConFix/pool/plrtAnalyze.txt")));
+			String line = "";
+
+			while((line = bufReader.readLine()) != null) {
+				checkList.add(Integer.parseInt(line));
+			}
+			
+			while(keyContext.hasNext()) {
+				Context tempContext = keyContext.next();
+				System.out.println(tempContext.hashString);
+				System.out.println(tempContext.hash);
+				if (checkList.contains(number)) {
+					contextInfo = pool.contexts.get(tempContext);
+					for (int i = 0; i < 15; i += 4) {
+						int changeInt = contextInfo.getChanges().get(i);
+						pool.loadChange(changeInt);
+						bufWriter.write(pool.hashIdMap.get(changeInt) + "\n");
+					}
+				}
+				number++;
+			}
+			bufReader.close();
+			bufWriter.close();
+		} catch (Exception e) {
+			System.out.println(e.toString());
 		}
 	}
 
@@ -196,7 +273,7 @@ public class Jinfix {
 						int changeInt = contextInfo.getChanges().get(i);
 						pool.loadChange(changeInt);
 						bufWriter.write("Change's id number: " + changeInt + "\n");
-						bufWriter.write(pool.changes.get(changeInt).toString() + "\n");
+						bufWriter.write(pool.hashIdMap.get(changeInt) + "\n");
 					}
 				}
 				number++;
@@ -258,5 +335,6 @@ public class Jinfix {
 		pStrategyKey = PatchUtils.getStringProperty(props, "patch.strategy", "flfreq");
 		cStrategyKey = PatchUtils.getStringProperty(props, "concretize.strategy", "tc");
 		flMetric = PatchUtils.getStringProperty(props, "fl.metric", "ochiai");
+		targetProjectName = PatchUtils.getStringProperty(props, "targetproject", "");
 	}
 }
