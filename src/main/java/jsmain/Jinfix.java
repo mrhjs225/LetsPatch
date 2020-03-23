@@ -10,6 +10,7 @@ import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -23,6 +24,12 @@ import com.github.thwak.confix.pool.ChangePoolGenerator;
 import com.github.thwak.confix.pool.Context;
 import com.github.thwak.confix.pool.ContextInfo;
 import com.github.thwak.confix.pool.PLRTContextIdentifier;
+import com.github.difflib.DiffUtils;
+import com.github.difflib.UnifiedDiffUtils;
+import com.github.difflib.patch.AbstractDelta;
+import com.github.difflib.patch.Patch;
+import com.github.difflib.text.DiffRow;
+import com.github.difflib.text.DiffRowGenerator;
 import com.github.thwak.confix.coverage.CoverageManager;
 
 import com.github.thwak.confix.pool.Change;
@@ -69,26 +76,26 @@ public class Jinfix {
 		String path = "/home/hjsvm/hjsaprvm/condatabase/commitfile";
 
 		loadProperties("/home/hjsvm/hjsaprvm/ConFix/samples/confix.properties");
-		setPathEntries(targetProjectName);
-		generateChangePool(path);
-		targetProjectName = "derby";
-		setPathEntries(targetProjectName);
-		generateChangePool(path);
-		targetProjectName = "groovy";
-		setPathEntries(targetProjectName);
-		generateChangePool(path);
-		targetProjectName = "hama";
-		setPathEntries(targetProjectName);
-		generateChangePool(path);
-		targetProjectName = "ivy";
-		setPathEntries(targetProjectName);
-		generateChangePool(path);
-		targetProjectName = "lucene";
-		setPathEntries(targetProjectName);
-		generateChangePool(path);
-		targetProjectName = "mahout";
-		setPathEntries(targetProjectName);
-		generateChangePool(path);
+		// setPathEntries(targetProjectName);
+		// generateChangePool(path);
+		// targetProjectName = "derby";
+		// setPathEntries(targetProjectName);
+		// generateChangePool(path);
+		// targetProjectName = "groovy";
+		// setPathEntries(targetProjectName);
+		// generateChangePool(path);
+		// targetProjectName = "hama";
+		// setPathEntries(targetProjectName);
+		// generateChangePool(path);
+		// targetProjectName = "ivy";
+		// setPathEntries(targetProjectName);
+		// generateChangePool(path);
+		// targetProjectName = "lucene";
+		// setPathEntries(targetProjectName);
+		// generateChangePool(path);
+		// targetProjectName = "mahout";
+		// setPathEntries(targetProjectName);
+		// generateChangePool(path);
 		
 		//for check ConFix context database
 		// for (String poolPath : poolList) {
@@ -97,7 +104,73 @@ public class Jinfix {
 
 		// checkingPreviousContext("/home/hjsvm/hjsaprvm/ConFix/pool");
 
+		// change별로 file 뽑아내서 diff랑 전체파일 내용보기
+		// loadChangePool("/home/hjsvm/hjsaprvm/ConFix/pool");
+		// System.out.println(pool.contexts.size());
+		
+		// generateMergeCommit("collections");
+		// generateMergeCommit("derby");
+		// generateMergeCommit("groovy");
+		// generateMergeCommit("hama");
+		// generateMergeCommit("ivy");
+		// generateMergeCommit("lucene");
+		// generateMergeCommit("mahout");
+
+		checkingPreviousContext(poolList.get(0));
+		
 		System.out.println("done");
+	}
+	
+	// to generate merge commit file like github
+	public static void generateMergeCommit(String projectName) {
+		try {
+			String databasePath = "/home/hjsvm/hjsaprvm/condatabase/commitfile/" + projectName;
+			String folderPath = "";
+			String beforeCommitFile = "";
+			String afterCommitFile = "";
+			ArrayList<String> beforeCommitFileList = new ArrayList<>();
+			ArrayList<String> afterCommitFileList = new ArrayList<>();
+			List<String> beforeCommitFileData;
+			List<String> afterCommitFileData;
+			BufferedWriter bufWriter;
+			DiffRowGenerator generator = DiffRowGenerator.create()
+			.showInlineDiffs(true)
+			.inlineDiffByWord(true)
+			.oldTag(f -> "")
+			.newTag(f -> "")
+			.build();
+			for (File info: new File(databasePath).listFiles()) {
+				if(info.isDirectory()) {
+					beforeCommitFileList.clear();
+					afterCommitFileList.clear();
+					beforeCommitFileList = new ArrayList<>(Arrays.asList(new File(info.getPath() + "/beforeCommit").list()));
+					afterCommitFileList = new ArrayList<>(Arrays.asList(new File(info.getPath() + "/afterCommit").list()));
+					for (int i = 0; i < afterCommitFileList.size(); i++) {
+						// System.out.println("run2");
+						if (beforeCommitFileList.contains(afterCommitFileList.get(i)) && afterCommitFileList.get(i).endsWith(".java")) {
+							beforeCommitFile = info.getPath() + "/beforeCommit/" + afterCommitFileList.get(i);
+							afterCommitFile = info.getPath() + "/afterCommit/" + afterCommitFileList.get(i);
+							beforeCommitFileData = Files.readAllLines(new File(beforeCommitFile).toPath());
+							afterCommitFileData = Files.readAllLines(new File(afterCommitFile).toPath());
+							folderPath = "/home/hjsvm/hjsaprvm/condatabase/commitfileMerge/" + projectName + "/" + info.getName();
+							File folder = new File(folderPath);
+							if (!folder.exists()) {
+									folder.mkdir();
+							}
+							bufWriter = new BufferedWriter(new FileWriter(new File(folderPath+"/" + afterCommitFileList.get(i).substring(0, afterCommitFileList.get(i).length() - 5) + ".txt")));
+							List<DiffRow> rows = generator.generateDiffRows(beforeCommitFileData, afterCommitFileData);
+							// System.out.println("run3");
+							for (int j = 0; j < rows.size(); j++) {
+								bufWriter.write(rows.get(j).getTag() + "	" + rows.get(j).getOldLine() + "	" + rows.get(j).getNewLine() + "\n");
+							}
+							bufWriter.close();
+						}
+					}
+				}
+			}			
+		}	catch (Exception e) {
+			System.out.println(e);
+		}
 	}
 
 	// to generate changePool
@@ -121,8 +194,8 @@ public class Jinfix {
 				beforeList = new ArrayList<>(Arrays.asList(beforePatchFile.list()));
 				afterList = new ArrayList<>(Arrays.asList(afterPatchFile.list()));
 				try {
-					for (i = 0; i < beforeList.size(); i++) {
-						if(beforeList.get(i).endsWith(".java") && afterList.contains(beforeList.get(i))) {
+					for (i = 0; i < afterList.size(); i++) {
+						if(afterList.get(i).endsWith(".java") && beforeList.contains(afterList.get(i))) {
 							cpg.collect(info.getName() + ":" + info.getPath() + "/afterCommit/" + beforeList.get(i), new File(info.getPath() + "/beforeCommit/" + beforeList.get(i)), new File(info.getPath() + "/afterCommit/"+beforeList.get(i)), classPathEntries, sourcePathEntries);
 
 						}
@@ -174,7 +247,7 @@ public class Jinfix {
 		ContextInfo contextInfo;
 		Change tempChange;
 
-		for (int i = 0; i < 2; i++) {
+		for (int i = 0; i < 5; i++) {
 			tempContext = keyContext.next();
 			contextInfo = pool.contexts.get(tempContext);
 			
@@ -190,18 +263,20 @@ public class Jinfix {
 			}
 			System.out.println("changes content: " + contextInfo.getChanges().get(0));
 			System.out.println("change: " + pool.hashIdMap.get(contextInfo.getChanges().get(0)));
-			pool.loadChange(contextInfo.getChanges().get(0));
-			tempChange = pool.changes.get(contextInfo.getChanges().get(0));
-			System.out.println(tempChange);
-			System.out.println("id: " + tempChange.id);
-			System.out.println("type: " + tempChange.type);
-			System.out.println("node: " + tempChange.node.value);
-			System.out.println("node: " + tempChange.node.id);
-			System.out.println("node: " + tempChange.node.kind);
-			System.out.println("node: " + tempChange.node.parent.value);
-			System.out.println("location: " + tempChange.location.value);
-			System.out.println("code: " + tempChange.code);
-			System.out.println("locationCOde: " + tempChange.locationCode);
+			for (int j = 0; j < contextInfo.getChanges().size(); j++) {
+				pool.loadChange(contextInfo.getChanges().get(j));
+				tempChange = pool.changes.get(contextInfo.getChanges().get(j));
+				System.out.println(tempChange);
+			}
+			// System.out.println("id: " + tempChange.id);
+			// System.out.println("type: " + tempChange.type);
+			// System.out.println("node: " + tempChange.node.value);
+			// System.out.println("node: " + tempChange.node.id);
+			// System.out.println("node: " + tempChange.node.kind);
+			// System.out.println("node: " + tempChange.node.parent.value);
+			// System.out.println("location: " + tempChange.location.value);
+			// System.out.println("code: " + tempChange.code);
+			// System.out.println("locationCOde: " + tempChange.locationCode);
 			
 		}
 	}
