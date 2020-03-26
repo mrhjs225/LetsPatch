@@ -19,22 +19,17 @@ import java.util.List;
 import java.util.Properties;
 import java.util.Set;
 
+import com.github.difflib.text.DiffRow;
+import com.github.difflib.text.DiffRowGenerator;
+import com.github.thwak.confix.coverage.CoverageManager;
 import com.github.thwak.confix.patch.PatchUtils;
+import com.github.thwak.confix.pool.Change;
+import com.github.thwak.confix.pool.ChangePool;
 import com.github.thwak.confix.pool.ChangePoolGenerator;
 import com.github.thwak.confix.pool.Context;
 import com.github.thwak.confix.pool.ContextInfo;
 import com.github.thwak.confix.pool.PLRTContextIdentifier;
-import com.github.difflib.DiffUtils;
-import com.github.difflib.UnifiedDiffUtils;
-import com.github.difflib.patch.AbstractDelta;
-import com.github.difflib.patch.Patch;
-import com.github.difflib.text.DiffRow;
-import com.github.difflib.text.DiffRowGenerator;
-import com.github.thwak.confix.coverage.CoverageManager;
-
-import com.github.thwak.confix.pool.Change;
-import com.github.thwak.confix.pool.ChangeOrigin;
-import com.github.thwak.confix.pool.ChangePool;
+import com.github.thwak.confix.pool.TestContextIdentifier;
 
 public class Jinfix {
 	public static String testClassPath;
@@ -76,7 +71,9 @@ public class Jinfix {
 		String path = "/home/hjsvm/hjsaprvm/condatabase/commitfile";
 
 		loadProperties("/home/hjsvm/hjsaprvm/ConFix/samples/confix.properties");
-		// setPathEntries(targetProjectName);
+		targetProjectName = "collections";
+		setPathEntries(targetProjectName);
+		testChangePool(path);
 		// generateChangePool(path);
 		// targetProjectName = "derby";
 		// setPathEntries(targetProjectName);
@@ -97,12 +94,12 @@ public class Jinfix {
 		// setPathEntries(targetProjectName);
 		// generateChangePool(path);
 		
-		//for check ConFix context database
+		// for check ConFix context database
 		// for (String poolPath : poolList) {
-		// 	checkingPreviousContext(poolPath);
+		// checkingPreviousContext(poolPath);
 		// }
 
-		// checkingPreviousContext("/home/hjsvm/hjsaprvm/ConFix/pool");
+		// checkingPreviousContext("/home/hjsvm/hjsaprvm/condatabase/pool");
 
 		// change별로 file 뽑아내서 diff랑 전체파일 내용보기
 		// loadChangePool("/home/hjsvm/hjsaprvm/ConFix/pool");
@@ -116,7 +113,7 @@ public class Jinfix {
 		// generateMergeCommit("lucene");
 		// generateMergeCommit("mahout");
 
-		checkingPreviousContext(poolList.get(0));
+		// checkingPreviousContext(poolList.get(0));
 		
 		System.out.println("done");
 	}
@@ -173,10 +170,23 @@ public class Jinfix {
 		}
 	}
 
+	// to test contextidentifier
+	public static void testChangePool(String path) {
+		ChangePoolGenerator cpg = new ChangePoolGenerator(new TestContextIdentifier());
+		cpg.pool.setPoolDir(new File("/home/hjsvm/hjsaprvm/condatabase/pool"));
+		String[] classPathEntries = new String[] {classPathString};
+		String[] sourcePathEntries = new String[] {sourcePathString};
+
+		cpg.collect("test", new File("/home/hjsvm/hjsaprvm/condatabase/commitfile/collections/COLLECTIONS-228/beforeCommit/MultiValueMap.java"), 
+				new File("/home/hjsvm/hjsaprvm/condatabase/commitfile/collections/COLLECTIONS-228/afterCommit/MultiValueMap.java"), classPathEntries, sourcePathEntries);
+		cpg.pool.storeTo(new File("/home/hjsvm/hjsaprvm/condatabase/pool"), true);
+		pool = cpg.pool;
+	}
+
 	// to generate changePool
 	public static void generateChangePool(String path) {
 		ChangePoolGenerator cpg = new ChangePoolGenerator(new PLRTContextIdentifier());
-		cpg.pool.setPoolDir(new File("/home/hjsvm/hjsaprvm/ConFix/pool"));
+		cpg.pool.setPoolDir(new File("/home/hjsvm/hjsaprvm/condatabase/pool/pool2"));
 		String[] classPathEntries = new String[] {classPathString};
 		String[] sourcePathEntries = new String[] {sourcePathString};
 		File beforePatchFile;
@@ -196,19 +206,20 @@ public class Jinfix {
 				try {
 					for (i = 0; i < afterList.size(); i++) {
 						if(afterList.get(i).endsWith(".java") && beforeList.contains(afterList.get(i))) {
-							cpg.collect(info.getName() + ":" + info.getPath() + "/afterCommit/" + beforeList.get(i), new File(info.getPath() + "/beforeCommit/" + beforeList.get(i)), new File(info.getPath() + "/afterCommit/"+beforeList.get(i)), classPathEntries, sourcePathEntries);
-
+							cpg.collect(info.getName() + ":" + info.getPath() + "/afterCommit/" + afterList.get(i), new File(info.getPath() + "/beforeCommit/" + afterList.get(i)), new File(info.getPath() + "/afterCommit/" + afterList.get(i)), classPathEntries, sourcePathEntries);
 						}
 					}
 				} catch(Exception e) {
 					System.out.println("i: " + i);
 					System.out.println("id:" + info.getName() + ":" + info.getPath() + "/afterCommit/");
+					System.out.println("e: " + e);
 				}
 			} else {
 			}
 		}
 		cpg.pool.storeTo(new File("/home/hjsvm/hjsaprvm/ConFix/pool"), true);
 		pool = cpg.pool;
+		System.out.println(targetProjectName + " done");
 	}
 
 	// to set classPathEntries and sourcePathEntries
@@ -246,38 +257,42 @@ public class Jinfix {
 		Context tempContext;
 		ContextInfo contextInfo;
 		Change tempChange;
+		int i = 0;
 
-		for (int i = 0; i < 5; i++) {
-			tempContext = keyContext.next();
-			contextInfo = pool.contexts.get(tempContext);
-			
-			System.out.println("----------context----------");
-			System.out.println("context: " + tempContext);
-			System.out.println("freq: " + contextInfo.getFreq());
-			System.out.println("listsize: " + contextInfo.getChanges().size());
-			System.out.println("changeFreqsize: " + contextInfo.getChangeFreq().size());
+		for (i = 0; i < 5; i++) {
+			if (keyContext.hasNext()) {
+				tempContext = keyContext.next();
+				contextInfo = pool.contexts.get(tempContext);
+				
+				System.out.println("----------context----------");
+				System.out.println("context: " + tempContext);
+				System.out.println("freq: " + contextInfo.getFreq());
+				System.out.println("listsize: " + contextInfo.getChanges().size());
+				System.out.println("changeFreqsize: " + contextInfo.getChangeFreq().size());
 
-			for (int j = 0; j < contextInfo.getChanges().size(); j++) {
-				System.out.println("	list" + j + ": " + contextInfo.getChanges().get(j));	// this integer using to find hashmapid in changepool
-				System.out.println("	freq" + j + ": " + contextInfo.getChangeFreq().get(contextInfo.getChanges().get(j)));
+				for (int j = 0; j < contextInfo.getChanges().size(); j++) {
+					System.out.println("	list" + j + ": " + contextInfo.getChanges().get(j));	// this integer using to find hashmapid in changepool
+					System.out.println("	freq" + j + ": " + contextInfo.getChangeFreq().get(contextInfo.getChanges().get(j)));
+				}
+				System.out.println("changes content: " + contextInfo.getChanges().get(0));
+				System.out.println("change: " + pool.hashIdMap.get(contextInfo.getChanges().get(0)));
+				for (int j = 0; j < contextInfo.getChanges().size(); j++) {
+					pool.loadChange(contextInfo.getChanges().get(j));
+					tempChange = pool.changes.get(contextInfo.getChanges().get(j));
+					System.out.println(tempChange);
+				}
+				// System.out.println("id: " + tempChange.id);
+				// System.out.println("type: " + tempChange.type);
+				// System.out.println("node: " + tempChange.node.value);
+				// System.out.println("node: " + tempChange.node.id);
+				// System.out.println("node: " + tempChange.node.kind);
+				// System.out.println("node: " + tempChange.node.parent.value);
+				// System.out.println("location: " + tempChange.location.value);
+				// System.out.println("code: " + tempChange.code);
+				// System.out.println("locationCOde: " + tempChange.locationCode);
+			} else {
+				break;
 			}
-			System.out.println("changes content: " + contextInfo.getChanges().get(0));
-			System.out.println("change: " + pool.hashIdMap.get(contextInfo.getChanges().get(0)));
-			for (int j = 0; j < contextInfo.getChanges().size(); j++) {
-				pool.loadChange(contextInfo.getChanges().get(j));
-				tempChange = pool.changes.get(contextInfo.getChanges().get(j));
-				System.out.println(tempChange);
-			}
-			// System.out.println("id: " + tempChange.id);
-			// System.out.println("type: " + tempChange.type);
-			// System.out.println("node: " + tempChange.node.value);
-			// System.out.println("node: " + tempChange.node.id);
-			// System.out.println("node: " + tempChange.node.kind);
-			// System.out.println("node: " + tempChange.node.parent.value);
-			// System.out.println("location: " + tempChange.location.value);
-			// System.out.println("code: " + tempChange.code);
-			// System.out.println("locationCOde: " + tempChange.locationCode);
-			
 		}
 	}
 
