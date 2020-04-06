@@ -70,7 +70,7 @@ public class Jinfix {
 	public static int rightCount;
 	
 	public static void main(String[] args) {
-		String path = "/home/hjsvm/hjsaprvm/condatabase/commitfile";
+		String path = "/home/hjsvm/hjsaprvm/condatabase/outputs";
 
 		errorCount = rightCount = 0;
 		loadProperties("/home/hjsvm/hjsaprvm/ConFix/samples/confix.properties");
@@ -217,17 +217,17 @@ public class Jinfix {
 				int i = 0;
 				beforeList.clear();
 				afterList.clear();
-				beforePatchFile = new File(info.getPath() + "/beforeCommit");
-				afterPatchFile = new File(info.getPath() + "/afterCommit");
+				beforePatchFile = new File(info.getPath() + "/before");
+				afterPatchFile = new File(info.getPath() + "/after");
 				beforeList = new ArrayList<>(Arrays.asList(beforePatchFile.list()));
 				afterList = new ArrayList<>(Arrays.asList(afterPatchFile.list()));
 				try {
 					for (i = 0; i < afterList.size(); i++) {
 						if(afterList.get(i).endsWith(".java") && beforeList.contains(afterList.get(i))) {
-							File beforeFileName = new File(info.getPath() + "/beforeCommit/" + afterList.get(i));
-							File afterFileName = new File(info.getPath() + "/afterCommit/" + afterList.get(i));
+							File beforeFileName = new File(info.getPath() + "/before/" + afterList.get(i));
+							File afterFileName = new File(info.getPath() + "/after/" + afterList.get(i));
 							// boolean check = false;
-							cpg.collect(info.getName() + ":" + info.getPath() + "/afterCommit/" + afterList.get(i), beforeFileName, afterFileName, classPathEntries, sourcePathEntries);
+							cpg.collect(info.getName() + ":" + info.getPath() + "/after/" + afterList.get(i), beforeFileName, afterFileName, classPathEntries, sourcePathEntries);
 							rightCount++;
 						} else {
 							errorCount++;
@@ -235,7 +235,7 @@ public class Jinfix {
 					}
 				} catch(Exception e) {
 					System.out.println("i: " + i);
-					System.out.println("id:" + info.getName() + ":" + info.getPath() + "/afterCommit/");
+					System.out.println("id:" + info.getName() + ":" + info.getPath() + "/after/");
 					System.out.println("e: " + e);	
 				}
 			} else {

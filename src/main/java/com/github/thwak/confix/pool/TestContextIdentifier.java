@@ -1,40 +1,25 @@
 package com.github.thwak.confix.pool;
 
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.jdt.core.ICompilationUnit;
-import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTParser;
-import org.eclipse.jdt.core.dom.ASTVisitor;
-import org.eclipse.jdt.core.dom.ArrayInitializer;
-import org.eclipse.jdt.core.dom.Assignment;
-import org.eclipse.jdt.core.dom.Block;
-import org.eclipse.jdt.core.dom.BlockComment;
 import org.eclipse.jdt.core.dom.ChildListPropertyDescriptor;
 import org.eclipse.jdt.core.dom.ChildPropertyDescriptor;
-import org.eclipse.jdt.core.dom.ClassInstanceCreation;
 import org.eclipse.jdt.core.dom.CompilationUnit;
-import org.eclipse.jdt.core.dom.EnumDeclaration;
 import org.eclipse.jdt.core.dom.IfStatement;
 import org.eclipse.jdt.core.dom.InfixExpression;
-import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.MethodInvocation;
-import org.eclipse.jdt.core.dom.NormalAnnotation;
-import org.eclipse.jdt.core.dom.SimpleName;
 import org.eclipse.jdt.core.dom.SimplePropertyDescriptor;
 import org.eclipse.jdt.core.dom.StructuralPropertyDescriptor;
-import org.eclipse.jdt.core.dom.TypeDeclaration;
-import org.eclipse.jdt.core.dom.TypeDeclarationStatement;
-import org.eclipse.jdt.core.dom.VariableDeclarationExpression;
-import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
-import org.eclipse.jdt.core.dom.VariableDeclarationStatement;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -51,6 +36,10 @@ public class TestContextIdentifier extends ContextIdentifier {
 	private static final long serialVersionUID = -8352611691723991826L;
 	private ArrayList<String> tempList = new ArrayList<>();
 	private ArrayList<String> nameList = new ArrayList<>();
+	private int jsonNodeId = 0;
+	JSONObject jsonObject = new JSONObject();
+	JSONArray nodeArray = new JSONArray();
+	JSONArray edgeArray = new JSONArray();
 
 	@Override
 	public Context getContext(EditOp op, File aFile) {
@@ -65,37 +54,8 @@ public class TestContextIdentifier extends ContextIdentifier {
 				if(parent.getMatched() != null){
 					parent = parent.getMatched();
 				}
-				// System.out.println("parent: " + parent.getASTNode());
-				// for(int i = 0; i < parent.children.size(); i++) {
-				// 	System.out.println("parent1:" + parent.children.get(i).getASTNode());
-				// 	System.out.println("parent1name:" + parent.children.get(i).getLabel());
-				// 	TreeNode child = parent.children.get(i);
-				// 	for(int j = 0; j < child.children.size(); j++) {
-				// 		System.out.println("parent2:" + child.children.get(j).getASTNode());
-				// 		System.out.println("parent2name:" + child.children.get(j).getLabel());
-				// 		TreeNode child2 = child.children.get(j);
-				// 		for(int k = 0; k < child2.children.size(); k++) {
-				// 			System.out.println("parent3:" + child2.children.get(k).getASTNode());
-				// 			System.out.println("parent3name:" + child2.children.get(k).getLabel());
-				// 			TreeNode child3 = child2.children.get(k);
-				// 			for(int l = 0; l < child3.children.size(); l++) {
-				// 				System.out.println("parent4:" + child3.children.get(l).getASTNode());
-				// 				System.out.println("parent4name:" + child3.children.get(l).getLabel());
-				// 				TreeNode child4 = child3.children.get(k);
-				// 				for(int m = 0; m < child4.children.size(); m++) {
-				// 					System.out.println("parent5:" + child4.children.get(m).getASTNode());
-				// 					System.out.println("parent5name:" + child4.children.get(m).getLabel());
-				// 				}
-				// 			}
-				// 		}
-				// 	}
-				// }
 				nameList.clear();
 				extractNameinContext(parent);
-				// for (int i = 0; i < nameList.size(); i++) {
-				// 	System.out.println(i + ":" + nameList.get(i));
-				// }
-
 				
 				sb.append(TreeUtils.getTypeName(parent.getType()));
 				StructuralPropertyDescriptor desc = null;
@@ -132,21 +92,6 @@ public class TestContextIdentifier extends ContextIdentifier {
 				// System.out.println("right:" + right.getASTNode());
 			}
 
-			// sb.append(",C:");
-			// if (parent != null) {
-			// 	tempList.clear();
-			// 	collectClass(parent);
-			// 	if (!tempList.isEmpty()) {
-			// 		sb.append(TreeUtils.SYM_OPEN);
-			// 		for (int i = 0; i < tempList.size(); i++) {
-			// 			sb.append(tempList.get(i));
-			// 			if (i < tempList.size() - 1) {
-			// 				sb.append(", ");
-			// 			}
-			// 		}
-			// 		sb.append(TreeUtils.SYM_CLOSE);
-			// 	}
-			// }
 
 			//extract procedure context info.
 			// System.out.println("name:" + aFile.getName());
@@ -171,19 +116,42 @@ public class TestContextIdentifier extends ContextIdentifier {
 			// System.out.println("----------------- info -------------------");
 			// System.out.println(cu.getStartPosition());
 			// System.out.println(cu.getLineNumber(cu.getStartPosition()));
-
-			ASTPrint(cu, cu.getRoot());
-
+			try {
+				BufferedWriter bufWriter = new BufferedWriter(new FileWriter(new File("/home/hjsvm/hjsaprvm/jsontest.txt")));
+				ASTtoJsonPrint(cu, cu.getRoot(), bufWriter, 0, "");
+				jsonObject.put("node", nodeArray);
+				jsonObject.put("edge", edgeArray);
+				bufWriter.close();
+				bufWriter = new BufferedWriter(new FileWriter(new File("/home/hjsvm/hjsaprvm/realjson.txt")));
+				bufWriter.write(jsonObject.toJSONString());
+				bufWriter.close();
+			} catch (Exception e) {
+			}
 			return new Context(sb.toString());
 		}else{
 			return getContext(op.getNode());
 		}
 	}
-	private void ASTPrint(CompilationUnit cu, ASTNode node) {
-		System.out.println(
-			cu.getLineNumber(node.getStartPosition()) + "\t" +
-			node.toString()
-			);
+
+	private void ASTtoJsonPrint(CompilationUnit cu, ASTNode node, BufferedWriter bufWriter, int parentNodeId, String typeName) throws IOException {
+		int thisNodeId = ++jsonNodeId;
+		JSONObject jsonEdge = new JSONObject();
+		JSONObject jsonNode = new JSONObject();
+
+		jsonEdge.put("parent", parentNodeId);
+		jsonEdge.put("child", thisNodeId);
+		jsonNode.put("id", thisNodeId);
+		jsonNode.put("contents", node.toString());
+		jsonNode.put("type", typeName);
+		jsonNode.put("linenum", cu.getLineNumber(node.getStartPosition()));
+		edgeArray.add(jsonEdge);
+		nodeArray.add(jsonNode);
+
+		bufWriter.write("edge:(" + Integer.toString(parentNodeId) + ", " + Integer.toString(thisNodeId) + ")\n");
+		bufWriter.write("nodeid: " + Integer.toString(thisNodeId) + "\n");
+		bufWriter.write("nodecontents: " + node.toString() + "\n");
+		bufWriter.write("nodetype:" + typeName + "\n");
+		bufWriter.write("nodelinenum:" + cu.getLineNumber(node.getStartPosition()) + "\n");
 		List properties = node.structuralPropertiesForType();
 		for (Iterator iterator = properties.iterator(); iterator.hasNext();) {
 			Object descriptor = iterator.next();
@@ -191,33 +159,37 @@ public class TestContextIdentifier extends ContextIdentifier {
 				SimplePropertyDescriptor simple = (SimplePropertyDescriptor) descriptor;
 				Object value = node.getStructuralProperty(simple);
 				if (value == null) {
-					System.out.println(simple.getId() + " (" + value + ")");
+					// bufWriter.write("-------type1--------\n");
+					// bufWriter.write(simple.getId() + " (" + value + ")" + "\n");
+					// bufWriter.write("------------------\n");
 				} else {
-					System.out.println(simple.getId() + " (" + value.toString() + ")");
+					// bufWriter.write("-------type2--------\n");
+					// bufWriter.write(simple.getId() + " (" + value.toString() + ")" + "\n");
+					// bufWriter.write("------------------\n");
 				}
-				
 			} else if (descriptor instanceof ChildPropertyDescriptor) {
 				ChildPropertyDescriptor child = (ChildPropertyDescriptor) descriptor;
 				ASTNode childNode = (ASTNode) node.getStructuralProperty(child);
 				if (childNode != null) {
-					System.out.println("Child (" + child.getId() + ") {");
-					ASTPrint(cu, childNode);
-					System.out.println("}");
+					bufWriter.write("Child (" + child.getId() + ") {" + "\n");
+					ASTtoJsonPrint(cu, childNode, bufWriter, thisNodeId, child.getId());
+					bufWriter.write("}\n");
 				}
 			} else {
 				ChildListPropertyDescriptor list = (ChildListPropertyDescriptor) descriptor;
-				System.out.println("List (" + list.getId() + "){");
-				ASTPrint(cu, (List) node.getStructuralProperty(list));
-				System.out.println("}");
+				bufWriter.write("List (" + list.getId() + "){" + "\n");
+				ASTtoJsonPrint(cu, (List) node.getStructuralProperty(list), bufWriter, thisNodeId, list.getId());
+				bufWriter.write("}\n");
 			}
 		}
 	}
 	
-	private void ASTPrint(CompilationUnit cu, List nodes) {
+	private void ASTtoJsonPrint(CompilationUnit cu, List nodes, BufferedWriter bufWriter, int parentNodeId, String typeName) throws IOException {
 		for (Iterator iterator = nodes.iterator(); iterator.hasNext();) {
-			ASTPrint(cu, (ASTNode) iterator.next());
+			ASTtoJsonPrint(cu, (ASTNode) iterator.next(), bufWriter, parentNodeId, typeName);
 		}
 	}
+
 	@Override
 	public Context getContext(EditOp op) {
 		if(op.getType().equals(Change.INSERT)){
