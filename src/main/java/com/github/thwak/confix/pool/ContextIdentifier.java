@@ -1,5 +1,6 @@
 package com.github.thwak.confix.pool;
 
+import java.io.File;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -24,6 +25,10 @@ public class ContextIdentifier implements Serializable {
 	public static final String SYM_CLOSE = ")";
 
 	public Context getContext(EditOp op) {
+		return new Context();
+	}
+
+	public Context getContext(EditOp op, File aFile) {
 		return new Context();
 	}
 

@@ -66,34 +66,52 @@ public class Jinfix {
 	public static String targetProjectName;
 	public static String classPathString;
 	public static String sourcePathString;
+	public static int errorCount;
+	public static int rightCount;
 	
 	public static void main(String[] args) {
 		String path = "/home/hjsvm/hjsaprvm/condatabase/commitfile";
 
+		errorCount = rightCount = 0;
 		loadProperties("/home/hjsvm/hjsaprvm/ConFix/samples/confix.properties");
 		targetProjectName = "collections";
 		setPathEntries(targetProjectName);
+		
 		testChangePool(path);
+
 		// generateChangePool(path);
+		// System.out.println("right count: " + rightCount);
+		// System.out.println("error count: " + errorCount);
 		// targetProjectName = "derby";
 		// setPathEntries(targetProjectName);
 		// generateChangePool(path);
+		// System.out.println("right count: " + rightCount);
+		// System.out.println("error count: " + errorCount);
 		// targetProjectName = "groovy";
 		// setPathEntries(targetProjectName);
 		// generateChangePool(path);
+		// System.out.println("right count: " + rightCount);
+		// System.out.println("error count: " + errorCount);
 		// targetProjectName = "hama";
 		// setPathEntries(targetProjectName);
 		// generateChangePool(path);
+		// System.out.println("right count: " + rightCount);
+		// System.out.println("error count: " + errorCount);
 		// targetProjectName = "ivy";
 		// setPathEntries(targetProjectName);
 		// generateChangePool(path);
+		// System.out.println("right count: " + rightCount);
+		// System.out.println("error count: " + errorCount);
 		// targetProjectName = "lucene";
 		// setPathEntries(targetProjectName);
 		// generateChangePool(path);
+		// System.out.println("right count: " + rightCount);
+		// System.out.println("error count: " + errorCount);
 		// targetProjectName = "mahout";
 		// setPathEntries(targetProjectName);
 		// generateChangePool(path);
-		
+		// System.out.println("right count: " + rightCount);
+		// System.out.println("error count: " + errorCount);
 		// for check ConFix context database
 		// for (String poolPath : poolList) {
 		// checkingPreviousContext(poolPath);
@@ -114,7 +132,7 @@ public class Jinfix {
 		// generateMergeCommit("mahout");
 
 		// checkingPreviousContext(poolList.get(0));
-		
+
 		System.out.println("done");
 	}
 	
@@ -173,20 +191,20 @@ public class Jinfix {
 	// to test contextidentifier
 	public static void testChangePool(String path) {
 		ChangePoolGenerator cpg = new ChangePoolGenerator(new TestContextIdentifier());
-		cpg.pool.setPoolDir(new File("/home/hjsvm/hjsaprvm/condatabase/pool"));
+		cpg.pool.setPoolDir(new File("/home/hjsvm/hjsaprvm/condatabase/pool/poolTest"));
 		String[] classPathEntries = new String[] {classPathString};
 		String[] sourcePathEntries = new String[] {sourcePathString};
 
-		cpg.collect("test", new File("/home/hjsvm/hjsaprvm/condatabase/commitfile/collections/COLLECTIONS-228/beforeCommit/MultiValueMap.java"), 
-				new File("/home/hjsvm/hjsaprvm/condatabase/commitfile/collections/COLLECTIONS-228/afterCommit/MultiValueMap.java"), classPathEntries, sourcePathEntries);
-		cpg.pool.storeTo(new File("/home/hjsvm/hjsaprvm/condatabase/pool"), true);
+		cpg.collect("test", new File("/home/hjsvm/hjsaprvm/condatabase/commitfile/collections/583d96b0895beafad326793c0cd0d273013ff137/beforeCommit/TreeBag.java"),
+				new File("/home/hjsvm/hjsaprvm/condatabase/commitfile/collections/583d96b0895beafad326793c0cd0d273013ff137/afterCommit/TreeBag.java"), classPathEntries, sourcePathEntries);
+		cpg.pool.storeTo(new File("/home/hjsvm/hjsaprvm/condatabase/pool/poolTest"), true);
 		pool = cpg.pool;
 	}
 
 	// to generate changePool
 	public static void generateChangePool(String path) {
-		ChangePoolGenerator cpg = new ChangePoolGenerator(new PLRTContextIdentifier());
-		cpg.pool.setPoolDir(new File("/home/hjsvm/hjsaprvm/condatabase/pool/pool2"));
+		ChangePoolGenerator cpg = new ChangePoolGenerator(new TestContextIdentifier());
+		cpg.pool.setPoolDir(new File("/home/hjsvm/hjsaprvm/condatabase/pool/poolPLRT"));
 		String[] classPathEntries = new String[] {classPathString};
 		String[] sourcePathEntries = new String[] {sourcePathString};
 		File beforePatchFile;
@@ -206,18 +224,24 @@ public class Jinfix {
 				try {
 					for (i = 0; i < afterList.size(); i++) {
 						if(afterList.get(i).endsWith(".java") && beforeList.contains(afterList.get(i))) {
-							cpg.collect(info.getName() + ":" + info.getPath() + "/afterCommit/" + afterList.get(i), new File(info.getPath() + "/beforeCommit/" + afterList.get(i)), new File(info.getPath() + "/afterCommit/" + afterList.get(i)), classPathEntries, sourcePathEntries);
+							File beforeFileName = new File(info.getPath() + "/beforeCommit/" + afterList.get(i));
+							File afterFileName = new File(info.getPath() + "/afterCommit/" + afterList.get(i));
+							// boolean check = false;
+							cpg.collect(info.getName() + ":" + info.getPath() + "/afterCommit/" + afterList.get(i), beforeFileName, afterFileName, classPathEntries, sourcePathEntries);
+							rightCount++;
+						} else {
+							errorCount++;
 						}
 					}
 				} catch(Exception e) {
 					System.out.println("i: " + i);
 					System.out.println("id:" + info.getName() + ":" + info.getPath() + "/afterCommit/");
-					System.out.println("e: " + e);
+					System.out.println("e: " + e);	
 				}
 			} else {
 			}
 		}
-		cpg.pool.storeTo(new File("/home/hjsvm/hjsaprvm/ConFix/pool"), true);
+		cpg.pool.storeTo(new File("/home/hjsvm/hjsaprvm/condatabase/pool/poolPLRT"), true);
 		pool = cpg.pool;
 		System.out.println(targetProjectName + " done");
 	}
@@ -229,7 +253,8 @@ public class Jinfix {
 			classPathString = basicPath + "commons-collections" + "/target";
 			sourcePathString = basicPath + "commons-collections" + "/src";
 		} else if (targetProject.equals("derby")) {
-			classPathString = basicPath + targetProject + "/bin";
+			// classPathString = basicPath + targetProject + "/bin";
+			classPathString = "";
 			sourcePathString = basicPath + targetProject + "/java";
 		} else if (targetProject.equals("groovy")) {
 			classPathString = basicPath + targetProject + "/bin";
