@@ -78,6 +78,9 @@ public class Jinfix {
 		setPathEntries(targetProjectName);
 		
 		testChangePool(path);
+		System.out.println("-----------check change-------------");
+		System.out.println(pool.contexts.size());
+		
 
 		// generateChangePool(path);
 		// System.out.println("right count: " + rightCount);
@@ -126,10 +129,12 @@ public class Jinfix {
 		// generateMergeCommit("collections");
 		// generateMergeCommit("derby");
 		// generateMergeCommit("groovy");
+		// generateMergeCommit("hadoop");
 		// generateMergeCommit("hama");
 		// generateMergeCommit("ivy");
 		// generateMergeCommit("lucene");
 		// generateMergeCommit("mahout");
+		// generateMergeCommit("pdfbox");
 
 		// checkingPreviousContext(poolList.get(0));
 
@@ -139,7 +144,7 @@ public class Jinfix {
 	// to generate merge commit file like github
 	public static void generateMergeCommit(String projectName) {
 		try {
-			String databasePath = "/home/hjsvm/hjsaprvm/condatabase/commitfile/" + projectName;
+			String databasePath = "/home/hjsvm/hjsaprvm/condatabase/outputs/" + projectName;
 			String folderPath = "";
 			String beforeCommitFile = "";
 			String afterCommitFile = "";
@@ -158,13 +163,13 @@ public class Jinfix {
 				if(info.isDirectory()) {
 					beforeCommitFileList.clear();
 					afterCommitFileList.clear();
-					beforeCommitFileList = new ArrayList<>(Arrays.asList(new File(info.getPath() + "/beforeCommit").list()));
-					afterCommitFileList = new ArrayList<>(Arrays.asList(new File(info.getPath() + "/afterCommit").list()));
+					beforeCommitFileList = new ArrayList<>(Arrays.asList(new File(info.getPath() + "/before").list()));
+					afterCommitFileList = new ArrayList<>(Arrays.asList(new File(info.getPath() + "/after").list()));
 					for (int i = 0; i < afterCommitFileList.size(); i++) {
 						// System.out.println("run2");
 						if (beforeCommitFileList.contains(afterCommitFileList.get(i)) && afterCommitFileList.get(i).endsWith(".java")) {
-							beforeCommitFile = info.getPath() + "/beforeCommit/" + afterCommitFileList.get(i);
-							afterCommitFile = info.getPath() + "/afterCommit/" + afterCommitFileList.get(i);
+							beforeCommitFile = info.getPath() + "/before/" + afterCommitFileList.get(i);
+							afterCommitFile = info.getPath() + "/after/" + afterCommitFileList.get(i);
 							beforeCommitFileData = Files.readAllLines(new File(beforeCommitFile).toPath());
 							afterCommitFileData = Files.readAllLines(new File(afterCommitFile).toPath());
 							folderPath = "/home/hjsvm/hjsaprvm/condatabase/commitfileMerge/" + projectName + "/" + info.getName();
@@ -194,16 +199,45 @@ public class Jinfix {
 		cpg.pool.setPoolDir(new File("/home/hjsvm/hjsaprvm/condatabase/pool/poolTest"));
 		String[] classPathEntries = new String[] {classPathString};
 		String[] sourcePathEntries = new String[] {sourcePathString};
+		File beforePatchFile;
+		File afterPatchFile;
+		ArrayList<String> beforeList = new ArrayList<>();
+		ArrayList<String> afterList = new ArrayList<>();
 
-		cpg.collect("test", new File("/home/hjsvm/hjsaprvm/condatabase/commitfile/collections/583d96b0895beafad326793c0cd0d273013ff137/beforeCommit/TreeBag.java"),
-				new File("/home/hjsvm/hjsaprvm/condatabase/commitfile/collections/583d96b0895beafad326793c0cd0d273013ff137/afterCommit/TreeBag.java"), classPathEntries, sourcePathEntries);
-		cpg.pool.storeTo(new File("/home/hjsvm/hjsaprvm/condatabase/pool/poolTest"), true);
+		for (File info: new File("/home/hjsvm/hjsaprvm/condatabase/outputs/test").listFiles()) {
+			if (info.isDirectory()) {
+				int i = 0;
+				beforeList.clear();
+				afterList.clear();
+				beforePatchFile = new File(info.getPath() + "/before");
+				afterPatchFile = new File(info.getPath() + "/after");
+				beforeList = new ArrayList<>(Arrays.asList(beforePatchFile.list()));
+				afterList = new ArrayList<>(Arrays.asList(afterPatchFile.list()));
+				try {
+					for (i = 0; i < afterList.size(); i++) {
+						if(afterList.get(i).endsWith(".java") && beforeList.contains(afterList.get(i))) {
+							File beforeFileName = new File(info.getPath() + "/before/" + afterList.get(i));
+							File afterFileName = new File(info.getPath() + "/after/" + afterList.get(i));
+							cpg.collect("test1", beforeFileName, afterFileName, classPathEntries, sourcePathEntries);
+						}
+					}
+				} catch(Exception e) {
+					System.out.println("i: " + i);
+					System.out.println("id:" + info.getName() + ":" + info.getPath() + "/after/");
+					System.out.println("e: " + e);	
+				}
+			}
+		}
+
+		// cpg.collect("test", new File("/home/hjsvm/hjsaprvm/condatabase/outputs/test/220_0/before/UnboundedFifoBuffer.java"),
+		// 		new File("/home/hjsvm/hjsaprvm/condatabase/outputs/test/220_0/after/UnboundedFifoBuffer.java"), classPathEntries, sourcePathEntries);
+		// cpg.pool.storeTo(new File("/home/hjsvm/hjsaprvm/condatabase/pool/poolTest"), true);
 		pool = cpg.pool;
 	}
 
 	// to generate changePool
 	public static void generateChangePool(String path) {
-		ChangePoolGenerator cpg = new ChangePoolGenerator(new TestContextIdentifier());
+		ChangePoolGenerator cpg = new ChangePoolGenerator(new PLRTContextIdentifier());
 		cpg.pool.setPoolDir(new File("/home/hjsvm/hjsaprvm/condatabase/pool/poolPLRT"));
 		String[] classPathEntries = new String[] {classPathString};
 		String[] sourcePathEntries = new String[] {sourcePathString};
@@ -259,6 +293,9 @@ public class Jinfix {
 		} else if (targetProject.equals("groovy")) {
 			classPathString = basicPath + targetProject + "/bin";
 			sourcePathString = basicPath + targetProject + "/src";
+		} else if (targetProject.equals("hadoop")) {
+			classPathString = "";
+			sourcePathString = basicPath + targetProject + "/src/java";
 		} else if (targetProject.equals("hama")) {
 			classPathString = "";
 			sourcePathString = basicPath + targetProject + "/core/src";
@@ -270,7 +307,10 @@ public class Jinfix {
 			sourcePathString = basicPath + "lucene-solr" + "/lucene";
 		} else if (targetProject.equals("mahout")) {
 			classPathString = "";
-			sourcePathString = basicPath + targetProject + "/core/src";
+			sourcePathString = basicPath + targetProject + "/src";
+		} else if (targetProject.equals("pdfbox")) {
+			classPathString = "";
+			sourcePathString = basicPath + targetProject + "/src";
 		}
 	}
 

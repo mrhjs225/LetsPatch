@@ -21,11 +21,11 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
 import com.github.thwak.confix.tree.Node;
-import com.github.thwak.confix.tree.Parser;
 import com.github.thwak.confix.tree.TreeUtils;
 
 import script.model.EditOp;
@@ -34,7 +34,6 @@ import tree.TreeNode;
 public class TestContextIdentifier extends ContextIdentifier {
 
 	private static final long serialVersionUID = -8352611691723991826L;
-	private ArrayList<String> tempList = new ArrayList<>();
 	private ArrayList<String> nameList = new ArrayList<>();
 	private int jsonNodeId = 0;
 	JSONObject jsonObject = new JSONObject();
@@ -42,7 +41,9 @@ public class TestContextIdentifier extends ContextIdentifier {
 	JSONArray edgeArray = new JSONArray();
 
 	@Override
-	public Context getContext(EditOp op, File aFile) {
+	public Context getContext(EditOp op, File aFile, File bFile) {
+		ASTNode parentNode = null;
+
 		if(op.getType().equals(Change.INSERT)){
 			StringBuffer sb = new StringBuffer();
 			sb.append("P:");
@@ -55,7 +56,14 @@ public class TestContextIdentifier extends ContextIdentifier {
 					parent = parent.getMatched();
 				}
 				nameList.clear();
+				// extract the var. name and M.I in context
 				extractNameinContext(parent);
+				System.out.println("parentCode:" + parent.getASTNode());
+				parentNode = parent.getASTNode();
+				
+				for(int i = 0; i < nameList.size(); i++) {
+					System.out.println("name" + i + ":" + nameList.get(i));
+				}
 				
 				sb.append(TreeUtils.getTypeName(parent.getType()));
 				StructuralPropertyDescriptor desc = null;
@@ -64,13 +72,13 @@ public class TestContextIdentifier extends ContextIdentifier {
 					desc = astNode.getParent().getLocationInParent();
 				else
 					desc = astNode.getLocationInParent();
-				if(desc != null){
+				if(desc != null) {
 					sb.append(TreeUtils.SYM_OPEN);
 					sb.append(desc.getId());
 					sb.append(TreeUtils.SYM_CLOSE);
 				}
 			}
-			// System.out.println("parentCode:" + parent.getASTNode());
+			
 			TreeNode node = op.getNode();
 			TreeNode left = node.getLeft();
 			TreeNode right = node.getRight();
@@ -93,40 +101,111 @@ public class TestContextIdentifier extends ContextIdentifier {
 			}
 
 
-			//extract procedure context info.
+			// extract procedure context info.
 			// System.out.println("name:" + aFile.getName());
-			// System.out.println("string:" + aFile.getAbsolutePath());
-			ASTParser parser = ASTParser.newParser(AST.JLS8);
+			System.out.println("Filepath:" + aFile.getAbsolutePath());
+			// System.out.println(aFile.getAbsolutePath().substring(0, aFile.getAbsolutePath().length()-4));
+			ASTParser afterFileParser = ASTParser.newParser(AST.JLS8);
+			ASTParser beforeFileParser = ASTParser.newParser(AST.JLS8);
 			String line = "";
-			String fileLine = "";
+			String afterFileLine = "";
+			String beforeFileLine = "";
 			try {
 				BufferedReader bufReader = new BufferedReader(new FileReader(aFile));
-						
+				BufferedReader bufReader2 = new BufferedReader(new FileReader(bFile));
 				while ((line = bufReader.readLine()) != null) {
-					fileLine = fileLine.concat(line+"\n");
+					afterFileLine = afterFileLine.concat(line + "\n");
+				}
+				while ((line = bufReader2.readLine()) != null) {
+					beforeFileLine = beforeFileLine.concat(line + "\n");
 				}
 				bufReader.close();
+				bufReader2.close();
 			} catch(Exception e) {
 				e.printStackTrace();
 			}
-			parser.setSource(fileLine.toCharArray());
-			parser.setKind(ASTParser.K_COMPILATION_UNIT);
-			CompilationUnit cu = (CompilationUnit) parser.createAST(null);
-
-			// System.out.println("----------------- info -------------------");
-			// System.out.println(cu.getStartPosition());
-			// System.out.println(cu.getLineNumber(cu.getStartPosition()));
+			afterFileParser.setSource(afterFileLine.toCharArray());
+			beforeFileParser.setSource(beforeFileLine.toCharArray());
+			afterFileParser.setKind(ASTParser.K_COMPILATION_UNIT);
+			beforeFileParser.setKind(ASTParser.K_COMPILATION_UNIT);
+			CompilationUnit afterCu = (CompilationUnit) afterFileParser.createAST(null);
+			CompilationUnit beforeCu = (CompilationUnit) beforeFileParser.createAST(null);
+			if (parentNode != null) {
+				int startPosition = parentNode.getStartPosition();
+				System.out.println("afterline: " + afterCu.getLineNumber(startPosition));
+				System.out.println("beforeline: " + beforeCu.getLineNumber(startPosition));
+				System.out.println("parentline: " + parent.getLineNumber());
+			}
+			
+			// TODO: json에 node0, node1이 여러번 들어감
+			// Extract AST to json
 			try {
-				BufferedWriter bufWriter = new BufferedWriter(new FileWriter(new File("/home/hjsvm/hjsaprvm/jsontest.txt")));
-				ASTtoJsonPrint(cu, cu.getRoot(), bufWriter, 0, "");
+				BufferedWriter bufWriter = new BufferedWriter(new FileWriter(new File(aFile.getAbsolutePath().substring(0, aFile.getAbsolutePath().length()-4) + "txt")));
+				JSONObject jsonNode = new JSONObject();
+				JSONObject jsonNodeData = new JSONObject();
+				jsonObject = new JSONObject();
+				nodeArray.clear();
+				edgeArray.clear();
+				System.out.println("tell me why?");
+				jsonNode.put("id", "node" + 0);
+				jsonNode.put("label", "label" + 0);
+				jsonNode.put("contents", "");
+				jsonNode.put("type", "ROOTNODE");
+				jsonNode.put("linenum", 1);
+				jsonNodeData.put("data", jsonNode);
+				nodeArray.add(jsonNodeData);
+				jsonNodeId = 0;
+				ASTtoJsonPrint(afterCu, afterCu.getRoot(), bufWriter, 0, "");
 				jsonObject.put("node", nodeArray);
 				jsonObject.put("edge", edgeArray);
 				bufWriter.close();
-				bufWriter = new BufferedWriter(new FileWriter(new File("/home/hjsvm/hjsaprvm/realjson.txt")));
+				bufWriter = new BufferedWriter(new FileWriter(new File(aFile.getAbsolutePath().substring(0, aFile.getAbsolutePath().length()-4) + "json")));
 				bufWriter.write(jsonObject.toJSONString());
 				bufWriter.close();
 			} catch (Exception e) {
+				e.printStackTrace();
 			}
+			
+			// Extract additional information from Json using var name and M.I.
+			HashMap<String, ArrayList> additionalContext = new HashMap<>();
+			String tempIdChild = "";
+			String tempIdParent = "";
+			// try {
+			// 	for (int i = 0; i < nameList.size(); i++) {
+			// 		ArrayList<String> tempList = new ArrayList<>();
+			// 		for (int j = 0; j < nodeArray.size(); j++) {
+			// 			JSONObject tempObject = (JSONObject) ((JSONObject) nodeArray.get(j)).get("data");
+			// 			if (tempObject.get("type").equals("name")) {
+			// 				if (tempObject.get("contents").equals(nameList.get(i))) {
+			// 					tempIdChild = tempObject.get("id").toString();
+			// 					System.out.println(tempIdChild + ": " + tempObject.get("contents").toString());
+			// 					while(!(tempObject.get("type").equals("body")|| tempObject.get("type").equals("statements") || tempObject.get("type").equals("ROOTNODE"))) {
+			// 						// TODO: 무한 반복 탈출하기...
+			// 						for(int k = 0; k < edgeArray.size(); k++) {
+			// 							if (((JSONObject) ((JSONObject) edgeArray.get(k)).get("data")).get("target").equals(tempIdChild)) {
+			// 								tempIdParent = (String) ((JSONObject)((JSONObject) edgeArray.get(k)).get("data")).get("source");
+			// 								break;
+			// 							}
+			// 						}
+			// 						for(int k = 0; k < nodeArray.size(); k++) {
+			// 							if (((JSONObject)((JSONObject) nodeArray.get(k)).get("data")).get("id").equals(tempIdParent)) {
+			// 								tempObject = (JSONObject) ((JSONObject) nodeArray.get(k)).get("data");
+			// 							}
+			// 						}
+			// 					}
+			// 					if (tempObject.get("type").equals("statements")) {
+			// 						System.out.println("additional context: " + tempObject.get("contents"));
+			// 					}
+			// 				}
+			// 			}
+			// 		}
+			// 		additionalContext.put(nameList.get(i), tempList);
+			// 	}
+			// } catch (Exception e) {
+			// 	System.out.println(e);
+			// }
+
+
 			return new Context(sb.toString());
 		}else{
 			return getContext(op.getNode());
@@ -137,16 +216,20 @@ public class TestContextIdentifier extends ContextIdentifier {
 		int thisNodeId = ++jsonNodeId;
 		JSONObject jsonEdge = new JSONObject();
 		JSONObject jsonNode = new JSONObject();
+		JSONObject jsonEdgeData = new JSONObject();
+		JSONObject jsonNodeData = new JSONObject();
 
-		jsonEdge.put("parent", parentNodeId);
-		jsonEdge.put("child", thisNodeId);
-		jsonNode.put("id", thisNodeId);
+		jsonEdge.put("source", "node" + parentNodeId);
+		jsonEdge.put("target", "node" + thisNodeId);
+		jsonEdgeData.put("data", jsonEdge);
+		jsonNode.put("id", "node" + thisNodeId);
+		jsonNode.put("label", "label" + thisNodeId);
 		jsonNode.put("contents", node.toString());
 		jsonNode.put("type", typeName);
 		jsonNode.put("linenum", cu.getLineNumber(node.getStartPosition()));
-		edgeArray.add(jsonEdge);
-		nodeArray.add(jsonNode);
-
+		jsonNodeData.put("data", jsonNode);
+		edgeArray.add(jsonEdgeData);
+		nodeArray.add(jsonNodeData);
 		bufWriter.write("edge:(" + Integer.toString(parentNodeId) + ", " + Integer.toString(thisNodeId) + ")\n");
 		bufWriter.write("nodeid: " + Integer.toString(thisNodeId) + "\n");
 		bufWriter.write("nodecontents: " + node.toString() + "\n");
@@ -240,17 +323,6 @@ public class TestContextIdentifier extends ContextIdentifier {
 			return new Context(sb.toString());
 		}else{
 			return getContext(op.getNode());
-		}
-	}
-
-	private void collectClass(TreeNode node) {
-		if (node.toString().contains("Type") && !tempList.contains(node.getASTNode().toString())) {
-			tempList.add(node.getASTNode().toString());
-		}
-		if (node.children.size() != 0) {
-			for (int i = 0; i < node.children.size(); i++) {
-				collectClass(node.children.get(i));
-			}
 		}
 	}
 

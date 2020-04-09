@@ -32,6 +32,10 @@ public class ContextIdentifier implements Serializable {
 		return new Context();
 	}
 
+	public Context getContext(EditOp op, File aFile, File bFile) {
+		return new Context();
+	}
+
 	public Context getContext(TreeNode node){
 		return new Context();
 	}

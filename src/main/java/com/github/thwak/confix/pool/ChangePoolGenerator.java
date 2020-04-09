@@ -35,12 +35,12 @@ public class ChangePoolGenerator {
 		}
 	}
 
-	public void collect(Script script, File aFile){
+	public void collect(Script script, File aFile, File bFile){
 		for(Change c : script.changes.keySet()){
 			ContextIdentifier identifier = pool.getIdentifier();
 			List<EditOp> ops = script.changes.get(c);
 			for(EditOp op : ops) {
-				Context context = identifier.getContext(op, aFile);
+				Context context = identifier.getContext(op, aFile, bFile);
 				updateMethod(c);
 				pool.add(context, c);
 			}
@@ -79,29 +79,9 @@ public class ChangePoolGenerator {
 			editScript = Converter.filter(editScript);
 			EditScript combined = Converter.combineEditOps(editScript);
 			Script script = Converter.convert(id, combined, oldCode, newCode);
-			collect(script, aFile);
+			collect(script, aFile, bFile);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-	}
-
-	public boolean collected(String id, File bFile, File aFile, String[] classPathEntries, String[] sourcePathEntries) {
-		try {
-			//Generate EditScript from before and after.
-			String oldCode = IOUtils.readFile(bFile);
-			String newCode = IOUtils.readFile(aFile);
-			Tree before = TreeBuilder.buildTreeFromFile(bFile, classPathEntries, sourcePathEntries);
-			Tree after = TreeBuilder.buildTreeFromFile(aFile, classPathEntries, sourcePathEntries);
-			EditScript editScript = ScriptGenerator.generateScript(before, after);
-			//Convert EditScript to Script.
-			editScript = Converter.filter(editScript);
-			EditScript combined = Converter.combineEditOps(editScript);
-			Script script = Converter.convert(id, combined, oldCode, newCode);
-			collect(script);
-		} catch (IOException e) {
-			// e.printStackTrace();
-			return true;
-		}
-		return false;
 	}
 }
