@@ -187,7 +187,7 @@ public class Jinfix {
 						}
 					}
 				}
-			}			
+			}
 		}	catch (Exception e) {
 			System.out.println(e);
 		}

@@ -137,7 +137,6 @@ public class TestContextIdentifier extends ContextIdentifier {
 				System.out.println("parentline: " + parent.getLineNumber());
 			}
 			
-			// TODO: json에 node0, node1이 여러번 들어감
 			// Extract AST to json
 			try {
 				BufferedWriter bufWriter = new BufferedWriter(new FileWriter(new File(aFile.getAbsolutePath().substring(0, aFile.getAbsolutePath().length()-4) + "txt")));
@@ -146,7 +145,6 @@ public class TestContextIdentifier extends ContextIdentifier {
 				jsonObject = new JSONObject();
 				nodeArray.clear();
 				edgeArray.clear();
-				System.out.println("tell me why?");
 				jsonNode.put("id", "node" + 0);
 				jsonNode.put("label", "label" + 0);
 				jsonNode.put("contents", "");
@@ -170,40 +168,41 @@ public class TestContextIdentifier extends ContextIdentifier {
 			HashMap<String, ArrayList> additionalContext = new HashMap<>();
 			String tempIdChild = "";
 			String tempIdParent = "";
-			// try {
-			// 	for (int i = 0; i < nameList.size(); i++) {
-			// 		ArrayList<String> tempList = new ArrayList<>();
-			// 		for (int j = 0; j < nodeArray.size(); j++) {
-			// 			JSONObject tempObject = (JSONObject) ((JSONObject) nodeArray.get(j)).get("data");
-			// 			if (tempObject.get("type").equals("name")) {
-			// 				if (tempObject.get("contents").equals(nameList.get(i))) {
-			// 					tempIdChild = tempObject.get("id").toString();
-			// 					System.out.println(tempIdChild + ": " + tempObject.get("contents").toString());
-			// 					while(!(tempObject.get("type").equals("body")|| tempObject.get("type").equals("statements") || tempObject.get("type").equals("ROOTNODE"))) {
-			// 						// TODO: 무한 반복 탈출하기...
-			// 						for(int k = 0; k < edgeArray.size(); k++) {
-			// 							if (((JSONObject) ((JSONObject) edgeArray.get(k)).get("data")).get("target").equals(tempIdChild)) {
-			// 								tempIdParent = (String) ((JSONObject)((JSONObject) edgeArray.get(k)).get("data")).get("source");
-			// 								break;
-			// 							}
-			// 						}
-			// 						for(int k = 0; k < nodeArray.size(); k++) {
-			// 							if (((JSONObject)((JSONObject) nodeArray.get(k)).get("data")).get("id").equals(tempIdParent)) {
-			// 								tempObject = (JSONObject) ((JSONObject) nodeArray.get(k)).get("data");
-			// 							}
-			// 						}
-			// 					}
-			// 					if (tempObject.get("type").equals("statements")) {
-			// 						System.out.println("additional context: " + tempObject.get("contents"));
-			// 					}
-			// 				}
-			// 			}
-			// 		}
-			// 		additionalContext.put(nameList.get(i), tempList);
-			// 	}
-			// } catch (Exception e) {
-			// 	System.out.println(e);
-			// }
+			try {
+				for (int i = 0; i < nameList.size(); i++) {
+					ArrayList<String> tempList = new ArrayList<>();
+					for (int j = 0; j < nodeArray.size(); j++) {
+						JSONObject tempObject = (JSONObject) ((JSONObject) nodeArray.get(j)).get("data");
+						if (tempObject.get("type").equals("name")) {
+							if (tempObject.get("contents").equals(nameList.get(i))) {
+								tempIdChild = tempObject.get("id").toString();
+								System.out.println(tempIdChild + ": " + tempObject.get("contents").toString());
+								while(!(tempObject.get("type").equals("body")|| tempObject.get("type").equals("statements") || tempObject.get("type").equals("ROOTNODE") || tempObject.get("type").equals("expression"))) {
+									for(int k = 0; k < edgeArray.size(); k++) {
+										if (((JSONObject) ((JSONObject) edgeArray.get(k)).get("data")).get("target").equals(tempIdChild)) {
+											tempIdParent = (String) ((JSONObject)((JSONObject) edgeArray.get(k)).get("data")).get("source");
+											break;
+										}
+									}
+									for(int k = 0; k < nodeArray.size(); k++) {
+										if (((JSONObject)((JSONObject) nodeArray.get(k)).get("data")).get("id").equals(tempIdParent)) {
+											tempObject = (JSONObject) ((JSONObject) nodeArray.get(k)).get("data");
+											tempIdChild = ((JSONObject) ((JSONObject) nodeArray.get(k)).get("data")).get("id").toString();
+											break;
+										}
+									}
+								}
+								if (tempObject.get("type").equals("statements") || tempObject.get("type").equals("expression")) {
+									System.out.println("additional context: " + tempObject.get("contents"));
+								}
+							}
+						}
+					}
+					additionalContext.put(nameList.get(i), tempList);
+				}
+			} catch (Exception e) {
+				System.out.println(e);
+			}
 
 
 			return new Context(sb.toString());
@@ -212,6 +211,7 @@ public class TestContextIdentifier extends ContextIdentifier {
 		}
 	}
 
+	// TODO: change부분 색칠해서 눈에 띄게 보이기, 주석같은 부분들 전처리하기(import도??)
 	private void ASTtoJsonPrint(CompilationUnit cu, ASTNode node, BufferedWriter bufWriter, int parentNodeId, String typeName) throws IOException {
 		int thisNodeId = ++jsonNodeId;
 		JSONObject jsonEdge = new JSONObject();
