@@ -43,6 +43,10 @@ public class TestContextIdentifier extends ContextIdentifier {
 	public Context getContext(EditOp op, File aFile, File bFile) {
 		ArrayList<String> leftNameList = new ArrayList<>();
 		ArrayList<String> rightNameList = new ArrayList<>();
+
+		// System.out.println("name:" + aFile.getName());
+		System.out.println("Filepath:" + aFile.getAbsolutePath());
+
 		if(op.getType().equals(Change.INSERT)){
 			StringBuffer sb = new StringBuffer();
 			sb.append("P:");
@@ -55,7 +59,7 @@ public class TestContextIdentifier extends ContextIdentifier {
 					parent = parent.getMatched();
 				}
 				// extract the var. name and M.I in context
-				System.out.println("parentCode:" + parent.getASTNode());
+				// System.out.println("parentCode:" + parent.getASTNode());
 				
 				sb.append(TreeUtils.getTypeName(parent.getType()));
 				StructuralPropertyDescriptor desc = null;
@@ -82,27 +86,25 @@ public class TestContextIdentifier extends ContextIdentifier {
 			if(right != null && right.isMatched())
 				right = right.getMatched();
 			sb.append(",L:");
-			// TODO: left에 추가한 변수를 기반으로 additional contexxt 추가가 안됨 / 이름이 제대로 추출안되는 것도 있음.
 			if(left != null) {
 				addNodeType(left, sb);
 				extractNameinContext(left, leftNameList);
-				System.out.println("left:" + left.getASTNode());
-				for(int i = 0; i < leftNameList.size(); i++) {
-					System.out.println("name" + i + ":" + leftNameList.get(i));
-				}
+				// System.out.println("left:" + left.getASTNode());
+				// for(int i = 0; i < leftNameList.size(); i++) {
+				// 	System.out.println("name" + i + ":" + leftNameList.get(i));
+				// }
 			}
 			sb.append(",R:");
 			if(right != null) {
 				addNodeType(right, sb);
 				extractNameinContext(right, rightNameList);
-				System.out.println("right:" + right.getASTNode());
+				// System.out.println("right:" + right.getASTNode());
+				// for(int i = 0; i < rightNameList.size(); i++) {
+				// 	System.out.println("name" + i + ":" + rightNameList.get(i));
+				// }
 			}
 
-
-			// extract procedure context info.
-			// System.out.println("name:" + aFile.getName());
-			// System.out.println("Filepath:" + aFile.getAbsolutePath());
-			// System.out.println(aFile.getAbsolutePath().substring(0, aFile.getAbsolutePath().length()-4));
+			// extract procedure context info
 			ASTParser afterFileParser = ASTParser.newParser(AST.JLS8);
 			ASTParser beforeFileParser = ASTParser.newParser(AST.JLS8);
 			String line = "";
@@ -157,49 +159,72 @@ public class TestContextIdentifier extends ContextIdentifier {
 			}
 			
 			// Extract additional information from Json using var name and M.I.
-			HashMap<String, ArrayList> additionalContext = new HashMap<>();
-			String tempIdChild = "";
-			String tempIdParent = "";
-			try {
-				for (int i = 0; i < leftNameList.size(); i++) {
-					ArrayList<String> tempList = new ArrayList<>();
-					for (int j = 0; j < nodeArray.size(); j++) {
-						JSONObject tempObject = (JSONObject) ((JSONObject) nodeArray.get(j)).get("data");
-						if (tempObject.get("type").equals("name")) {
-							if (tempObject.get("contents").equals(leftNameList.get(i))) {
-								tempIdChild = tempObject.get("id").toString();
-								// System.out.println(tempIdChild + ": " + tempObject.get("contents").toString());
-								while(!(tempObject.get("type").equals("body") || tempObject.get("type").equals("statements") || tempObject.get("type").equals("ROOTNODE"))) {
-									for(int k = 0; k < edgeArray.size(); k++) {
-										if (((JSONObject) ((JSONObject) edgeArray.get(k)).get("data")).get("target").equals(tempIdChild)) {
-											tempIdParent = (String) ((JSONObject)((JSONObject) edgeArray.get(k)).get("data")).get("source");
-											break;
-										}
-									}
-									for(int k = 0; k < nodeArray.size(); k++) {
-										if (((JSONObject)((JSONObject) nodeArray.get(k)).get("data")).get("id").equals(tempIdParent)) {
-											tempObject = (JSONObject) ((JSONObject) nodeArray.get(k)).get("data");
-											tempIdChild = ((JSONObject) ((JSONObject) nodeArray.get(k)).get("data")).get("id").toString();
-											break;
-										}
-									}
-								}
-								if (tempObject.get("type").equals("statements")) {
-									// System.out.println("additional context: " + tempObject.get("contents"));
-								}
-							}
-						}
-					}
-					additionalContext.put(leftNameList.get(i), tempList);
-				}
-			} catch (Exception e) {
-				System.out.println(e);
-			}
+			HashMap<String, ArrayList<String>> additionalLeftContext = new HashMap<>();
+			HashMap<String, ArrayList<String>> additionalRightContext = new HashMap<>();
+			getStatement(leftNameList, additionalLeftContext);
+			getStatement(rightNameList, additionalRightContext);
 
+			Iterator<String> iter = additionalLeftContext.keySet().iterator();
+			int i = 0;
+			while (iter.hasNext()) {
+				String keyName = iter.next();
+				// System.out.println("leftName" + i + ": " + keyName);
+				for (int j = 0; j < additionalLeftContext.get(keyName).size(); j++) {
+					// System.out.println("	addi_Context" + j + ": " + additionalLeftContext.get(keyName).get(j));
+				}
+				i++;
+			}
+			iter = additionalRightContext.keySet().iterator();
+			while (iter.hasNext()) {
+				String keyName = iter.next();
+				// System.out.println("rightName" + i + ": " + keyName);
+				for (int j = 0; j < additionalRightContext.get(keyName).size(); j++) {
+					// System.out.println("	addi_Context" + j + ": " + additionalRightContext.get(keyName).get(j));
+				}
+				i++;
+			}
+			System.out.println("sb:" + sb);
 
 			return new Context(sb.toString());
 		}else{
 			return getContext(op.getNode());
+		}
+	}
+
+	private void getStatement(ArrayList<String> nameList, HashMap<String, ArrayList<String>> additionalContext) {
+		String tempIdChild = "";
+		String tempIdParent = "";
+
+		for (int i = 0; i < nameList.size(); i++) {
+			ArrayList<String> tempList = new ArrayList<>();
+			for (int j = 0; j < nodeArray.size(); j++) {
+				JSONObject tempObject = (JSONObject) ((JSONObject) nodeArray.get(j)).get("data");
+				if (tempObject.get("type").equals("name")) {
+					if (tempObject.get("contents").equals(nameList.get(i))) {
+						tempIdChild = tempObject.get("id").toString();
+						while(!(tempObject.get("type").equals("body") || tempObject.get("type").equals("statements")
+						|| tempObject.get("type").equals("ROOTNODE") || tempObject.get("type").equals("expression"))) {
+							for(int k = 0; k < edgeArray.size(); k++) {
+								if (((JSONObject) ((JSONObject) edgeArray.get(k)).get("data")).get("target").equals(tempIdChild)) {
+									tempIdParent = (String) ((JSONObject)((JSONObject) edgeArray.get(k)).get("data")).get("source");
+									break;
+								}
+							}
+							for(int k = 0; k < nodeArray.size(); k++) {
+								if (((JSONObject)((JSONObject) nodeArray.get(k)).get("data")).get("id").equals(tempIdParent)) {
+									tempObject = (JSONObject) ((JSONObject) nodeArray.get(k)).get("data");
+									tempIdChild = ((JSONObject) ((JSONObject) nodeArray.get(k)).get("data")).get("id").toString();
+									break;
+								}
+							}
+						}
+						if (tempObject.get("type").equals("statements") || tempObject.get("type").equals("expression")) {
+							tempList.add(tempObject.get("contents").toString());
+						}
+					}
+				}
+			}
+			additionalContext.put(nameList.get(i), tempList);
 		}
 	}
 
@@ -237,17 +262,6 @@ public class TestContextIdentifier extends ContextIdentifier {
 		for (Iterator iterator = properties.iterator(); iterator.hasNext();) {
 			Object descriptor = iterator.next();
 			if (descriptor instanceof SimplePropertyDescriptor) {
-				SimplePropertyDescriptor simple = (SimplePropertyDescriptor) descriptor;
-				Object value = node.getStructuralProperty(simple);
-				if (value == null) {
-					// bufWriter.write("-------type1--------\n");
-					// bufWriter.write(simple.getId() + " (" + value + ")" + "\n");
-					// bufWriter.write("------------------\n");
-				} else {
-					// bufWriter.write("-------type2--------\n");
-					// bufWriter.write(simple.getId() + " (" + value.toString() + ")" + "\n");
-					// bufWriter.write("------------------\n");
-				}
 			} else if (descriptor instanceof ChildPropertyDescriptor) {
 				ChildPropertyDescriptor child = (ChildPropertyDescriptor) descriptor;
 				ASTNode childNode = (ASTNode) node.getStructuralProperty(child);
@@ -268,6 +282,29 @@ public class TestContextIdentifier extends ContextIdentifier {
 	private void ASTtoJsonPrint(CompilationUnit cu, List nodes, BufferedWriter bufWriter, int parentNodeId, String typeName) throws IOException {
 		for (Iterator iterator = nodes.iterator(); iterator.hasNext();) {
 			ASTtoJsonPrint(cu, (ASTNode) iterator.next(), bufWriter, parentNodeId, typeName);
+		}
+	}
+
+	private void extractNameinContext(TreeNode node, ArrayList<String> nameArrayList) {
+		if (node.getLabel().contains("Declaration") || node.getLabel().contains("Assignment")
+			|| node.getLabel().contains("Invocation")) {
+			for (int i = 0; i < node.children.size(); i++) {
+				getNameinContext(node.children.get(i), nameArrayList);
+			}
+		} else {
+			for(int i = 0; i < node.children.size(); i++) {
+				extractNameinContext(node.children.get(i), nameArrayList);
+			}
+		}
+	}
+
+	private void getNameinContext(TreeNode node, ArrayList<String> nameArrayList) {
+		if (node.getLabel().contains("Name")) {
+			nameArrayList.add(node.getASTNode().toString());
+		} else {
+			for (int i = 0; i < node.children.size(); i++) {
+				getNameinContext(node.children.get(i), nameArrayList);
+			}
 		}
 	}
 
@@ -321,29 +358,6 @@ public class TestContextIdentifier extends ContextIdentifier {
 			return new Context(sb.toString());
 		}else{
 			return getContext(op.getNode());
-		}
-	}
-
-	private void extractNameinContext(TreeNode node, ArrayList<String> nameArrayList) {
-		if (node.getLabel().contains("Declaration")
-				|| node.getLabel().contains("Assignment")
-				|| node.getLabel().contains("Invocation")) {
-			if (node.getLabel().contains("Assignment")) {
-				System.out.println("----assignment-----\n" + node.getASTNode());
-			}
-			for (int i = 0; i < node.children.size(); i++) {
-				getNameinContext(node.children.get(i), nameArrayList);
-			}
-		} else {
-			for(int i = 0; i < node.children.size(); i++) {
-				extractNameinContext(node.children.get(i), nameArrayList);
-			}
-		}
-	}
-
-	private void getNameinContext(TreeNode node, ArrayList<String> nameArrayList) {
-		if (node.getLabel().contains("Name")) {
-			nameArrayList.add(node.getASTNode().toString());
 		}
 	}
 
