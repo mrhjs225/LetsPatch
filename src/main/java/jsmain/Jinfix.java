@@ -140,7 +140,7 @@ public class Jinfix {
 
 		System.out.println("done");
 	}
-	
+
 	// to generate merge commit file like github
 	public static void generateMergeCommit(String projectName) {
 		try {

@@ -34,7 +34,6 @@ import tree.TreeNode;
 public class TestContextIdentifier extends ContextIdentifier {
 
 	private static final long serialVersionUID = -8352611691723991826L;
-	private ArrayList<String> nameList = new ArrayList<>();
 	private int jsonNodeId = 0;
 	JSONObject jsonObject = new JSONObject();
 	JSONArray nodeArray = new JSONArray();
@@ -42,8 +41,8 @@ public class TestContextIdentifier extends ContextIdentifier {
 
 	@Override
 	public Context getContext(EditOp op, File aFile, File bFile) {
-		ASTNode parentNode = null;
-
+		ArrayList<String> leftNameList = new ArrayList<>();
+		ArrayList<String> rightNameList = new ArrayList<>();
 		if(op.getType().equals(Change.INSERT)){
 			StringBuffer sb = new StringBuffer();
 			sb.append("P:");
@@ -55,15 +54,8 @@ public class TestContextIdentifier extends ContextIdentifier {
 				if(parent.getMatched() != null){
 					parent = parent.getMatched();
 				}
-				nameList.clear();
 				// extract the var. name and M.I in context
-				extractNameinContext(parent);
 				System.out.println("parentCode:" + parent.getASTNode());
-				parentNode = parent.getASTNode();
-				
-				for(int i = 0; i < nameList.size(); i++) {
-					System.out.println("name" + i + ":" + nameList.get(i));
-				}
 				
 				sb.append(TreeUtils.getTypeName(parent.getType()));
 				StructuralPropertyDescriptor desc = null;
@@ -90,20 +82,26 @@ public class TestContextIdentifier extends ContextIdentifier {
 			if(right != null && right.isMatched())
 				right = right.getMatched();
 			sb.append(",L:");
+			// TODO: left에 추가한 변수를 기반으로 additional contexxt 추가가 안됨 / 이름이 제대로 추출안되는 것도 있음.
 			if(left != null) {
 				addNodeType(left, sb);
-				// System.out.println("left:" + left.getASTNode());
+				extractNameinContext(left, leftNameList);
+				System.out.println("left:" + left.getASTNode());
+				for(int i = 0; i < leftNameList.size(); i++) {
+					System.out.println("name" + i + ":" + leftNameList.get(i));
+				}
 			}
 			sb.append(",R:");
 			if(right != null) {
 				addNodeType(right, sb);
-				// System.out.println("right:" + right.getASTNode());
+				extractNameinContext(right, rightNameList);
+				System.out.println("right:" + right.getASTNode());
 			}
 
 
 			// extract procedure context info.
 			// System.out.println("name:" + aFile.getName());
-			System.out.println("Filepath:" + aFile.getAbsolutePath());
+			// System.out.println("Filepath:" + aFile.getAbsolutePath());
 			// System.out.println(aFile.getAbsolutePath().substring(0, aFile.getAbsolutePath().length()-4));
 			ASTParser afterFileParser = ASTParser.newParser(AST.JLS8);
 			ASTParser beforeFileParser = ASTParser.newParser(AST.JLS8);
@@ -130,12 +128,6 @@ public class TestContextIdentifier extends ContextIdentifier {
 			beforeFileParser.setKind(ASTParser.K_COMPILATION_UNIT);
 			CompilationUnit afterCu = (CompilationUnit) afterFileParser.createAST(null);
 			CompilationUnit beforeCu = (CompilationUnit) beforeFileParser.createAST(null);
-			if (parentNode != null) {
-				int startPosition = parentNode.getStartPosition();
-				System.out.println("afterline: " + afterCu.getLineNumber(startPosition));
-				System.out.println("beforeline: " + beforeCu.getLineNumber(startPosition));
-				System.out.println("parentline: " + parent.getLineNumber());
-			}
 			
 			// Extract AST to json
 			try {
@@ -169,15 +161,15 @@ public class TestContextIdentifier extends ContextIdentifier {
 			String tempIdChild = "";
 			String tempIdParent = "";
 			try {
-				for (int i = 0; i < nameList.size(); i++) {
+				for (int i = 0; i < leftNameList.size(); i++) {
 					ArrayList<String> tempList = new ArrayList<>();
 					for (int j = 0; j < nodeArray.size(); j++) {
 						JSONObject tempObject = (JSONObject) ((JSONObject) nodeArray.get(j)).get("data");
 						if (tempObject.get("type").equals("name")) {
-							if (tempObject.get("contents").equals(nameList.get(i))) {
+							if (tempObject.get("contents").equals(leftNameList.get(i))) {
 								tempIdChild = tempObject.get("id").toString();
-								System.out.println(tempIdChild + ": " + tempObject.get("contents").toString());
-								while(!(tempObject.get("type").equals("body")|| tempObject.get("type").equals("statements") || tempObject.get("type").equals("ROOTNODE") || tempObject.get("type").equals("expression"))) {
+								// System.out.println(tempIdChild + ": " + tempObject.get("contents").toString());
+								while(!(tempObject.get("type").equals("body") || tempObject.get("type").equals("statements") || tempObject.get("type").equals("ROOTNODE"))) {
 									for(int k = 0; k < edgeArray.size(); k++) {
 										if (((JSONObject) ((JSONObject) edgeArray.get(k)).get("data")).get("target").equals(tempIdChild)) {
 											tempIdParent = (String) ((JSONObject)((JSONObject) edgeArray.get(k)).get("data")).get("source");
@@ -192,13 +184,13 @@ public class TestContextIdentifier extends ContextIdentifier {
 										}
 									}
 								}
-								if (tempObject.get("type").equals("statements") || tempObject.get("type").equals("expression")) {
-									System.out.println("additional context: " + tempObject.get("contents"));
+								if (tempObject.get("type").equals("statements")) {
+									// System.out.println("additional context: " + tempObject.get("contents"));
 								}
 							}
 						}
 					}
-					additionalContext.put(nameList.get(i), tempList);
+					additionalContext.put(leftNameList.get(i), tempList);
 				}
 			} catch (Exception e) {
 				System.out.println(e);
@@ -211,14 +203,15 @@ public class TestContextIdentifier extends ContextIdentifier {
 		}
 	}
 
-	// TODO: change부분 색칠해서 눈에 띄게 보이기, 주석같은 부분들 전처리하기(import도??)
+	// TODO: change부분 색칠해서 눈에 띄게 보이기
 	private void ASTtoJsonPrint(CompilationUnit cu, ASTNode node, BufferedWriter bufWriter, int parentNodeId, String typeName) throws IOException {
 		int thisNodeId = ++jsonNodeId;
 		JSONObject jsonEdge = new JSONObject();
 		JSONObject jsonNode = new JSONObject();
 		JSONObject jsonEdgeData = new JSONObject();
 		JSONObject jsonNodeData = new JSONObject();
-
+		// imports, javadoc
+		
 		jsonEdge.put("source", "node" + parentNodeId);
 		jsonEdge.put("target", "node" + thisNodeId);
 		jsonEdgeData.put("data", jsonEdge);
@@ -228,8 +221,13 @@ public class TestContextIdentifier extends ContextIdentifier {
 		jsonNode.put("type", typeName);
 		jsonNode.put("linenum", cu.getLineNumber(node.getStartPosition()));
 		jsonNodeData.put("data", jsonNode);
-		edgeArray.add(jsonEdgeData);
-		nodeArray.add(jsonNodeData);
+		if (!(typeName.equals("imports") || typeName.equals("javadoc"))) {
+			edgeArray.add(jsonEdgeData);
+			nodeArray.add(jsonNodeData);
+		} else {
+			return;
+		}
+		
 		bufWriter.write("edge:(" + Integer.toString(parentNodeId) + ", " + Integer.toString(thisNodeId) + ")\n");
 		bufWriter.write("nodeid: " + Integer.toString(thisNodeId) + "\n");
 		bufWriter.write("nodecontents: " + node.toString() + "\n");
@@ -326,7 +324,7 @@ public class TestContextIdentifier extends ContextIdentifier {
 		}
 	}
 
-	private void extractNameinContext(TreeNode node) {
+	private void extractNameinContext(TreeNode node, ArrayList<String> nameArrayList) {
 		if (node.getLabel().contains("Declaration")
 				|| node.getLabel().contains("Assignment")
 				|| node.getLabel().contains("Invocation")) {
@@ -334,18 +332,18 @@ public class TestContextIdentifier extends ContextIdentifier {
 				System.out.println("----assignment-----\n" + node.getASTNode());
 			}
 			for (int i = 0; i < node.children.size(); i++) {
-				getNameinContext(node.children.get(i));
+				getNameinContext(node.children.get(i), nameArrayList);
 			}
 		} else {
 			for(int i = 0; i < node.children.size(); i++) {
-				extractNameinContext(node.children.get(i));
+				extractNameinContext(node.children.get(i), nameArrayList);
 			}
 		}
 	}
 
-	private void getNameinContext(TreeNode node) {
+	private void getNameinContext(TreeNode node, ArrayList<String> nameArrayList) {
 		if (node.getLabel().contains("Name")) {
-			nameList.add(node.getASTNode().toString());
+			nameArrayList.add(node.getASTNode().toString());
 		}
 	}
 
