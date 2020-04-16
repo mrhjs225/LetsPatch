@@ -35,12 +35,12 @@ public class ChangePoolGenerator {
 		}
 	}
 
-	public void collect(Script script, File aFile, File bFile){
+	public void collect(Script script, File aFile, File bFile, Tree before){
 		for(Change c : script.changes.keySet()){
 			ContextIdentifier identifier = pool.getIdentifier();
 			List<EditOp> ops = script.changes.get(c);
 			for(EditOp op : ops) {
-				Context context = identifier.getContext(op, aFile, bFile);
+				Context context = identifier.getContext(op, aFile, bFile, c, before);
 				updateMethod(c);
 				pool.add(context, c);
 			}
@@ -79,7 +79,7 @@ public class ChangePoolGenerator {
 			editScript = Converter.filter(editScript);
 			EditScript combined = Converter.combineEditOps(editScript);
 			Script script = Converter.convert(id, combined, oldCode, newCode);
-			collect(script, aFile, bFile);
+			collect(script, aFile, bFile, before);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

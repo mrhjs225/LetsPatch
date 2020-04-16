@@ -26,6 +26,8 @@ public class Change implements Serializable {
 	public String code;
 	public String locationCode;
 	public Requirements requirements;
+	public String leftRelatedStatement;
+	public String rightRelatedStatement;
 
 	public Change(String id, String type, Node node, Node location){
 		this.id = id;
@@ -36,6 +38,8 @@ public class Change implements Serializable {
 		hash = TreeUtils.computeSHA256Hash(hashString);
 		hashCode = hash.hashCode();
 		requirements = new Requirements();
+		this.leftRelatedStatement = "";
+		this.rightRelatedStatement = "";
 	}
 
 	public String getHash(){
@@ -72,6 +76,8 @@ public class Change implements Serializable {
 	@Override
 	public String toString(){
 		StringBuffer sb = new StringBuffer();
+		String additionalInfo = "\n<left related statement>\n" + leftRelatedStatement +
+								"\n<right related statement>\n" + rightRelatedStatement;
 		switch(type){
 		case Change.INSERT:
 		case Change.DELETE:
@@ -120,6 +126,6 @@ public class Change implements Serializable {
 			sb.append("]");
 			break;
 		}
-		return sb.toString();
+		return sb.toString() + additionalInfo;
 	}
 }

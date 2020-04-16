@@ -16,6 +16,7 @@ import com.github.thwak.confix.tree.Node;
 import com.github.thwak.confix.tree.TreeUtils;
 
 import script.model.EditOp;
+import tree.Tree;
 import tree.TreeNode;
 
 public class ContextIdentifier implements Serializable {
@@ -32,7 +33,7 @@ public class ContextIdentifier implements Serializable {
 		return new Context();
 	}
 
-	public Context getContext(EditOp op, File aFile, File bFile) {
+	public Context getContext(EditOp op, File aFile, File bFile, Change c, Tree before) {
 		return new Context();
 	}
 

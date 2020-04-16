@@ -1,35 +1,17 @@
 package jsmain;
 
-import java.io.BufferedOutputStream;
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
 import java.util.Set;
 
-import com.github.difflib.text.DiffRow;
-import com.github.difflib.text.DiffRowGenerator;
 import com.github.thwak.confix.coverage.CoverageManager;
 import com.github.thwak.confix.patch.PatchUtils;
-import com.github.thwak.confix.pool.Change;
-import com.github.thwak.confix.pool.ChangePool;
-import com.github.thwak.confix.pool.ChangePoolGenerator;
-import com.github.thwak.confix.pool.Context;
-import com.github.thwak.confix.pool.ContextInfo;
-import com.github.thwak.confix.pool.PLRTContextIdentifier;
-import com.github.thwak.confix.pool.TestContextIdentifier;
 
 public class Jinfix {
 	public static String testClassPath;
@@ -66,11 +48,12 @@ public class Jinfix {
 	
 	public static void main(String[] args) {
 		loadProperties("/home/hjsvm/hjsaprvm/ConFix/samples/confix.properties");
-
+		// JinContextAnalyzer jinContextAnalyzer = new JinContextAnalyzer(maxPoolLoad);
 		String path = "/home/hjsvm/hjsaprvm/condatabase/outputs";
+
 		JinGenerateChangePool.setPathEntries("collections");
-		// JinGenerateChangePool.testChangePool();
-		JinContextAnalyzer.checkingPreviousContext("/home/hjsvm/hjsaprvm/condatabase/pool/poolTest");
+		JinGenerateChangePool.testChangePool();
+		// jinContextAnalyzer.checkingPreviousContext("/home/hjsvm/hjsaprvm/condatabase/pool/poolTest");
 		// targetProjectName = "collections";
 		// JinGenerateChangePool.setPathEntries(targetProjectName);		
 		// JinGenerateChangePool.generateChangePool(path);

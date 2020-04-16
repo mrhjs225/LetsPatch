@@ -3,6 +3,7 @@ package jsmain;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
+import java.io.Serializable;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -15,7 +16,7 @@ import com.github.thwak.confix.pool.ChangePoolGenerator;
 import com.github.thwak.confix.pool.PLRTContextIdentifier;
 import com.github.thwak.confix.pool.TestContextIdentifier;
 
-public class JinGenerateChangePool {
+public class JinGenerateChangePool implements Serializable{
 	public static String classPathString;
     public static String sourcePathString;
     public static String targetProjectName;

@@ -9,7 +9,6 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
 
 import com.github.thwak.confix.pool.Change;
 import com.github.thwak.confix.pool.ChangePool;
@@ -19,17 +18,17 @@ import com.github.thwak.confix.pool.ContextInfo;
 
 public class JinContextAnalyzer {
     public static ChangePool pool;
-    public static List<String> poolList;
+    public static ArrayList<String> poolList;
     static int maxPoolLoad = 0;
 
     public JinContextAnalyzer(final int maxPoolLoad) {
         JinContextAnalyzer.pool = new ChangePool();
-        JinContextAnalyzer.poolList.clear();
+        JinContextAnalyzer.poolList = new ArrayList<>();
         JinContextAnalyzer.maxPoolLoad = maxPoolLoad;
     }
 
     // for checking previous ConFix paper's context database
-    public static void checkingPreviousContext(final String poolPath) {
+    public void checkingPreviousContext(final String poolPath) {
         loadChangePool(poolPath);
         System.out.println("--------------------------new pool------------------------");
         System.out.println("poolPath: " + poolPath);

@@ -386,7 +386,7 @@ public class Converter {
 		return script;
 	}
 
-	private static Node getCopiedNode(Node node) {
+	public static Node getCopiedNode(Node node) {
 		Node parent = node.parent;
 		Node copied = TreeUtils.deepCopy(node);
 		if(node.parent != null){
@@ -399,7 +399,7 @@ public class Converter {
 		return copied;
 	}
 
-	private static void updateEdit(MVTManager manager, Change change, Node node, String source) {
+	public static void updateEdit(MVTManager manager, Change change, Node node, String source) {
 		int startPos = node.startPos;
 		int endPos = node.startPos + node.length;
 		String code = source.substring(startPos, endPos);
