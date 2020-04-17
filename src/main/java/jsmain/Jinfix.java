@@ -50,37 +50,17 @@ public class Jinfix {
 		loadProperties("/home/hjsvm/hjsaprvm/ConFix/samples/confix.properties");
 		JinContextAnalyzer jinContextAnalyzer = new JinContextAnalyzer(maxPoolLoad);
 		String path = "/home/hjsvm/hjsaprvm/condatabase/outputs";
-
+		
 		JinGenerateChangePool.setPathEntries("collections");
-		JinGenerateChangePool.testChangePool();
-		jinContextAnalyzer.checkingPreviousContext("/home/hjsvm/hjsaprvm/condatabase/pool/poolTest");
-		// targetProjectName = "collections";
-		// JinGenerateChangePool.setPathEntries(targetProjectName);		
+		// JinGenerateChangePool.testChangePool();
+		// jinContextAnalyzer.checkingPreviousContext("/home/hjsvm/hjsaprvm/condatabase/pool/poolTest");
+		
 		// JinGenerateChangePool.generateChangePool(path);
-
-		// targetProjectName = "derby";
-		// JinGenerateChangePool.setPathEntries(targetProjectName);
-		// JinGenerateChangePool.generateChangePool(path);
-
-		// targetProjectName = "groovy";
-		// JinGenerateChangePool.setPathEntries(targetProjectName);
-		// JinGenerateChangePool.generateChangePool(path);
-
-		// targetProjectName = "hama";
-		// JinGenerateChangePool.setPathEntries(targetProjectName);
-		// JinGenerateChangePool.generateChangePool(path);
-
-		// targetProjectName = "ivy";
-		// JinGenerateChangePool.setPathEntries(targetProjectName);
-		// JinGenerateChangePool.generateChangePool(path);
-
-		// targetProjectName = "lucene";
-		// JinGenerateChangePool.setPathEntries(targetProjectName);
-		// JinGenerateChangePool.generateChangePool(path);
+		JinGenerateChangePool.testgenerateChangePool(path);
 
 		// targetProjectName = "mahout";
 		// JinGenerateChangePool.setPathEntries(targetProjectName);
-		// JinGenerateChangePool.generateChangePool(path);
+		// JinGenerateChangePool.generateProjectChangePool(path);
 
 		System.out.println("done");
 	}

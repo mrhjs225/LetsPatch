@@ -124,6 +124,30 @@ public class JinGenerateChangePool implements Serializable{
 
     // to generate changePool
     public static void generateChangePool(String path) {
+		setPathEntries("collections");		
+		generateProjectChangePool(path);
+
+		setPathEntries("derby");
+		generateProjectChangePool(path);
+
+		setPathEntries("groovy");
+		generateProjectChangePool(path);
+
+		setPathEntries("hama");
+		generateProjectChangePool(path);
+
+		setPathEntries("ivy");
+		generateProjectChangePool(path);
+
+		setPathEntries("lucene");
+		generateProjectChangePool(path);
+
+		setPathEntries("mahout");
+		generateProjectChangePool(path);
+    }
+
+    // to generate changePool by project
+    public static void generateProjectChangePool(String path) {
         ChangePoolGenerator cpg = new ChangePoolGenerator(new PLRTContextIdentifier());
         cpg.pool.setPoolDir(new File("/home/hjsvm/hjsaprvm/condatabase/pool/poolPLRT"));
         String[] classPathEntries = new String[] { classPathString };
@@ -166,6 +190,7 @@ public class JinGenerateChangePool implements Serializable{
 
     // to set classPathEntries and sourcePathEntries
     public static void setPathEntries(String targetProject) {
+        JinGenerateChangePool.targetProjectName = targetProject;
         String basicPath = "/home/hjsvm/hjsaprvm/condatabase/";
         if (targetProject.equals("collections")) {
             classPathString = basicPath + "commons-collections" + "/target";
@@ -194,6 +219,99 @@ public class JinGenerateChangePool implements Serializable{
         } else if (targetProject.equals("pdfbox")) {
             classPathString = "";
             sourcePathString = basicPath + targetProject + "/src";
+        }
+    }
+
+    // to test generate changePool
+    public static void testgenerateChangePool(String path) {
+		testSetPathEntries("collections");		
+		testgenerateProjectChangePool(path);
+
+		testSetPathEntries("derby");
+		testgenerateProjectChangePool(path);
+
+		testSetPathEntries("groovy");
+		testgenerateProjectChangePool(path);
+
+		testSetPathEntries("hama");
+		testgenerateProjectChangePool(path);
+
+		testSetPathEntries("ivy");
+		testgenerateProjectChangePool(path);
+
+		testSetPathEntries("lucene");
+		testgenerateProjectChangePool(path);
+
+		testSetPathEntries("mahout");
+		testgenerateProjectChangePool(path);
+    }
+
+    // to test generate changePool by project
+    public static void testgenerateProjectChangePool(String path) {
+        ChangePoolGenerator cpg = new ChangePoolGenerator(new TestContextIdentifier());
+        cpg.pool.setPoolDir(new File("/home/hjsvm/hjsaprvm/condatabase/pool/poolNew"));
+        String[] classPathEntries = new String[] { classPathString };
+        String[] sourcePathEntries = new String[] { sourcePathString };
+        File beforePatchFile;
+        File afterPatchFile;
+        ArrayList<String> beforeList = new ArrayList<>();
+        ArrayList<String> afterList = new ArrayList<>();
+
+        for (File info : new File(path + "/" + targetProjectName).listFiles()) {
+            if (info.isDirectory()) {
+                int i = 0;
+                beforeList.clear();
+                afterList.clear();
+                beforePatchFile = new File(info.getPath() + "/before");
+                afterPatchFile = new File(info.getPath() + "/after");
+                beforeList = new ArrayList<>(Arrays.asList(beforePatchFile.list()));
+                afterList = new ArrayList<>(Arrays.asList(afterPatchFile.list()));
+                try {
+                    for (i = 0; i < afterList.size(); i++) {
+                        if (afterList.get(i).endsWith(".java") && beforeList.contains(afterList.get(i))) {
+                            File beforeFileName = new File(info.getPath() + "/before/" + afterList.get(i));
+                            File afterFileName = new File(info.getPath() + "/after/" + afterList.get(i));
+                            cpg.collect(info.getName() + ":" + info.getPath() + "/after/" + afterList.get(i),
+                                    beforeFileName, afterFileName, classPathEntries, sourcePathEntries);
+                        }
+                    }
+                } catch (Exception e) {
+                    System.out.println("i: " + i);
+                    System.out.println("id:" + info.getName() + ":" + info.getPath() + "/after/");
+                    System.out.println("e: " + e);
+                }
+            } else {
+            }
+        }
+        cpg.pool.storeTo(new File("/home/hjsvm/hjsaprvm/condatabase/pool/poolNew"), true);
+        pool = cpg.pool;
+        System.out.println(targetProjectName + " done");
+    }
+
+    public static void testSetPathEntries(String targetProject) {
+        JinGenerateChangePool.targetProjectName = targetProject;
+        String basicPath = "/home/hjsvm/hjsaprvm/condatabase/forchange/";
+        if (targetProject.equals("collections")) {
+            classPathString = basicPath + "commons-collections" + "/target";
+            sourcePathString = basicPath + "commons-collections" + "/src";
+        } else if (targetProject.equals("derby")) {
+            classPathString = basicPath + targetProject + "/bin";
+            sourcePathString = basicPath + targetProject + "/java";
+        } else if (targetProject.equals("groovy")) {
+            classPathString = basicPath + targetProject + "/bin";
+            sourcePathString = basicPath + targetProject + "/src";
+        } else if (targetProject.equals("hama")) {
+            classPathString = "";
+            sourcePathString = basicPath + targetProject;
+        } else if (targetProject.equals("ivy")) {
+            classPathString = basicPath + "ant-ivy" + "/bin";
+            sourcePathString = basicPath + "ant-ivy" + "/src";
+        } else if (targetProject.equals("lucene")) {
+            classPathString = basicPath + "lucene-solr" + "/bin";
+            sourcePathString = basicPath + "lucene-solr";
+        } else if (targetProject.equals("mahout")) {
+            classPathString = "";
+            sourcePathString = basicPath + targetProject;
         }
     }
 }

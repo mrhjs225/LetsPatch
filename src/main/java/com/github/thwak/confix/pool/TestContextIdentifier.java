@@ -59,8 +59,6 @@ public class TestContextIdentifier extends ContextIdentifier {
 				if(parent.getMatched() != null){
 					parent = parent.getMatched();
 				}
-				// extract the var. name and M.I in context
-				// System.out.println("parentCode:" + parent.getASTNode());
 				
 				sb.append(TreeUtils.getTypeName(parent.getType()));
 				StructuralPropertyDescriptor desc = null;
@@ -75,7 +73,7 @@ public class TestContextIdentifier extends ContextIdentifier {
 					sb.append(TreeUtils.SYM_CLOSE);
 				}
 			}
-			
+
 			TreeNode node = op.getNode();
 			TreeNode left = node.getLeft();
 			TreeNode right = node.getRight();
@@ -100,33 +98,15 @@ public class TestContextIdentifier extends ContextIdentifier {
 			}
 
 			// extract procedure context info
-			ASTParser afterFileParser = ASTParser.newParser(AST.JLS8);
 			ASTParser beforeFileParser = ASTParser.newParser(AST.JLS8);
-			String line = "";
-			String afterFileLine = IOUtils.readFile(aFile);
 			String beforeFileLine = IOUtils.readFile(bFile);
 
-			afterFileParser.setSource(afterFileLine.toCharArray());
 			beforeFileParser.setSource(beforeFileLine.toCharArray());
-			afterFileParser.setKind(ASTParser.K_COMPILATION_UNIT);
 			beforeFileParser.setKind(ASTParser.K_COMPILATION_UNIT);
-			CompilationUnit afterCu = (CompilationUnit) afterFileParser.createAST(null);
 			CompilationUnit beforeCu = (CompilationUnit) beforeFileParser.createAST(null);
-			
-			// check the normalizing --> success!
-			
-
-			// if (right != null) {
-			// 	Node tempNode = Converter.convert(right);
-			// 	TreeUtils.normalize(manager, tempNode, false);
-			// 	tempNode.normalized = false;
-			// 	System.out.println("after right normalize: " + Converter.getNormalizedCode(tempNode, IOUtils.readFile(bFile)));
-			// }
-
 
 			// Extract AST to json
 			try {
-				BufferedWriter bufWriter = new BufferedWriter(new FileWriter(new File(aFile.getAbsolutePath().substring(0, aFile.getAbsolutePath().length()-4) + "txt")));
 				JSONObject jsonNode = new JSONObject();
 				JSONObject jsonNodeData = new JSONObject();
 				jsonObject = new JSONObject();
@@ -140,17 +120,15 @@ public class TestContextIdentifier extends ContextIdentifier {
 				jsonNodeData.put("data", jsonNode);
 				nodeArray.add(jsonNodeData);
 				jsonNodeId = 0;
-				ASTtoJsonPrint(beforeCu, beforeCu.getRoot(), bufWriter, 0, "");
+				ASTtoJsonPrint(beforeCu, beforeCu.getRoot(), 0, "");
 				jsonObject.put("node", nodeArray);
 				jsonObject.put("edge", edgeArray);
-				bufWriter.close();
-				bufWriter = new BufferedWriter(new FileWriter(new File(aFile.getAbsolutePath().substring(0, aFile.getAbsolutePath().length()-4) + "json")));
+				BufferedWriter bufWriter = new BufferedWriter(new FileWriter(new File(aFile.getAbsolutePath().substring(0, aFile.getAbsolutePath().length()-4) + "json")));
 				bufWriter.write(jsonObject.toJSONString());
 				bufWriter.close();
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-			
 
 			// Extract additional information from Json using var name and M.I.
 			HashMap<String, ArrayList<String>> additionalLeftContext = new HashMap<>();
@@ -158,42 +136,52 @@ public class TestContextIdentifier extends ContextIdentifier {
 			getStatement(leftNameList, additionalLeftContext);
 			getStatement(rightNameList, additionalRightContext);
 
-			System.out.println("------ after abstarct -------");
+			// Iterator<String> iter = additionalLeftContext.keySet().iterator();
+			// while (iter.hasNext()) {
+			// 	String keyname = iter.next();
+			// 	System.out.println("left add context num: " + additionalLeftContext.get(keyname).size());
+			// }
+			// iter = additionalRightContext.keySet().iterator();
+			// while (iter.hasNext()) {
+			// 	String keyname = iter.next();
+			// 	System.out.println("right add context num: " + additionalRightContext.get(keyname).size());
+			// }
+
 			String tempString = "";
 			contextNodeList.clear();
-			if (left != null) {
-				tempString = getNormalizedStatement(additionalLeftContext, beforeCu, afterFileLine, beforeFileLine, beforeTree);
+			if (left != null && additionalLeftContext.size() != 0) {
+				tempString = getNormalizedStatement(additionalLeftContext, beforeCu, beforeFileLine, beforeTree);
 			}
 			c.leftRelatedStatement.add(tempString.toString());
+
 			tempString = "";
 			contextNodeList.clear();
-			if (right != null) {
-				tempString = getNormalizedStatement(additionalRightContext, beforeCu, afterFileLine, beforeFileLine, beforeTree);
+			if (right != null && additionalRightContext.size() != 0) {
+				tempString = getNormalizedStatement(additionalRightContext, beforeCu, beforeFileLine, beforeTree);
 			}
 			c.rightRelatedStatement.add(tempString.toString());
-
 			return new Context(sb.toString());
 		}else{
-			return getContext(op.getNode());
+			return getContext(op.getNode(), aFile, bFile, c, beforeTree);
 		}
 	}
 
-	private String getNormalizedStatement(HashMap<String, ArrayList<String>> additionalContext, CompilationUnit comUnit, String afterFileString, String beforeFileString, Tree beforeTree) {
+	private String getNormalizedStatement(HashMap<String, ArrayList<String>> additionalContext, CompilationUnit comUnit, String beforeFileString, Tree beforeTree) {
 		Iterator<String> iter = additionalContext.keySet().iterator();
 		StringBuffer sBuffer = new StringBuffer();
 		MVTManager manager = new MVTManager();
+		
 		while (iter.hasNext()) {
 			String keyName = iter.next();
+
 			for (int j = 0; j < additionalContext.get(keyName).size(); j++) {
-				findRelatedNode(comUnit, comUnit.getRoot(), 0, "", additionalContext.get(keyName).get(j));
-			}
-			for (int j = 0; j < contextNodeList.size(); j++) {
 				// System.out.println("-----------------------");
-				// System.out.println("before normalize: " + contextNodeList.get(j));
+				// System.out.println("before normalize: " + additionalContext.get(keyName).get(j).toString());
 				TreeNode tempTreeNode = null;
-				for (int k = 0; k < beforeTree.bfs().size(); k++) {
-					if (beforeTree.bfs().get(k).getASTNode().toString().equals(contextNodeList.get(j).toString())) {
-						tempTreeNode = beforeTree.bfs().get(k);
+				
+				for (int k = 0; k < beforeTree.dfs().size(); k++) {
+					if (beforeTree.dfs().get(k).getASTNode().toString().equals(additionalContext.get(keyName).get(j).toString())) {
+						tempTreeNode = beforeTree.dfs().get(k);
 						break;
 					}
 				}
@@ -207,8 +195,8 @@ public class TestContextIdentifier extends ContextIdentifier {
 			}
 		}
 		return sBuffer.toString();
-		} 
-
+	}
+		
 	private void getStatement(ArrayList<String> nameList, HashMap<String, ArrayList<String>> additionalContext) {
 		String tempIdChild = "";
 		String tempIdParent = "";
@@ -236,13 +224,15 @@ public class TestContextIdentifier extends ContextIdentifier {
 								}
 							}
 						}
-						if (tempObject.get("type").equals("statements") || tempObject.get("type").equals("expression")) {
+						if (!tempList.contains(tempObject.get("contents").toString()) && (tempObject.get("type").equals("statements") || tempObject.get("type").equals("expression"))) {
 							tempList.add(tempObject.get("contents").toString());
 						}
 					}
 				}
 			}
-			additionalContext.put(nameList.get(i), tempList);
+			if (tempList.size() != 0) {
+				additionalContext.put(nameList.get(i), tempList);
+			}
 		}
 	}
 
@@ -276,13 +266,12 @@ public class TestContextIdentifier extends ContextIdentifier {
 	}
 
 	// TODO: change부분 색칠해서 눈에 띄게 보이기
-	private void ASTtoJsonPrint(CompilationUnit cu, ASTNode node, BufferedWriter bufWriter, int parentNodeId, String typeName) throws IOException {
+	private void ASTtoJsonPrint(CompilationUnit cu, ASTNode node, int parentNodeId, String typeName) throws IOException {
 		int thisNodeId = ++jsonNodeId;
 		JSONObject jsonEdge = new JSONObject();
 		JSONObject jsonNode = new JSONObject();
 		JSONObject jsonEdgeData = new JSONObject();
 		JSONObject jsonNodeData = new JSONObject();
-		// imports, javadoc
 		
 		jsonEdge.put("source", "node" + parentNodeId);
 		jsonEdge.put("target", "node" + thisNodeId);
@@ -300,11 +289,6 @@ public class TestContextIdentifier extends ContextIdentifier {
 			return;
 		}
 		
-		bufWriter.write("edge:(" + Integer.toString(parentNodeId) + ", " + Integer.toString(thisNodeId) + ")\n");
-		bufWriter.write("nodeid: " + Integer.toString(thisNodeId) + "\n");
-		bufWriter.write("nodecontents: " + node.toString() + "\n");
-		bufWriter.write("nodetype:" + typeName + "\n");
-		bufWriter.write("nodelinenum:" + cu.getLineNumber(node.getStartPosition()) + "\n");
 		List properties = node.structuralPropertiesForType();
 		for (Iterator iterator = properties.iterator(); iterator.hasNext();) {
 			Object descriptor = iterator.next();
@@ -313,22 +297,18 @@ public class TestContextIdentifier extends ContextIdentifier {
 				ChildPropertyDescriptor child = (ChildPropertyDescriptor) descriptor;
 				ASTNode childNode = (ASTNode) node.getStructuralProperty(child);
 				if (childNode != null) {
-					bufWriter.write("Child (" + child.getId() + ") {" + "\n");
-					ASTtoJsonPrint(cu, childNode, bufWriter, thisNodeId, child.getId());
-					bufWriter.write("}\n");
+					ASTtoJsonPrint(cu, childNode, thisNodeId, child.getId());
 				}
 			} else {
 				ChildListPropertyDescriptor list = (ChildListPropertyDescriptor) descriptor;
-				bufWriter.write("List (" + list.getId() + "){" + "\n");
-				ASTtoJsonPrint(cu, (List) node.getStructuralProperty(list), bufWriter, thisNodeId, list.getId());
-				bufWriter.write("}\n");
+				ASTtoJsonPrint(cu, (List) node.getStructuralProperty(list), thisNodeId, list.getId());
 			}
 		}
 	}
 	
-	private void ASTtoJsonPrint(CompilationUnit cu, List nodes, BufferedWriter bufWriter, int parentNodeId, String typeName) throws IOException {
+	private void ASTtoJsonPrint(CompilationUnit cu, List nodes, int parentNodeId, String typeName) throws IOException {
 		for (Iterator iterator = nodes.iterator(); iterator.hasNext();) {
-			ASTtoJsonPrint(cu, (ASTNode) iterator.next(), bufWriter, parentNodeId, typeName);
+			ASTtoJsonPrint(cu, (ASTNode) iterator.next(), parentNodeId, typeName);
 		}
 	}
 
@@ -355,59 +335,6 @@ public class TestContextIdentifier extends ContextIdentifier {
 		}
 	}
 
-	@Override
-	public Context getContext(EditOp op) {
-		if(op.getType().equals(Change.INSERT)){
-			StringBuffer sb = new StringBuffer();
-			sb.append("P:");
-			TreeNode parent = null;
-			
-			parent = op.getNode().getParent();
-			if(parent.getType() == ASTNode.BLOCK && parent.getParent() != null)
-				parent = parent.getParent();
-			
-			System.out.println("op: " + op.toOpString());
-
-			if(parent != null){
-				if(parent.getMatched() != null){
-					parent = parent.getMatched();
-				}
-				sb.append(TreeUtils.getTypeName(parent.getType()));
-				StructuralPropertyDescriptor desc = null;
-				ASTNode astNode = op.getNode().getASTNode();
-				if(astNode.getParent().getNodeType() == ASTNode.EXPRESSION_STATEMENT)
-					desc = astNode.getParent().getLocationInParent();
-				else
-					desc = astNode.getLocationInParent();
-				if(desc != null){
-					sb.append(TreeUtils.SYM_OPEN);
-					sb.append(desc.getId());
-					sb.append(TreeUtils.SYM_CLOSE);
-				}
-			}
-			// System.out.println("parentCode:" + parent.getASTNode());
-			TreeNode node = op.getNode();
-			TreeNode left = node.getLeft();
-			TreeNode right = node.getRight();
-			while(right != null && !right.isMatched())
-				right = right.getRight();
-			//Get hash of old nodes as contexts.
-			if(left != null && left.isMatched())
-				left = left.getMatched();
-			if(right != null && right.isMatched())
-				right = right.getMatched();
-			sb.append(",L:");
-			if(left != null)
-				addNodeType(left, sb);
-			sb.append(",R:");
-			if(right != null)
-				addNodeType(right, sb);			
-			return new Context(sb.toString());
-		}else{
-			return getContext(op.getNode());
-		}
-	}
-
 	private void addNodeType(TreeNode node, StringBuffer sb){
 		sb.append(TreeUtils.getTypeName(node.getType()));
 		StructuralPropertyDescriptor desc = null;
@@ -424,7 +351,10 @@ public class TestContextIdentifier extends ContextIdentifier {
 	}
 
 	@Override
-	public Context getContext(TreeNode node){
+	public Context getContext(TreeNode node, File aFile, File bFile, Change c, Tree beforeTree){
+		ArrayList<String> leftNameList = new ArrayList<>();
+		ArrayList<String> rightNameList = new ArrayList<>();
+
 		StringBuffer sb = new StringBuffer();
 		sb.append("P:");
 		TreeNode parent = null;
@@ -450,11 +380,65 @@ public class TestContextIdentifier extends ContextIdentifier {
 		TreeNode left = node.getLeft();
 		TreeNode right = node.getRight();
 		sb.append(",L:");
-		if(left != null)
+		if(left != null) {
 			addNodeType(left, sb);
+			extractNameinContext(left, leftNameList);
+		}
 		sb.append(",R:");
-		if(right != null)
+		if(right != null) {
 			addNodeType(right, sb);
+			extractNameinContext(right, rightNameList);
+		}
+		// extract procedure context info
+		ASTParser beforeFileParser = ASTParser.newParser(AST.JLS8);
+		String beforeFileLine = IOUtils.readFile(bFile);
+
+		beforeFileParser.setSource(beforeFileLine.toCharArray());
+		beforeFileParser.setKind(ASTParser.K_COMPILATION_UNIT);
+		CompilationUnit beforeCu = (CompilationUnit) beforeFileParser.createAST(null);
+		// Extract AST to json
+		try {
+			JSONObject jsonNode = new JSONObject();
+			JSONObject jsonNodeData = new JSONObject();
+			jsonObject = new JSONObject();
+			nodeArray.clear();
+			edgeArray.clear();
+			jsonNode.put("id", "node" + 0);
+			jsonNode.put("label", "label" + 0);
+			jsonNode.put("contents", "");
+			jsonNode.put("type", "ROOTNODE");
+			jsonNode.put("linenum", 1);
+			jsonNodeData.put("data", jsonNode);
+			nodeArray.add(jsonNodeData);
+			jsonNodeId = 0;
+			ASTtoJsonPrint(beforeCu, beforeCu.getRoot(), 0, "");
+			jsonObject.put("node", nodeArray);
+			jsonObject.put("edge", edgeArray);
+			BufferedWriter bufWriter = new BufferedWriter(new FileWriter(new File(aFile.getAbsolutePath().substring(0, aFile.getAbsolutePath().length()-4) + "json")));
+			bufWriter.write(jsonObject.toJSONString());
+			bufWriter.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		// Extract additional information from Json using var name and M.I.
+		HashMap<String, ArrayList<String>> additionalLeftContext = new HashMap<>();
+		HashMap<String, ArrayList<String>> additionalRightContext = new HashMap<>();
+		getStatement(leftNameList, additionalLeftContext);
+		getStatement(rightNameList, additionalRightContext);
+
+		String tempString = "";
+		contextNodeList.clear();
+		if (left != null) {
+			tempString = getNormalizedStatement(additionalLeftContext, beforeCu, beforeFileLine, beforeTree);
+		}
+		c.leftRelatedStatement.add(tempString.toString());
+		tempString = "";
+		contextNodeList.clear();
+		if (right != null) {
+			tempString = getNormalizedStatement(additionalRightContext, beforeCu, beforeFileLine, beforeTree);
+		}
+		c.rightRelatedStatement.add(tempString.toString());
 		return new Context(sb.toString());
 	}
 
