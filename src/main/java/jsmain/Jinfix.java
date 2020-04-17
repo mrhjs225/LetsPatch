@@ -48,12 +48,12 @@ public class Jinfix {
 	
 	public static void main(String[] args) {
 		loadProperties("/home/hjsvm/hjsaprvm/ConFix/samples/confix.properties");
-		// JinContextAnalyzer jinContextAnalyzer = new JinContextAnalyzer(maxPoolLoad);
+		JinContextAnalyzer jinContextAnalyzer = new JinContextAnalyzer(maxPoolLoad);
 		String path = "/home/hjsvm/hjsaprvm/condatabase/outputs";
 
 		JinGenerateChangePool.setPathEntries("collections");
 		JinGenerateChangePool.testChangePool();
-		// jinContextAnalyzer.checkingPreviousContext("/home/hjsvm/hjsaprvm/condatabase/pool/poolTest");
+		jinContextAnalyzer.checkingPreviousContext("/home/hjsvm/hjsaprvm/condatabase/pool/poolTest");
 		// targetProjectName = "collections";
 		// JinGenerateChangePool.setPathEntries(targetProjectName);		
 		// JinGenerateChangePool.generateChangePool(path);

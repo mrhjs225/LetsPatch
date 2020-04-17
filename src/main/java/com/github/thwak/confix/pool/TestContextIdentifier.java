@@ -45,8 +45,8 @@ public class TestContextIdentifier extends ContextIdentifier {
 		ArrayList<String> leftNameList = new ArrayList<>();
 		ArrayList<String> rightNameList = new ArrayList<>();
 
-		System.out.println("=====================================================================");
-		System.out.println("Filepath:" + aFile.getAbsolutePath());
+		// System.out.println("=====================================================================");
+		// System.out.println("Filepath:" + aFile.getAbsolutePath());
 
 		if(op.getType().equals(Change.INSERT)){
 			StringBuffer sb = new StringBuffer();
@@ -90,14 +90,13 @@ public class TestContextIdentifier extends ContextIdentifier {
 			if(left != null) {
 				addNodeType(left, sb);
 				extractNameinContext(left, leftNameList);
-				System.out.println("left:" + left.getASTNode());
+				// System.out.println("left:" + left.getASTNode());
 			}
 			sb.append(",R:");
 			if(right != null) {
 				addNodeType(right, sb);
 				extractNameinContext(right, rightNameList);
-				
-				System.out.println("right:" + right.getASTNode());
+				// System.out.println("right:" + right.getASTNode());
 			}
 
 			// extract procedure context info
@@ -165,23 +164,13 @@ public class TestContextIdentifier extends ContextIdentifier {
 			if (left != null) {
 				tempString = getNormalizedStatement(additionalLeftContext, beforeCu, afterFileLine, beforeFileLine, beforeTree);
 			}
-			c.leftRelatedStatement = tempString.toString();
-			
-			// TreeNode beforeTreeRootNode = beforeTree.getRoot();
-			// for(int i = 0; i< beforeTree.bfs(beforeTreeRootNode).size(); i++) {
-			// 	if(contextNodeList.size() != 0 
-			// 		&& beforeTree.bfs(beforeTreeRootNode).get(i).getASTNode().toString().equals(contextNodeList.get(0).toString())) {
-			// 		System.out.println(beforeTree.bfs(beforeTreeRootNode).get(i).getId());
-			// 		System.out.println(beforeTree.bfs(beforeTreeRootNode).get(i).getASTNode());
-			// 	}
-			// }
-
-			// tempString = "";
-			// contextNodeList.clear();
-			// if (right != null) {
-			// 	tempString = getNormalizedStatement(additionalRightContext, beforeCu, afterFileLine, beforeFileLine);
-			// }
-			// c.rightRelatedStatement = tempString;
+			c.leftRelatedStatement.add(tempString.toString());
+			tempString = "";
+			contextNodeList.clear();
+			if (right != null) {
+				tempString = getNormalizedStatement(additionalRightContext, beforeCu, afterFileLine, beforeFileLine, beforeTree);
+			}
+			c.rightRelatedStatement.add(tempString.toString());
 
 			return new Context(sb.toString());
 		}else{
@@ -199,27 +188,21 @@ public class TestContextIdentifier extends ContextIdentifier {
 				findRelatedNode(comUnit, comUnit.getRoot(), 0, "", additionalContext.get(keyName).get(j));
 			}
 			for (int j = 0; j < contextNodeList.size(); j++) {
-				// TreeNode tempTreeNode = new TreeNode(-1, TreeUtils.getLabel(tempASTNode), tempASTNode);
-				System.out.println("before normalize: " + contextNodeList.get(j));
+				// System.out.println("-----------------------");
+				// System.out.println("before normalize: " + contextNodeList.get(j));
 				TreeNode tempTreeNode = null;
 				for (int k = 0; k < beforeTree.bfs().size(); k++) {
 					if (beforeTree.bfs().get(k).getASTNode().toString().equals(contextNodeList.get(j).toString())) {
-						System.out.println("right!: " + beforeTree.bfs().get(k).getASTNode());
 						tempTreeNode = beforeTree.bfs().get(k);
 						break;
 					}
 				}
-				
-				// if (tempTreeNode.isMatched()) {
-				// 	tempTreeNode = tempTreeNode.getMatched();
-				// }
 				Node tempNode = Converter.convert(tempTreeNode);
-				// System.out.println("Before NODE: " + tempNode);
 				manager = new MVTManager();
 				TreeUtils.normalize(manager, tempNode, false);
 				tempNode.normalized = false;
-				System.out.println("after normalize: " + Converter.getNormalizedCode(tempNode, beforeFileString));
-				System.out.println("-----------------------");
+				// System.out.println("after normalize: " + Converter.getNormalizedCode(tempNode, beforeFileString));
+				// System.out.println("-----------------------");
 				sBuffer.append(Converter.getNormalizedCode(tempNode, beforeFileString) + "\n");
 			}
 		}

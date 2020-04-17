@@ -60,6 +60,12 @@ public class JinContextAnalyzer {
                     pool.loadChange(contextInfo.getChanges().get(j));
                     tempChange = pool.changes.get(contextInfo.getChanges().get(j));
                     System.out.println("change" + j + ": " + tempChange);
+                    for (int k = 0; k < tempChange.leftRelatedStatement.size(); k++) {
+                        System.out.println("is left alive?: " + tempChange.leftRelatedStatement.get(k));
+                    }
+                    for (int k = 0; k < tempChange.rightRelatedStatement.size(); k++) {
+                        System.out.println("is right alive?: " + tempChange.rightRelatedStatement.get(k));
+                    }
                 }
             } else {
                 break;
