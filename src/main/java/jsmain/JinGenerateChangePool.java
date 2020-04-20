@@ -112,9 +112,7 @@ public class JinGenerateChangePool implements Serializable{
                         }
                     }
                 } catch (Exception e) {
-                    System.out.println("i: " + i);
-                    System.out.println("id:" + info.getName() + ":" + info.getPath() + "/after/");
-                    System.out.println("e: " + e);
+                    e.printStackTrace();
                 }
             }
         }
@@ -176,9 +174,7 @@ public class JinGenerateChangePool implements Serializable{
                         }
                     }
                 } catch (Exception e) {
-                    System.out.println("i: " + i);
-                    System.out.println("id:" + info.getName() + ":" + info.getPath() + "/after/");
-                    System.out.println("e: " + e);
+                    e.printStackTrace();
                 }
             } else {
             }
@@ -224,26 +220,59 @@ public class JinGenerateChangePool implements Serializable{
 
     // to test generate changePool
     public static void testgenerateChangePool(String path) {
-		testSetPathEntries("collections");		
-		testgenerateProjectChangePool(path);
+        long ctime = System.currentTimeMillis();
+        // testSetPathEntries("collections");		
+        // testgenerateProjectChangePool(path);
+        long ntime = System.currentTimeMillis();
+        // System.out.println("time for done: " + (ntime - ctime)/1000 + "s");
 
-		testSetPathEntries("derby");
-		testgenerateProjectChangePool(path);
+        // ctime = System.currentTimeMillis();
+		// testSetPathEntries("derby");
+        // testgenerateProjectChangePool(path);
+        // ntime = System.currentTimeMillis();
+        // System.out.println("time for done: " + (ntime - ctime)/1000 + "s");
 
-		testSetPathEntries("groovy");
-		testgenerateProjectChangePool(path);
+        // ctime = System.currentTimeMillis();
+		// testSetPathEntries("groovy");
+		// testgenerateProjectChangePool(path);
+        // ntime = System.currentTimeMillis();
+        // System.out.println("time for done: " + (ntime - ctime)/1000 + "s");
 
-		testSetPathEntries("hama");
-		testgenerateProjectChangePool(path);
+        // ctime = System.currentTimeMillis();
+        // testSetPathEntries("hama");
+		// testgenerateProjectChangePool(path);
+        // ntime = System.currentTimeMillis();
+        // System.out.println("time for done: " + (ntime - ctime)/1000 + "s");
 
-		testSetPathEntries("ivy");
+        ctime = System.currentTimeMillis();
+        testSetPathEntries("ivy");
 		testgenerateProjectChangePool(path);
+        ntime = System.currentTimeMillis();
+        System.out.println("time for done: " + (ntime - ctime)/1000 + "s");
 
-		testSetPathEntries("lucene");
-		testgenerateProjectChangePool(path);
+        // ctime = System.currentTimeMillis();
+        // testSetPathEntries("lucene");
+		// testgenerateProjectChangePool(path);
+        // ntime = System.currentTimeMillis();
+        // System.out.println("time for done: " + (ntime - ctime)/1000 + "s");
 
-		testSetPathEntries("mahout");
-		testgenerateProjectChangePool(path);
+        // ctime = System.currentTimeMillis();
+        // testSetPathEntries("mahout");
+        // testgenerateProjectChangePool(path);
+        // ntime = System.currentTimeMillis();
+        // System.out.println("time for done: " + (ntime - ctime)/1000 + "s");
+
+        // ctime = System.currentTimeMillis();
+        // testSetPathEntries("hadoop");
+		// testgenerateProjectChangePool(path);
+        // ntime = System.currentTimeMillis();
+        // System.out.println("time for done: " + (ntime - ctime)/1000 + "s");
+
+        // ctime = System.currentTimeMillis();
+        // testSetPathEntries("pdfbox");
+		// testgenerateProjectChangePool(path);
+        // ntime = System.currentTimeMillis();
+        // System.out.println("time for done: " + (ntime - ctime)/1000 + "s");
     }
 
     // to test generate changePool by project
@@ -276,9 +305,7 @@ public class JinGenerateChangePool implements Serializable{
                         }
                     }
                 } catch (Exception e) {
-                    System.out.println("i: " + i);
-                    System.out.println("id:" + info.getName() + ":" + info.getPath() + "/after/");
-                    System.out.println("e: " + e);
+                    e.printStackTrace();
                 }
             } else {
             }
@@ -312,6 +339,12 @@ public class JinGenerateChangePool implements Serializable{
         } else if (targetProject.equals("mahout")) {
             classPathString = "";
             sourcePathString = basicPath + targetProject;
+        } else if (targetProject.equals("hadoop")) {
+            classPathString = "";
+            sourcePathString = basicPath + "hadoop-common";
+        } else if (targetProject.equals("pdfbox")) {
+            classPathString = "";
+            sourcePathString = basicPath + "fontbox";
         }
     }
 }

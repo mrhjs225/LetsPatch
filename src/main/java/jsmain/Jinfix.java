@@ -50,17 +50,12 @@ public class Jinfix {
 		loadProperties("/home/hjsvm/hjsaprvm/ConFix/samples/confix.properties");
 		JinContextAnalyzer jinContextAnalyzer = new JinContextAnalyzer(maxPoolLoad);
 		String path = "/home/hjsvm/hjsaprvm/condatabase/outputs";
-		
-		JinGenerateChangePool.setPathEntries("collections");
+		System.out.println("start!");
+		// JinGenerateChangePool.setPathEntries("collections");
 		// JinGenerateChangePool.testChangePool();
-		// jinContextAnalyzer.checkingPreviousContext("/home/hjsvm/hjsaprvm/condatabase/pool/poolTest");
 		
-		// JinGenerateChangePool.generateChangePool(path);
-		JinGenerateChangePool.testgenerateChangePool(path);
-
-		// targetProjectName = "mahout";
-		// JinGenerateChangePool.setPathEntries(targetProjectName);
-		// JinGenerateChangePool.generateProjectChangePool(path);
+		// JinGenerateChangePool.testgenerateChangePool(path);
+		// jinContextAnalyzer.checkingPreviousContext("/home/hjsvm/hjsaprvm/condatabase/pool/poolTest");
 
 		System.out.println("done");
 	}
