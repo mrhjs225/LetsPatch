@@ -55,7 +55,11 @@ public class Jinfix {
 		// JinGenerateChangePool.testChangePool();
 		
 		// JinGenerateChangePool.testgenerateChangePool(path);
-		// jinContextAnalyzer.checkingPreviousContext("/home/hjsvm/hjsaprvm/condatabase/pool/poolTest");
+		try {
+			jinContextAnalyzer.getStatisticsContext("/home/hjsvm/hjsaprvm/condatabase/pool/poolNew");
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
 
 		System.out.println("done");
 	}

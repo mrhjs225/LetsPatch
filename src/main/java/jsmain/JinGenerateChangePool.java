@@ -232,17 +232,17 @@ public class JinGenerateChangePool implements Serializable{
         // ntime = System.currentTimeMillis();
         // System.out.println("time for done: " + (ntime - ctime)/1000 + "s");
 
-        // ctime = System.currentTimeMillis();
-		// testSetPathEntries("groovy");
-		// testgenerateProjectChangePool(path);
-        // ntime = System.currentTimeMillis();
-        // System.out.println("time for done: " + (ntime - ctime)/1000 + "s");
+        ctime = System.currentTimeMillis();
+		testSetPathEntries("groovy");
+		testgenerateProjectChangePool(path);
+        ntime = System.currentTimeMillis();
+        System.out.println("time for done: " + (ntime - ctime)/1000 + "s");
 
-        // ctime = System.currentTimeMillis();
-        // testSetPathEntries("hama");
-		// testgenerateProjectChangePool(path);
-        // ntime = System.currentTimeMillis();
-        // System.out.println("time for done: " + (ntime - ctime)/1000 + "s");
+        ctime = System.currentTimeMillis();
+        testSetPathEntries("hama");
+		testgenerateProjectChangePool(path);
+        ntime = System.currentTimeMillis();
+        System.out.println("time for done: " + (ntime - ctime)/1000 + "s");
 
         ctime = System.currentTimeMillis();
         testSetPathEntries("ivy");
@@ -250,35 +250,35 @@ public class JinGenerateChangePool implements Serializable{
         ntime = System.currentTimeMillis();
         System.out.println("time for done: " + (ntime - ctime)/1000 + "s");
 
-        // ctime = System.currentTimeMillis();
-        // testSetPathEntries("lucene");
-		// testgenerateProjectChangePool(path);
-        // ntime = System.currentTimeMillis();
-        // System.out.println("time for done: " + (ntime - ctime)/1000 + "s");
+        ctime = System.currentTimeMillis();
+        testSetPathEntries("lucene");
+		testgenerateProjectChangePool(path);
+        ntime = System.currentTimeMillis();
+        System.out.println("time for done: " + (ntime - ctime)/1000 + "s");
 
-        // ctime = System.currentTimeMillis();
-        // testSetPathEntries("mahout");
-        // testgenerateProjectChangePool(path);
-        // ntime = System.currentTimeMillis();
-        // System.out.println("time for done: " + (ntime - ctime)/1000 + "s");
+        ctime = System.currentTimeMillis();
+        testSetPathEntries("mahout");
+        testgenerateProjectChangePool(path);
+        ntime = System.currentTimeMillis();
+        System.out.println("time for done: " + (ntime - ctime)/1000 + "s");
 
-        // ctime = System.currentTimeMillis();
-        // testSetPathEntries("hadoop");
-		// testgenerateProjectChangePool(path);
-        // ntime = System.currentTimeMillis();
-        // System.out.println("time for done: " + (ntime - ctime)/1000 + "s");
+        ctime = System.currentTimeMillis();
+        testSetPathEntries("hadoop");
+		testgenerateProjectChangePool(path);
+        ntime = System.currentTimeMillis();
+        System.out.println("time for done: " + (ntime - ctime)/1000 + "s");
 
-        // ctime = System.currentTimeMillis();
-        // testSetPathEntries("pdfbox");
-		// testgenerateProjectChangePool(path);
-        // ntime = System.currentTimeMillis();
-        // System.out.println("time for done: " + (ntime - ctime)/1000 + "s");
+        ctime = System.currentTimeMillis();
+        testSetPathEntries("pdfbox");
+		testgenerateProjectChangePool(path);
+        ntime = System.currentTimeMillis();
+        System.out.println("time for done: " + (ntime - ctime)/1000 + "s");
     }
 
     // to test generate changePool by project
     public static void testgenerateProjectChangePool(String path) {
-        ChangePoolGenerator cpg = new ChangePoolGenerator(new TestContextIdentifier());
-        cpg.pool.setPoolDir(new File("/home/hjsvm/hjsaprvm/condatabase/pool/poolNew"));
+        ChangePoolGenerator cpg = new ChangePoolGenerator(new PLRTContextIdentifier());
+        cpg.pool.setPoolDir(new File("/home/hjsvm/hjsaprvm/condatabase/pool/poolTest"));
         String[] classPathEntries = new String[] { classPathString };
         String[] sourcePathEntries = new String[] { sourcePathString };
         File beforePatchFile;
@@ -310,7 +310,7 @@ public class JinGenerateChangePool implements Serializable{
             } else {
             }
         }
-        cpg.pool.storeTo(new File("/home/hjsvm/hjsaprvm/condatabase/pool/poolNew"), true);
+        cpg.pool.storeTo(new File("/home/hjsvm/hjsaprvm/condatabase/pool/poolTest"), true);
         pool = cpg.pool;
         System.out.println(targetProjectName + " done");
     }
