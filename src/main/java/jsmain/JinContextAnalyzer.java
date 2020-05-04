@@ -44,77 +44,74 @@ public class JinContextAnalyzer {
         Change tempChange;
         int i = 0;
         System.out.println("context size: " + pool.contexts.size());
-        BufferedWriter bufWriter = new BufferedWriter(new FileWriter(new File("/home/hjsvm/hjsaprvm/condatabase/statisticResult/csresult_insert.txt")));
+        BufferedWriter bufWriter;
 
         HashMap<String, Integer> contextAndStatement = new HashMap<>();
-        // extract context <---> number of change
-        // while (keyContext.hasNext()) {
-        //     tempContext = keyContext.next();
-        //     contextInfo = pool.contexts.get(tempContext);
-        //     bufWriter.write(tempContext.toString() + "," + contextInfo.getChanges().size() + "\n");
 
-        // }
-        
-        //extract context <---> number of relatedstatement
         while (keyContext.hasNext()) {
             tempContext = keyContext.next();
             contextInfo = pool.contexts.get(tempContext);
             contextAndStatement.clear();
-            int changeSize = 0;
+            bufWriter = new BufferedWriter(new FileWriter(new File("/home/hjsvm/hjsaprvm/condatabase/statisticResult/contexttable/table" + i + ".txt")));
+
+            ArrayList<String> totalRelatedStatement = new ArrayList<>();
+            int changeNum = 0;
+            HashMap<Integer, ArrayList<Integer>> contextTable = new HashMap<>();
+            
             for (int j = 0; j < contextInfo.getChanges().size(); j++) {
                 pool.loadChange(contextInfo.getChanges().get(j));
                 tempChange = pool.changes.get(contextInfo.getChanges().get(j));
-                if (!tempChange.type.equals("insert")) {
-                    continue;
-                }
-                changeSize++;
-                ArrayList<String> totalRelatedStatement = tempChange.leftRelatedStatement;
+                ArrayList<Integer> changeVector = new ArrayList<>();
+                ArrayList<String> changeRelatedStatement = tempChange.leftRelatedStatement;
                 for (int k = 0; k < tempChange.rightRelatedStatement.size(); k++) {
-                    if (!totalRelatedStatement.contains(tempChange.rightRelatedStatement.get(k))) {
-                        totalRelatedStatement.add(tempChange.rightRelatedStatement.get(k));
+                    if (!changeRelatedStatement.contains(tempChange.rightRelatedStatement.get(k))) {
+                        changeRelatedStatement.add(tempChange.rightRelatedStatement.get(k));
                     }
                 }
+
                 for (int k = 0; k < totalRelatedStatement.size(); k++) {
-                    String relatedStatement = totalRelatedStatement.get(k);
-                    if (contextAndStatement.containsKey(relatedStatement)) {
-                        contextAndStatement.replace(relatedStatement, contextAndStatement.get(relatedStatement) + 1);
+                    if (changeRelatedStatement.contains(totalRelatedStatement.get(k))) {
+                        changeVector.add(1);
                     } else {
-                        contextAndStatement.put(relatedStatement, 1);
+                        changeVector.add(0);
                     }
                 }
-            }
-            
-            List<Map.Entry<String, Integer>> list = new LinkedList<>(contextAndStatement.entrySet());
-            
-            Collections.sort(list, new Comparator<Map.Entry<String, Integer>>() {
-                @Override
-                public int compare(Map.Entry<String, Integer> o1, Map.Entry<String, Integer> o2) {
-                    int comparison = (o1.getValue() - o2.getValue()) * -1;
-                    return comparison == 0 ? o1.getKey().compareTo(o2.getKey()) : comparison;
+
+                for (int k = 0; k < changeRelatedStatement.size(); k++) {
+                    if (!totalRelatedStatement.contains(changeRelatedStatement.get(k))) {
+                        changeVector.add(1);
+                        totalRelatedStatement.add(changeRelatedStatement.get(k));
+                        for (int l = 0; l < changeNum; l++) {
+                            contextTable.get(l).add(0);
+                        }
+                    }
                 }
-            });
 
-            Iterator<Map.Entry<String, Integer>> iter = list.iterator();
-            StringBuilder indexString = new StringBuilder();
-            StringBuilder contentString = new StringBuilder();
-            // contentString.append(tempContext.toString().replaceAll(",", "/"));
-            // indexString.append("changenum,");
-            contentString.append(i + ",");
-            contentString.append(changeSize + ",");
-            int j = 0;
-            while (iter.hasNext()) {
-                Map.Entry<String, Integer> entry = iter.next();
-                // indexString.append(j + ",");
-                contentString.append(entry.getValue() + ",");
-                j++;
+                contextTable.put(changeNum, changeVector);
+                changeNum++;
             }
-            // bufWriter.write(indexString.toString() + "\n");
+            
+            StringBuilder contentString = new StringBuilder();
+            contentString.append(",");
+            for (int j = 0; j < changeNum - 1; j++) {
+                contentString.append("change" + j + ",");
+            }
+            contentString.append("change" + (changeNum - 1));
             bufWriter.write(contentString.toString() + "\n");
-           
-
+            
+            for (int j = 0; j < totalRelatedStatement.size(); j++) {
+                contentString = new StringBuilder();
+                contentString.append("statement" + j + ",");
+                for (int k = 0; k < changeNum - 1; k++) {
+                    contentString.append(contextTable.get(k).get(j) + ",");
+                }
+                contentString.append(contextTable.get(changeNum - 1).get(j));
+                bufWriter.write(contentString.toString() + "\n");
+            }
+            
+            bufWriter.close();
             i++;
         }
-        bufWriter.close();
     }
 
 
