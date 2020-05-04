@@ -1,4 +1,4 @@
-# ConFix
+# ConFix_by Jinseok Heo
 ConFix - Automated Patch Generation with Context-based Change Application   
 
 For detailed approaches and evaluation, please check this [manuscript](https://github.com/thwak/ConFix/wiki/pre-print.pdf).  
