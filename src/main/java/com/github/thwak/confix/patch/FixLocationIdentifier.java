@@ -46,13 +46,10 @@ public class FixLocationIdentifier {
 				rightRelated.clear();
 				SourceContextIdentifier sci1 = new SourceContextIdentifier();
 				Context c =  sci1.getContext(n, sourceFileString, sTree, leftRelated, rightRelated);
-				// Context c = pStrategy.collector().getContext(n);
 				TargetLocation loc = new TargetLocation(className, TargetLocation.DEFAULT, c, n, desc);
 				if(iStrategy.resolveType(loc) && pStrategy.isTarget(loc)){
 					loc.leftRelatedStatement = c.sleftRelatedStatement;
 					loc.rightRelatedStatement = c.srightRelatedStatement;
-					// System.out.println("js left~~~~~: " + loc.leftRelatedStatement.size());
-					// System.out.println("js right~~~~~: " + loc.rightRelatedStatement.size());
 					fixLocs.add(loc);
 				}
 				//Insert Before/After only if the parent can accept.
@@ -64,28 +61,22 @@ public class FixLocationIdentifier {
 					rightRelated.clear();
 					SourceContextIdentifier sci = new SourceContextIdentifier();
 					c =  sci.getLeftContext(n, sourceFileString, sTree, leftRelated, rightRelated);
-					// c = pStrategy.collector().getLeftContext(n);
 					loc = new TargetLocation(className, TargetLocation.INSERT_BEFORE, c, n, desc);
 					if(iStrategy.resolveType(loc) && pStrategy.isTarget(loc)) {
 						iStrategy.updateLocInfo(loc);
 						loc.leftRelatedStatement = c.sleftRelatedStatement;
 						loc.rightRelatedStatement = c.srightRelatedStatement;
-						// System.out.println("js left~~~~~: " + loc.leftRelatedStatement.size());
-						// System.out.println("js right~~~~~: " + loc.rightRelatedStatement.size());
 						fixLocs.add(loc);
 					}
 					leftRelated.clear();
 					rightRelated.clear();
 					SourceContextIdentifier sci2 = new SourceContextIdentifier();
 					c =  sci2.getRightContext(n, sourceFileString, sTree, leftRelated, rightRelated);
-					// c = pStrategy.collector().getRightContext(n);
 					loc = new TargetLocation(className, TargetLocation.INSERT_AFTER, c, n, desc);
 					if(iStrategy.resolveType(loc) && pStrategy.isTarget(loc)) {
 						iStrategy.updateLocInfo(loc);
 						loc.leftRelatedStatement = c.sleftRelatedStatement;
 						loc.rightRelatedStatement = c.srightRelatedStatement;
-						// System.out.println("js left~~~~~: " + loc.leftRelatedStatement.size());
-						// System.out.println("js right~~~~~: " + loc.rightRelatedStatement.size());
 						fixLocs.add(loc);
 					}
 				} else if(desc != null
@@ -96,14 +87,11 @@ public class FixLocationIdentifier {
 					rightRelated.clear();
 					SourceContextIdentifier sci3 = new SourceContextIdentifier();
 					c =  sci3.getRightContext(n, sourceFileString, sTree, leftRelated, rightRelated);
-					// c = pStrategy.collector().getRightContext(n);
 					loc = new TargetLocation(className, TargetLocation.INSERT_AFTER, c, n, desc);
 					if(iStrategy.resolveType(loc) && pStrategy.isTarget(loc)) {
 						iStrategy.updateLocInfo(loc);
 						loc.leftRelatedStatement = c.sleftRelatedStatement;
 						loc.rightRelatedStatement = c.srightRelatedStatement;
-						// System.out.println("js left~~~~~: " + loc.leftRelatedStatement.size());
-						// System.out.println("js right~~~~~: " + loc.rightRelatedStatement.size());
 						fixLocs.add(loc);
 					}
 				} else if(desc != null
@@ -114,14 +102,11 @@ public class FixLocationIdentifier {
 					rightRelated.clear();
 					SourceContextIdentifier sci4 = new SourceContextIdentifier();
 					c =  sci4.getLeftContext(n, sourceFileString, sTree, leftRelated, rightRelated);
-					// c = pStrategy.collector().getLeftContext(n);
 					loc = new TargetLocation(className, TargetLocation.INSERT_BEFORE, c, n, desc);
 					if(iStrategy.resolveType(loc) && pStrategy.isTarget(loc)) {
 						iStrategy.updateLocInfo(loc);
 						loc.leftRelatedStatement = c.sleftRelatedStatement;
 						loc.rightRelatedStatement = c.srightRelatedStatement;
-						// System.out.println("js left~~~~~: " + loc.leftRelatedStatement.size());
-						// System.out.println("js right~~~~~: " + loc.rightRelatedStatement.size());
 						fixLocs.add(loc);
 					}
 				}
@@ -139,7 +124,6 @@ public class FixLocationIdentifier {
 						ASTNode astNode = ast.createInstance(n.type);
 						spdList = astNode.structuralPropertiesForType();
 					}
-					System.out.println("here5");
 					for(StructuralPropertyDescriptor spd : spdList) {
 						if(!spd.isSimpleProperty()) {
 							c = pStrategy.collector.getUnderContext(n, spd);

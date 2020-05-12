@@ -276,8 +276,6 @@ public class SourceContextIdentifier extends ContextIdentifier {
 
 	private void normlized(String sourceFileString, Tree sourceTree, Object left, Object right,
 						ArrayList<String> leftNameList, ArrayList<String> rightNameList, ArrayList<String> leftRelated, ArrayList<String> rightRelated, Context resultContext) {
-		// System.out.println("left name num: " + leftNameList.size());
-		// System.out.println("right name num: " + rightNameList.size());
 		// extract procedure context info
 		ASTParser beforeFileParser = ASTParser.newParser(AST.JLS8);
 		beforeFileParser.setSource(sourceFileString.toCharArray());
@@ -315,8 +313,6 @@ public class SourceContextIdentifier extends ContextIdentifier {
 		if (rightNameList.size() != 0) {
 			getStatement(rightNameList, additionalRightContext);
 		}
-		System.out.println("js before left normalized: " + additionalLeftContext.size());
-		System.out.println("js before right normalized: " + additionalRightContext.size());
 		contextNodeList.clear();
 		if (left != null && additionalLeftContext.size() != 0) {
 			leftRelated = getNormalizedStatement(additionalLeftContext, sourceFileString, sourceTree);
@@ -326,8 +322,6 @@ public class SourceContextIdentifier extends ContextIdentifier {
 		if (right != null && additionalRightContext.size() != 0) {
 			rightRelated = getNormalizedStatement(additionalRightContext, sourceFileString, sourceTree);
 		}
-		System.out.println("js after left normalized: " + leftRelated.size());
-		System.out.println("js after right normalized: " + rightRelated.size());
 		resultContext.sleftRelatedStatement = leftRelated;
 		resultContext.srightRelatedStatement = rightRelated;
 	}

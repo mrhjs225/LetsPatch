@@ -1,9 +1,11 @@
 package com.github.thwak.confix.main;
 
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -71,11 +73,12 @@ public class ConFix {
 	public static int maxPoolLoad;
 	public static int maxChangeCount;
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws IOException {
 		//Load necessary information.
 		loadProperties("confix.properties");
 		loadTests();
 		loadCoverage();
+		patchCount = 3000;
 		if(coverage == null || coverage.getNegCoveredClasses().size() == 0){
 			System.out.println("No class/coverage information.");
 			return;
@@ -94,9 +97,12 @@ public class ConFix {
 		Change oldApplied = null;
 		String locPoolPath = "";
 		StringBuffer sbLoc = new StringBuffer("Pool,CheckedLines,CheckedLoc,CheckedChange,AppliedChange");
+		BufferedWriter recordResult = new BufferedWriter(new FileWriter(new File("/home/hjs/dldoldam/checkout/result/timeResult.txt"), true));
 		int totalCompileError = 0;
 		int totalTestFailure = 0;
 		int totalCandidateNum = 0;
+		poolList.clear();
+		poolList.add("/home/hjs/dldoldam/jinfix_database/pool/poolNew");
 		for (String poolPath : poolList) {
 			loadChangePool(poolPath);
 			locPoolPath = poolPath;
@@ -237,15 +243,18 @@ public class ConFix {
 					break;
 			}
 			if (success || terminate) {
-				System.out.println("Elapsed Time: "+PatchUtils.getElapsedTime(System.currentTimeMillis()-startTime));
+				long elpasedTime = System.currentTimeMillis()-startTime;
+				System.out.println("Elapsed Time: "+PatchUtils.getElapsedTime(elpasedTime));
 				printLocInfo(pStrategy.getCurrentLineIndex()+1, locNum, changeNum, applied, locPoolPath, sbLoc);
 				System.out.println("Compile Errors:" + compileError);
 				System.out.println("Test Failures:" + testFailure);
 				IOUtils.storeContent("lines-"+pool.poolName+".txt", pStrategy.getLocInfo());
+				recordResult.write("success," + String.valueOf(elpasedTime) + "\n");
 				break;
 			} else {
+				long elpasedTime = System.currentTimeMillis()-startTime;
 				System.out.println("No patch found.");
-				System.out.println("Elapsed Time: "+PatchUtils.getElapsedTime(System.currentTimeMillis()-startTime));
+				System.out.println("Elapsed Time: "+PatchUtils.getElapsedTime(elpasedTime));
 				System.out.println("Compile Errors:" + compileError);
 				System.out.println("Test Failures:" + testFailure);
 				totalCompileError += compileError;
@@ -253,8 +262,10 @@ public class ConFix {
 				totalCandidateNum += candidateNum;
 				printLocInfo(pStrategy.getCurrentLineIndex()+1, locNum, changeNum, applied, locPoolPath, sbLoc);
 				IOUtils.storeContent("lines-"+pool.poolName+".txt", pStrategy.getLocInfo());
+				recordResult.write("fail," + String.valueOf(elpasedTime) + "\n");
 			}
 		}
+		recordResult.close();
 		IOUtils.storeContent("locinfo.csv", sbLoc.toString());
 	}
 

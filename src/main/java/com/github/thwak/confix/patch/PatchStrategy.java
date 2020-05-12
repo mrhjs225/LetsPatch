@@ -1,11 +1,14 @@
 package com.github.thwak.confix.patch;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.Set;
 
 import com.github.thwak.confix.coverage.CoverageManager;
 import com.github.thwak.confix.coverage.CoveredLine;
@@ -249,7 +252,8 @@ public class PatchStrategy {
 	}
 
 	public List<Integer> findCandidateChanges(TargetLocation loc, boolean checkOnly){
-		List<Integer> candidates = new ArrayList<>();
+		HashMap<Integer, Integer> candidates = new HashMap<>();
+		List<Integer> forOriginal = new ArrayList<>();
 		Iterator<Integer> it = pool.changeIterator(loc.context);
 		while(it.hasNext()){
 			int id = it.next();
@@ -257,7 +261,8 @@ public class PatchStrategy {
 			if(loc.kind != TargetLocation.DEFAULT
 					&& checkDescriptor(loc, c)
 					&& loc.isCompatible(c)){
-				candidates.add(id);
+				candidates.put(id, 0);
+				forOriginal.add(id);
 			}else if(!c.type.equals(Change.INSERT) && loc.kind == TargetLocation.DEFAULT){
 				if(c.node.hashString == null){
 					c.node.hashString = TreeUtils.getTypeHash(c.node);
@@ -269,12 +274,15 @@ public class PatchStrategy {
 				case Change.UPDATE:
 					if(c.node.hashString.equals(loc.node.hashString)){
 						if(c.node.isStatement){
-							candidates.add(id);
+							candidates.put(id, 0);
+							forOriginal.add(id);
 						}else if(c.node.kind == loc.node.kind){
 							if(c.node.normalized){
-								candidates.add(id);
+								candidates.put(id, 0);
+								forOriginal.add(id);
 							}else if(loc.isCompatible(c) && c.node.value.equals(loc.node.value)){
-								candidates.add(id);
+								candidates.put(id, 0);
+								forOriginal.add(id);
 							}
 						}
 					}
@@ -282,23 +290,82 @@ public class PatchStrategy {
 				case Change.REPLACE:
 					if(c.node.isStatement || !c.node.isStatement && loc.isCompatible(c)){
 						if(c.node.hashString.equals(loc.node.hashString)) {
-							if(valueMatched(c.node, loc.node))
-								candidates.add(id);
+							if(valueMatched(c.node, loc.node)) {
+								candidates.put(id, 0);
+								forOriginal.add(id);
+							}
 						}
 					}
 					break;
 				case Change.DELETE:
 				case Change.MOVE:
 					if(c.node.hashString.equals(loc.node.hashString)
-							&& c.node.kind == loc.node.kind)
-						candidates.add(id);
+							&& c.node.kind == loc.node.kind) {
+						candidates.put(id, 0);
+						forOriginal.add(id);
+					}
 					break;
 				}
 			}
-			if(checkOnly && candidates.size() > 0)
-				return candidates;
+			if(checkOnly && candidates.size() > 0) {
+				// return rankingByRStatement(loc, candidates);
+				return forOriginal;
+			}
 		}
-		return candidates;
+		
+		// return rankingByRStatement(loc, candidates);
+		return forOriginal;
+	}
+
+	private List<Integer> rankingByRStatement(TargetLocation loc, HashMap<Integer, Integer> changeHashMap) {
+		Set<Integer> changeIter = changeHashMap.keySet();
+		// update the score
+		for (Integer changeId : changeIter) {
+			Change c = pool.getChange(changeId);
+			int tempScore = 0;
+			for(int i = 0; i < loc.leftRelatedStatement.size(); i++) {
+				for (int j = 0; j < c.leftRelatedStatement.size(); j++) {
+					// Jinseok: It can change by algorithm. we also consider distance, not equal.
+					if (loc.leftRelatedStatement.get(i).equals(c.leftRelatedStatement.get(j))) {
+						tempScore++;
+					}
+				}
+			}
+			for(int i = 0; i < loc.rightRelatedStatement.size(); i++) {
+				for (int j = 0; j < c.rightRelatedStatement.size(); j++) {
+					// Jinseok: It can change by algorithm. we also consider distance, not equal.
+					if (loc.rightRelatedStatement.get(i).equals(c.rightRelatedStatement.get(j))) {
+						tempScore++;
+					}
+				}
+			}
+			changeHashMap.replace(changeId, tempScore);
+		}
+		// System.out.println("------------before-----------");
+		// for (Integer hashid : changeHashMap.keySet()) {
+		// 	System.out.println(hashid + " : " + changeHashMap.get(hashid) + ", " + pool.getChange(hashid).leftRelatedStatement.size() + ", " + pool.getChange(hashid).rightRelatedStatement.size());
+		// }
+		// System.out.println("-----------after-----------");
+		List<Integer> resultList = sortByValue(changeHashMap);
+		// for (Integer afterhashid : resultList) {
+		// 	System.out.println(afterhashid + " : " + changeHashMap.get(afterhashid) + ", " + pool.getChange(afterhashid).leftRelatedStatement.size() + ", " + pool.getChange(afterhashid).rightRelatedStatement.size());
+		// }
+		return resultList;
+	}
+
+	public static List sortByValue(final Map map) {
+		List<Integer> list = new ArrayList();
+
+		list.addAll(map.keySet());
+		Collections.sort(list,new Comparator() {
+			public int compare(Object o1,Object o2) {
+				Object v1 = map.get(o1);
+				Object v2 = map.get(o2);
+				return ((Comparable) v2).compareTo(v1);
+			}
+		});
+		// Collections.reverse(list);
+		return list;
 	}
 
 	protected boolean checkDescriptor(TargetLocation loc, Change c) {
@@ -372,6 +439,7 @@ public class PatchStrategy {
 
 	protected static class LocEntry implements Comparable<LocEntry> {
 		public TargetLocation loc;
+		// by jinseok, List<score, change's Hash number> and sort by score in descending order.
 		public List<Integer> changeIds;
 		public int freq;
 		public double score;
