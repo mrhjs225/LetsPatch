@@ -113,9 +113,9 @@ public class FLFreqPatchStrategy extends PatchStrategy {
 	}
 
 	@Override
-	public void updateLocations(String className, Node root, FixLocationIdentifier identifier) {
+	public void updateLocations(String className, Node root, FixLocationIdentifier identifier, String sourceFileString) {
 		List<TargetLocation> locs = new ArrayList<>();
-		identifier.findLocations(className, root, locs);
+		identifier.findLocations(className, root, locs, sourceFileString);
 		fixLocCount += locs.size();
 		Set<Integer> processed = new HashSet<>();
 		for(TargetLocation loc : locs) {

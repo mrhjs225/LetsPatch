@@ -104,7 +104,7 @@ public class Patcher {
 		CodeVisitor visitor = new CodeVisitor(root);
 		cu.accept(visitor);
 		cStrategy.collectGlobalMaterials(parser, className, root, cu);
-		pStrategy.updateLocations(className, root, identifier);
+		pStrategy.updateLocations(className, root, identifier, doc.get());
 	}
 
 	public String getNewSource(){

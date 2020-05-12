@@ -32,7 +32,7 @@ public class JinGenerateChangePool implements Serializable{
     // to generate merge commit file like github
     public static void generateMergeCommit(String projectName) {
         try {
-            String databasePath = "/home/hjsvm/hjsaprvm/condatabase/outputs/" + projectName;
+            String databasePath = "/home/hjs/dldoldam/jinfix_database/changedfile/" + projectName;
             String folderPath = "";
             String beforeCommitFile = "";
             String afterCommitFile = "";
@@ -57,7 +57,7 @@ public class JinGenerateChangePool implements Serializable{
                             afterCommitFile = info.getPath() + "/after/" + afterCommitFileList.get(i);
                             beforeCommitFileData = Files.readAllLines(new File(beforeCommitFile).toPath());
                             afterCommitFileData = Files.readAllLines(new File(afterCommitFile).toPath());
-                            folderPath = "/home/hjsvm/hjsaprvm/condatabase/commitfileMerge/" + projectName + "/"
+                            folderPath = "/home/hjs/dldoldam/jinfix_database/commitfileMerge/" + projectName + "/"
                                     + info.getName();
                             File folder = new File(folderPath);
                             if (!folder.exists()) {
@@ -85,15 +85,15 @@ public class JinGenerateChangePool implements Serializable{
     // to test contextidentifier
     public static void testChangePool() {
         ChangePoolGenerator cpg = new ChangePoolGenerator(new TestContextIdentifier());
-        cpg.pool.setPoolDir(new File("/home/hjsvm/hjsaprvm/condatabase/pool/poolTest"));
-        String[] classPathEntries = new String[] { classPathString };
-        String[] sourcePathEntries = new String[] { sourcePathString };
+        cpg.pool.setPoolDir(new File("/home/hjs/dldoldam/jinfix_database/pool/poolTest"));
+        String[] classPathEntries = new String[] { "" };
+        String[] sourcePathEntries = new String[] { "" };
         File beforePatchFile;
         File afterPatchFile;
         ArrayList<String> beforeList = new ArrayList<>();
         ArrayList<String> afterList = new ArrayList<>();
 
-        for (File info : new File("/home/hjsvm/hjsaprvm/condatabase/outputs/test").listFiles()) {
+        for (File info : new File("/home/hjs/dldoldam/jinfix_database/changedfile/test").listFiles()) {
             if (info.isDirectory()) {
                 int i = 0;
                 beforeList.clear();
@@ -116,7 +116,7 @@ public class JinGenerateChangePool implements Serializable{
                 }
             }
         }
-        cpg.pool.storeTo(new File("/home/hjsvm/hjsaprvm/condatabase/pool/poolTest"));
+        cpg.pool.storeTo(new File("/home/hjs/dldoldam/jinfix_database/pool/poolTest"));
         pool = cpg.pool;
     }
 
@@ -147,7 +147,7 @@ public class JinGenerateChangePool implements Serializable{
     // to generate changePool by project
     public static void generateProjectChangePool(String path) {
         ChangePoolGenerator cpg = new ChangePoolGenerator(new PLRTContextIdentifier());
-        cpg.pool.setPoolDir(new File("/home/hjsvm/hjsaprvm/condatabase/pool/poolPLRT"));
+        cpg.pool.setPoolDir(new File("/home/hjs/dldoldam/jinfix_database/pool/poolPLRT"));
         String[] classPathEntries = new String[] { classPathString };
         String[] sourcePathEntries = new String[] { sourcePathString };
         File beforePatchFile;
@@ -179,7 +179,7 @@ public class JinGenerateChangePool implements Serializable{
             } else {
             }
         }
-        cpg.pool.storeTo(new File("/home/hjsvm/hjsaprvm/condatabase/pool/poolPLRT"), true);
+        cpg.pool.storeTo(new File("/home/hjs/dldoldam/jinfix_database/pool/poolPLRT"), true);
         pool = cpg.pool;
         System.out.println(targetProjectName + " done");
     }
@@ -187,34 +187,34 @@ public class JinGenerateChangePool implements Serializable{
     // to set classPathEntries and sourcePathEntries
     public static void setPathEntries(String targetProject) {
         JinGenerateChangePool.targetProjectName = targetProject;
-        String basicPath = "/home/hjsvm/hjsaprvm/condatabase/";
+        String basicPath = "/home/hjs/dldoldam/jinfix_database/project";
         if (targetProject.equals("collections")) {
-            classPathString = basicPath + "commons-collections" + "/target";
-            sourcePathString = basicPath + "commons-collections" + "/src";
+            classPathString = basicPath + "/commons-collections" + "/target";
+            sourcePathString = basicPath + "/commons-collections" + "/src";
         } else if (targetProject.equals("derby")) {
-            classPathString = "";
+            classPathString = basicPath + targetProject + "/bin";
             sourcePathString = basicPath + targetProject + "/java";
         } else if (targetProject.equals("groovy")) {
             classPathString = basicPath + targetProject + "/bin";
             sourcePathString = basicPath + targetProject + "/src";
         } else if (targetProject.equals("hadoop")) {
             classPathString = "";
-            sourcePathString = basicPath + targetProject + "/src/java";
+            sourcePathString = basicPath + "/hadoop-common";
         } else if (targetProject.equals("hama")) {
-            classPathString = "";
+            classPathString = basicPath + targetProject + "/core/target";
             sourcePathString = basicPath + targetProject + "/core/src";
         } else if (targetProject.equals("ivy")) {
-            classPathString = basicPath + "ant-ivy" + "/bin/src";
-            sourcePathString = basicPath + "ant-ivy" + "/src";
+            classPathString = basicPath + "/ant-ivy" + "/bin/src";
+            sourcePathString = basicPath + "/ant-ivy" + "/src";
         } else if (targetProject.equals("lucene")) {
-            classPathString = basicPath + "lucene-solr" + "/bin";
-            sourcePathString = basicPath + "lucene-solr" + "/lucene";
+            classPathString = basicPath + "/lucene-solr" + "/bin";
+            sourcePathString = basicPath + "/lucene-solr" + "/lucene";
         } else if (targetProject.equals("mahout")) {
-            classPathString = "";
-            sourcePathString = basicPath + targetProject + "/src";
+            classPathString = basicPath + targetProject + "core/target";
+            sourcePathString = basicPath + targetProject + "core/src";
         } else if (targetProject.equals("pdfbox")) {
             classPathString = "";
-            sourcePathString = basicPath + targetProject + "/src";
+            sourcePathString = basicPath + "/fontbox" + "/src";
         }
     }
 
@@ -278,7 +278,7 @@ public class JinGenerateChangePool implements Serializable{
     // to test generate changePool by project
     public static void testgenerateProjectChangePool(String path) {
         ChangePoolGenerator cpg = new ChangePoolGenerator(new PLRTContextIdentifier());
-        cpg.pool.setPoolDir(new File("/home/hjsvm/hjsaprvm/condatabase/pool/poolTest"));
+        cpg.pool.setPoolDir(new File("/home/hjs/dldoldam/jinfix_database/pool/poolTest"));
         String[] classPathEntries = new String[] { classPathString };
         String[] sourcePathEntries = new String[] { sourcePathString };
         File beforePatchFile;
@@ -310,41 +310,41 @@ public class JinGenerateChangePool implements Serializable{
             } else {
             }
         }
-        cpg.pool.storeTo(new File("/home/hjsvm/hjsaprvm/condatabase/pool/poolTest"), true);
+        cpg.pool.storeTo(new File("/home/hjs/dldoldam/jinfix_database/pool/poolTest"), true);
         pool = cpg.pool;
         System.out.println(targetProjectName + " done");
     }
 
     public static void testSetPathEntries(String targetProject) {
         JinGenerateChangePool.targetProjectName = targetProject;
-        String basicPath = "/home/hjsvm/hjsaprvm/condatabase/forchange/";
+        String basicPath = "/home/hjs/dldoldam/jinfix_database/project/";
         if (targetProject.equals("collections")) {
-            classPathString = basicPath + "commons-collections" + "/target";
-            sourcePathString = basicPath + "commons-collections" + "/src";
+            classPathString = basicPath + "/commons-collections" + "/target";
+            sourcePathString = basicPath + "/commons-collections" + "/src";
         } else if (targetProject.equals("derby")) {
             classPathString = basicPath + targetProject + "/bin";
             sourcePathString = basicPath + targetProject + "/java";
         } else if (targetProject.equals("groovy")) {
             classPathString = basicPath + targetProject + "/bin";
             sourcePathString = basicPath + targetProject + "/src";
-        } else if (targetProject.equals("hama")) {
-            classPathString = "";
-            sourcePathString = basicPath + targetProject;
-        } else if (targetProject.equals("ivy")) {
-            classPathString = basicPath + "ant-ivy" + "/bin";
-            sourcePathString = basicPath + "ant-ivy" + "/src";
-        } else if (targetProject.equals("lucene")) {
-            classPathString = basicPath + "lucene-solr" + "/bin";
-            sourcePathString = basicPath + "lucene-solr";
-        } else if (targetProject.equals("mahout")) {
-            classPathString = "";
-            sourcePathString = basicPath + targetProject;
         } else if (targetProject.equals("hadoop")) {
             classPathString = "";
-            sourcePathString = basicPath + "hadoop-common";
+            sourcePathString = basicPath + "/hadoop-common";
+        } else if (targetProject.equals("hama")) {
+            classPathString = basicPath + targetProject + "/core/target";
+            sourcePathString = basicPath + targetProject + "/core/src";
+        } else if (targetProject.equals("ivy")) {
+            classPathString = basicPath + "/ant-ivy" + "/bin/src";
+            sourcePathString = basicPath + "/ant-ivy" + "/src";
+        } else if (targetProject.equals("lucene")) {
+            classPathString = basicPath + "/lucene-solr" + "/bin";
+            sourcePathString = basicPath + "/lucene-solr" + "/lucene";
+        } else if (targetProject.equals("mahout")) {
+            classPathString = basicPath + targetProject + "core/target";
+            sourcePathString = basicPath + targetProject + "core/src";
         } else if (targetProject.equals("pdfbox")) {
             classPathString = "";
-            sourcePathString = basicPath + "fontbox";
+            sourcePathString = basicPath + "/fontbox" + "/src";
         }
     }
 }

@@ -120,7 +120,6 @@ public class ConFix {
 			System.out.println("Done.");
 			
 			pool.poolName = poolPath.substring(poolPath.lastIndexOf('/')+1);
-
 			//Generating patch candidates.
 			while (candidateNum <= patchCount) {
 				int trial = 0;
@@ -133,6 +132,7 @@ public class ConFix {
 					locNum++;
 					locChangeCount = 0;
 				}
+
 				patcher = pStrategy.patcher();
 				if(patcher == null)
 					break;

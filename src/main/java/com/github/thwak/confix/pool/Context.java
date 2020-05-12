@@ -1,6 +1,7 @@
 package com.github.thwak.confix.pool;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 
 import com.github.thwak.confix.tree.TreeUtils;
 
@@ -9,6 +10,8 @@ public class Context  implements Serializable {
 	public String hashString;
 	public String hash;
 	public int hashCode;
+	public ArrayList<String> sleftRelatedStatement;
+	public ArrayList<String> srightRelatedStatement;
 
 	public Context(String hashString){
 		this(hashString, TreeUtils.computeSHA256Hash(hashString));

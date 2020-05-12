@@ -36,6 +36,19 @@ public class ContextIdentifier implements Serializable {
 	public Context getContext(TreeNode node, File aFile, File bFile, Change c, Tree beforeTree){
 		return new Context();
 	}
+
+	public Context getContext(EditOp op, String sFile, Tree sourceTree, ArrayList<String> leftRelated, ArrayList<String> rightRelated) {
+		return new Context();
+	}
+
+	public Context getContext(TreeNode node, String sFile, Tree sourceTree, ArrayList<String> leftRelated, ArrayList<String> rightRelated){
+		return new Context();
+	}
+
+	public Context getContext(Node node, String sFile, Tree sourceTree, ArrayList<String> leftRelated, ArrayList<String> rightRelated){
+		return new Context();
+	}
+
 	public Context getContext(TreeNode node){
 		return new Context();
 	}
@@ -49,6 +62,14 @@ public class ContextIdentifier implements Serializable {
 	}
 
 	public Context getRightContext(Node node){
+		return new Context();
+	}
+
+	public Context getLeftContext(Node node, String sFile, Tree sourceTree, ArrayList<String> leftRelated, ArrayList<String> rightRelated){
+		return new Context();
+	}
+
+	public Context getRightContext(Node node, String sFile, Tree sourceTree, ArrayList<String> leftRelated, ArrayList<String> rightRelated){
 		return new Context();
 	}
 

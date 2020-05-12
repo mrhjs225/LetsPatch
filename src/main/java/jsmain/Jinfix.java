@@ -47,19 +47,20 @@ public class Jinfix {
 	public static List<String> poolList;
 	
 	public static void main(String[] args) {
-		loadProperties("/home/hjsvm/hjsaprvm/ConFix/samples/confix.properties");
+		loadProperties("/home/hjs/dldoldam/context-aware-APR_advanced-confix/samples/confix.properties");
 		JinContextAnalyzer jinContextAnalyzer = new JinContextAnalyzer(maxPoolLoad);
-		String path = "/home/hjsvm/hjsaprvm/condatabase/outputs";
+		String path = "/home/hjs/dldoldam/jinfix_database/changedfile";
 		System.out.println("start!");
-		// JinGenerateChangePool.setPathEntries("collections");
-		// JinGenerateChangePool.testChangePool();
+		JinGenerateChangePool.setPathEntries("collections");
+		JinGenerateChangePool.testChangePool();
 		
 		// JinGenerateChangePool.testgenerateChangePool(path);
-		try {
-			jinContextAnalyzer.getStatisticsContext("/home/hjsvm/hjsaprvm/condatabase/pool/poolNew");
-		} catch(Exception e) {
-			e.printStackTrace();
-		}
+		// try {
+		// 	jinContextAnalyzer.getStatisticsContext("/home/hjs/dldoldam/jinfix_database/pool/poolNew");
+		// } catch(Exception e) {
+		// 	e.printStackTrace();
+		// }
+
 
 		System.out.println("done");
 	}

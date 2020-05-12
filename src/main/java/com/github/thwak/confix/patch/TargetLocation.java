@@ -1,5 +1,6 @@
 package com.github.thwak.confix.patch;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -20,6 +21,8 @@ public class TargetLocation {
 	public static final int MOVE_LOC = 3;
 	public static final int INSERT_UNDER = 4;
 	public String className;
+	public ArrayList<String> leftRelatedStatement;
+	public ArrayList<String> rightRelatedStatement;
 	public Context context;
 	public Node node;
 	public int kind;

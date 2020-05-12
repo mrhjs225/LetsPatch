@@ -168,9 +168,9 @@ public class PatchStrategy {
 		return pool.changeIterator(loc.context).hasNext();
 	}
 
-	public void updateLocations(String className, Node root, FixLocationIdentifier identifier) {
+	public void updateLocations(String className, Node root, FixLocationIdentifier identifier, String sourceFileString) {
 		List<TargetLocation> fixLocs = new ArrayList<>();
-		identifier.findLocations(className, root, fixLocs);
+		identifier.findLocations(className, root, fixLocs, sourceFileString);
 		fixLocCount += fixLocs.size();
 		for(TargetLocation loc : fixLocs) {
 			CoveredLine cl = new CoveredLine(className, loc.node.startLine);
