@@ -72,13 +72,17 @@ public class ConFix {
 	public static String flMetric;
 	public static int maxPoolLoad;
 	public static int maxChangeCount;
+	public static String projectName;
+	public static int bugId;
+	public static int maxCandidateContext;
+	public static int maxCandidateChange;
+	public static String resultPath;
 
 	public static void main(String[] args) throws IOException {
 		//Load necessary information.
 		loadProperties("confix.properties");
 		loadTests();
 		loadCoverage();
-		patchCount = 3000;
 		if(coverage == null || coverage.getNegCoveredClasses().size() == 0){
 			System.out.println("No class/coverage information.");
 			return;
@@ -97,12 +101,10 @@ public class ConFix {
 		Change oldApplied = null;
 		String locPoolPath = "";
 		StringBuffer sbLoc = new StringBuffer("Pool,CheckedLines,CheckedLoc,CheckedChange,AppliedChange");
-		BufferedWriter recordResult = new BufferedWriter(new FileWriter(new File("/home/hjs/dldoldam/checkout/result/timeResult.txt"), true));
+		BufferedWriter recordResult = new BufferedWriter(new FileWriter(new File(resultPath), true));
 		int totalCompileError = 0;
 		int totalTestFailure = 0;
 		int totalCandidateNum = 0;
-		poolList.clear();
-		poolList.add("/home/hjs/dldoldam/jinfix_database/pool/poolNew");
 		for (String poolPath : poolList) {
 			loadChangePool(poolPath);
 			locPoolPath = poolPath;
@@ -120,14 +122,14 @@ public class ConFix {
 			Patcher patcher = null;
 			System.out.println("Preparing patch generation...");
 			PatchStrategy pStrategy = StrategyFactory.getPatchStrategy(pStrategyKey, coverage, pool, r, flMetric,
-					cStrategyKey, sourceDir, compileClassPathEntries);
+					cStrategyKey, sourceDir, compileClassPathEntries, maxCandidateContext, maxCandidateChange);
 			pStrategy.finishUpdate();
 			IOUtils.storeContent("coveredlines.txt", pStrategy.getLineInfo());
 			System.out.println("Done.");
 			
 			pool.poolName = poolPath.substring(poolPath.lastIndexOf('/')+1);
 			//Generating patch candidates.
-			while (candidateNum <= patchCount) {
+			while (candidateNum <= 5000) {
 				int trial = 0;
 				int returnCode = -1;
 				TargetLocation loc = pStrategy.selectLocation();
@@ -151,6 +153,7 @@ public class ConFix {
 					pStrategy.nextLoc();
 					continue;
 				}
+
 				Set<String> candidates = new HashSet<>();
 				do {
 					PatchInfo info = new PatchInfo(targetClass, change, loc);
@@ -249,7 +252,7 @@ public class ConFix {
 				System.out.println("Compile Errors:" + compileError);
 				System.out.println("Test Failures:" + testFailure);
 				IOUtils.storeContent("lines-"+pool.poolName+".txt", pStrategy.getLocInfo());
-				recordResult.write("success," + String.valueOf(elpasedTime) + "\n");
+				recordResult.write(projectName + "," + bugId + "," + "success," + String.valueOf(elpasedTime) + ",+" + candidateNum+ "\n");
 				break;
 			} else {
 				long elpasedTime = System.currentTimeMillis()-startTime;
@@ -262,7 +265,7 @@ public class ConFix {
 				totalCandidateNum += candidateNum;
 				printLocInfo(pStrategy.getCurrentLineIndex()+1, locNum, changeNum, applied, locPoolPath, sbLoc);
 				IOUtils.storeContent("lines-"+pool.poolName+".txt", pStrategy.getLocInfo());
-				recordResult.write("fail," + String.valueOf(elpasedTime) + "\n");
+				recordResult.write(projectName + "," + bugId + "," + "fail," + String.valueOf(elpasedTime) + "," + candidateNum + "\n");
 			}
 		}
 		recordResult.close();
@@ -525,6 +528,11 @@ public class ConFix {
 		pStrategyKey = PatchUtils.getStringProperty(props, "patch.strategy", "flfreq");
 		cStrategyKey = PatchUtils.getStringProperty(props, "concretize.strategy", "tc");
 		flMetric = PatchUtils.getStringProperty(props, "fl.metric", "ochiai");
+		projectName = PatchUtils.getStringProperty(props, "project", "none");
+		bugId = Integer.parseInt(PatchUtils.getStringProperty(props, "bugid", "0"));
+		maxCandidateContext = Integer.parseInt(PatchUtils.getStringProperty(props, "max.candidate.context", "1"));
+		maxCandidateChange = Integer.parseInt(PatchUtils.getStringProperty(props, "max.candidate.change", "0"));
+		resultPath = PatchUtils.getStringProperty(props, "result.path", "");
 	}
 
 	private static void loadCoverage(){

@@ -27,12 +27,12 @@ public class TestedFirstPatchStrategy extends FLFreqPatchStrategy {
 	}
 
 	public TestedFirstPatchStrategy(CoverageManager manager, ChangePool pool, ContextIdentifier collector, Random r,
-			String flMetric, String cStrategyKey, String sourceDir, String[] compileClassPathEntries) {
-		this(manager, pool, collector, r, flMetric, cStrategyKey, sourceDir, compileClassPathEntries, new HashMap<String, Integer>());
+			String flMetric, String cStrategyKey, String sourceDir, String[] compileClassPathEntries, int maxContextNum, int maxChangeNum) {
+		this(manager, pool, collector, r, flMetric, cStrategyKey, sourceDir, compileClassPathEntries, new HashMap<String, Integer>(), maxContextNum, maxChangeNum);
 	}
 
 	public TestedFirstPatchStrategy(CoverageManager manager, ChangePool pool, ContextIdentifier collector, Random r,
-			String flMetric, String cStrategyKey, String sourceDir, String[] compileClassPathEntries, Map<String, Integer> testClasses) {
+			String flMetric, String cStrategyKey, String sourceDir, String[] compileClassPathEntries, Map<String, Integer> testClasses, int maxContextNum, int maxChangeNum) {
 		super();
 		this.r = r;
 		this.manager = manager;
@@ -47,6 +47,8 @@ public class TestedFirstPatchStrategy extends FLFreqPatchStrategy {
 		this.sourceDir = sourceDir;
 		this.compileClassPathEntries = compileClassPathEntries;
 		this.testClasses = testClasses;
+		this.maxCanContext = maxContextNum;
+		this.maxCanChange = maxChangeNum;
 		if(testClasses.size() == 0) {
 			loadTests();
 		}

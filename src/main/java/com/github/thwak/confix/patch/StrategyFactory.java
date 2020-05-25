@@ -15,25 +15,25 @@ public class StrategyFactory {
 	public static Map<String, CodePool> pkgCodePools = new HashMap<>();
 
 	public static PatchStrategy getPatchStrategy(String key, CoverageManager coverage, ChangePool pool, Random r,
-			String flMetric, String cStrategyKey, String sourceDir, String[] compileClassPathEntries) {
+			String flMetric, String cStrategyKey, String sourceDir, String[] compileClassPathEntries, int maxCandidateContext, int maxCandidateChange) {
 		PatchStrategy strategy = null;
 		key = key.toLowerCase();
 		switch(key) {
 		case "flfreq":
 			strategy = new FLFreqPatchStrategy(coverage, pool, pool.getIdentifier(), r, flMetric, cStrategyKey,
-					sourceDir, compileClassPathEntries);
+					sourceDir, compileClassPathEntries, maxCandidateContext, maxCandidateChange);
 			break;
 		case "tested-first":
 			strategy = new TestedFirstPatchStrategy(coverage, pool, pool.getIdentifier(), r, flMetric, cStrategyKey,
-					sourceDir, compileClassPathEntries);
+					sourceDir, compileClassPathEntries, maxCandidateContext, maxCandidateChange);
 			break;
 		case "noctx":
 			strategy = new NoContextPatchStrategy(coverage, pool, pool.getIdentifier(), r, flMetric, cStrategyKey,
-					sourceDir, compileClassPathEntries);
+					sourceDir, compileClassPathEntries, maxCandidateContext, maxCandidateChange);
 			break;
 		default:
 			strategy = new PatchStrategy(coverage, pool, pool.getIdentifier(), r, flMetric, cStrategyKey, sourceDir,
-					compileClassPathEntries);
+					compileClassPathEntries, maxCandidateContext, maxCandidateChange);
 		}
 		return strategy;
 	}

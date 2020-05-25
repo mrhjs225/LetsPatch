@@ -11,8 +11,8 @@ import com.github.thwak.confix.pool.ContextIdentifier;
 public class NoContextPatchStrategy extends PatchStrategy {
 
 	public NoContextPatchStrategy(CoverageManager manager, ChangePool pool, ContextIdentifier collector, Random r,
-			String flMetric, String cStrategyKey, String sourceDir, String[] compileClassPathEntries) {
-		super(manager, pool, collector, r, flMetric, cStrategyKey, sourceDir, compileClassPathEntries);
+			String flMetric, String cStrategyKey, String sourceDir, String[] compileClassPathEntries, int maxContextNum, int maxChangeNum) {
+		super(manager, pool, collector, r, flMetric, cStrategyKey, sourceDir, compileClassPathEntries, maxContextNum, maxChangeNum);
 	}
 
 	@Override

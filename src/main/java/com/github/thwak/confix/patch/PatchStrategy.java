@@ -14,10 +14,13 @@ import com.github.thwak.confix.coverage.CoverageManager;
 import com.github.thwak.confix.coverage.CoveredLine;
 import com.github.thwak.confix.pool.Change;
 import com.github.thwak.confix.pool.ChangePool;
+import com.github.thwak.confix.pool.Context;
 import com.github.thwak.confix.pool.ContextIdentifier;
 import com.github.thwak.confix.tree.Node;
 import com.github.thwak.confix.tree.TreeUtils;
 import com.github.thwak.confix.util.IndexMap;
+
+import org.apache.commons.text.similarity.CosineSimilarity;
 
 public class PatchStrategy {
 
@@ -30,6 +33,10 @@ public class PatchStrategy {
 	protected Map<Integer, List<LocEntry>> lineLocMap;
 	protected int currLocIndex = 0;
 	protected int currLineIndex = -1;
+	public int curConIndex = -1;
+	public int curChangeIndex = 0;
+	protected int maxCanContext;
+	protected int maxCanChange;
 	protected String cStrategyKey;
 	protected String flMetric;
 	protected Map<String, Patcher> patcherMap;
@@ -37,6 +44,7 @@ public class PatchStrategy {
 	protected String[] compileClassPathEntries;
 	protected int fixLocCount = 0;
 	protected StringBuffer sbLoc = new StringBuffer("LocKind$$Loc$$Class#Line:Freq:Score");
+	protected HashMap<Integer, Context> candidateContext;
 
 	protected PatchStrategy() {
 		super();
@@ -61,7 +69,7 @@ public class PatchStrategy {
 	}
 
 	public PatchStrategy(CoverageManager manager, ChangePool pool, ContextIdentifier collector, Random r,
-			String flMetric, String cStrategyKey, String sourceDir, String[] compileClassPathEntries) {
+			String flMetric, String cStrategyKey, String sourceDir, String[] compileClassPathEntries, int maxCanContext, int maxCanChange) {
 		this.r = r;
 		this.manager = manager;
 		this.pool = pool;
@@ -74,6 +82,9 @@ public class PatchStrategy {
 		this.cStrategyKey = cStrategyKey;
 		this.sourceDir = sourceDir;
 		this.compileClassPathEntries = compileClassPathEntries;
+		this.maxCanContext = maxCanContext;
+		this.maxCanChange = maxCanChange;
+		candidateContext = new HashMap<>();
 		prioritizeCoveredLines();
 	}
 
@@ -213,16 +224,34 @@ public class PatchStrategy {
 		}
 	}
 
-	public TargetLocation selectLocation(){
-		if(currLocIndex < locations.size()){
+	public TargetLocation selectLocation() {
+		if(currLocIndex < locations.size()) {
 			LocEntry e = locations.get(currLocIndex);
+			if (curConIndex == -1) {
+				if (candidateContext != null) {
+					candidateContext.clear();
+				}
+				candidateContext = calculateDistance(e);
+			}
 			if(e.changeIds == null) {
+				if(curConIndex >= 0) {
+					e.loc.context = candidateContext.get(curConIndex);
+				}
+				e.loc.context = candidateContext.get(curConIndex);
 				e.changeIds = findCandidateChanges(e.loc);
 				if(e.changeIds.size() > 0)
 					appendLoc(e);
 			}
-			if(e.changeIds.size() == 0){
-				currLocIndex++;
+			if(e.changeIds.size() == 0 || (maxCanChange != 0 && (curChangeIndex == maxCanChange) && curConIndex != -1)) {
+				if(curConIndex >= maxCanContext) {
+					currLocIndex++;
+					curConIndex = -1;
+					curChangeIndex = 0;
+					return selectLocation();
+				}
+				curConIndex++;
+				curChangeIndex = 0;
+				e.changeIds = null;
 				return selectLocation();
 			}
 			return e.loc;
@@ -245,6 +274,58 @@ public class PatchStrategy {
 			}
 			return null;
 		}
+	}
+
+	public HashMap<Integer, Context> calculateDistance(LocEntry e) {
+		CosineSimilarity cosSimilarity = new CosineSimilarity();
+		ArrayList<Context> topContext = new ArrayList<>();
+		ArrayList<Double> topScore = new ArrayList<>();
+		String originalContext = e.loc.context.toString();
+		Map<CharSequence, Integer> originalVector = new HashMap();
+		Map<CharSequence, Integer> candidateVector = new HashMap();
+		HashMap<Integer, Context> resultMap = new HashMap<>();
+
+		for (int i = 0; i < maxCanContext; i++) {
+			topContext.add(new Context());
+			topScore.add(0.0);
+		}
+		// make originalcontext's string to vector
+		for (char character : originalContext.toCharArray()) {
+			int count = (originalVector.get(character + "") == null ? 0 : originalVector.get(character + ""));
+			originalVector.put(character + "", count + 1);
+		}
+
+		for(Context c : pool.contexts.keySet()) {
+			String contextString = c.toString();
+				for (char character : contextString.toCharArray()) {
+					int count = (candidateVector.get(character + "") == null ? 0 : candidateVector.get(character + ""));
+					candidateVector.put(character + "", count + 1);
+				}
+				double score = cosSimilarity.cosineSimilarity(originalVector, candidateVector);
+				if (maxCanContext == 1) {
+					if (topScore.get(0) < score) {
+						topContext.set(0, c);
+						topScore.set(0, score);
+					}
+				} else {
+					for (int i = 0; i < maxCanContext; i++) {
+						if (topScore.get(i) < score) {
+							for (int j = maxCanContext - 2; j >= i; j--) {
+								topContext.set(j + 1, topContext.get(j));
+								topScore.set(j + 1, topScore.get(j));
+							}
+							topContext.set(i, c);
+							topScore.set(i, score);
+							break;
+						}
+					}
+				}
+		}
+		
+		for (int i = 0; i < topContext.size(); i++) {
+			resultMap.put(i, topContext.get(i));
+		}
+		return resultMap;
 	}
 
 	public List<Integer> findCandidateChanges(TargetLocation loc){
@@ -308,13 +389,13 @@ public class PatchStrategy {
 				}
 			}
 			if(checkOnly && candidates.size() > 0) {
-				// return rankingByRStatement(loc, candidates);
-				return forOriginal;
+				return rankingByRStatement(loc, candidates);
+				// return forOriginal;
 			}
 		}
 		
-		// return rankingByRStatement(loc, candidates);
-		return forOriginal;
+		return rankingByRStatement(loc, candidates);
+		// return forOriginal;
 	}
 
 	private List<Integer> rankingByRStatement(TargetLocation loc, HashMap<Integer, Integer> changeHashMap) {
@@ -391,6 +472,7 @@ public class PatchStrategy {
 		if(currLocIndex < locations.size()) {
 			LocEntry e = locations.get(currLocIndex);
 			Change c = e.changeIds != null && e.changeIds.size() > 0 ? pool.getChange(e.changeIds.remove(0)) : null;
+			curChangeIndex++;
 			return c;
 		}
 		return null;
