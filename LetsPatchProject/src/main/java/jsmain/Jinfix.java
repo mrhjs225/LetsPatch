@@ -51,15 +51,15 @@ public class Jinfix {
 		JinContextAnalyzer jinContextAnalyzer = new JinContextAnalyzer(maxPoolLoad);
 		String path = "/home/hjs/dldoldam/jinfix_database/changedfile";
 		System.out.println("start!");
-		JinGenerateChangePool.setPathEntries("collections");
-		JinGenerateChangePool.testChangePool();
+		// JinGenerateChangePool.setPathEntries("collections");
+		// JinGenerateChangePool.testChangePool();
 		
 		// JinGenerateChangePool.testgenerateChangePool(path);
-		// try {
-		// 	jinContextAnalyzer.getStatisticsContext("/home/hjs/dldoldam/jinfix_database/pool/poolNew");
-		// } catch(Exception e) {
-		// 	e.printStackTrace();
-		// }
+		try {
+			jinContextAnalyzer.getStatisticsContext("/home/hjs/dldoldam/jinfix_database/pool/poolNew_closure");
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
 
 
 		System.out.println("done");

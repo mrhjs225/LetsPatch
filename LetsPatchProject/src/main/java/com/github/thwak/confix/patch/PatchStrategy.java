@@ -45,6 +45,7 @@ public class PatchStrategy {
 	protected int fixLocCount = 0;
 	protected StringBuffer sbLoc = new StringBuffer("LocKind$$Loc$$Class#Line:Freq:Score");
 	protected HashMap<Integer, Context> candidateContext;
+	protected boolean changePrior = true;
 
 	protected PatchStrategy() {
 		super();
@@ -69,7 +70,7 @@ public class PatchStrategy {
 	}
 
 	public PatchStrategy(CoverageManager manager, ChangePool pool, ContextIdentifier collector, Random r,
-			String flMetric, String cStrategyKey, String sourceDir, String[] compileClassPathEntries, int maxCanContext, int maxCanChange) {
+			String flMetric, String cStrategyKey, String sourceDir, String[] compileClassPathEntries, int maxCanContext, int maxCanChange, boolean changePrior) {
 		this.r = r;
 		this.manager = manager;
 		this.pool = pool;
@@ -85,6 +86,7 @@ public class PatchStrategy {
 		this.maxCanContext = maxCanContext;
 		this.maxCanChange = maxCanChange;
 		candidateContext = new HashMap<>();
+		this.changePrior = changePrior;
 		prioritizeCoveredLines();
 	}
 
@@ -184,7 +186,11 @@ public class PatchStrategy {
 
 	public void updateLocations(String className, Node root, FixLocationIdentifier identifier, String sourceFileString) {
 		List<TargetLocation> fixLocs = new ArrayList<>();
-		identifier.findLocations(className, root, fixLocs, sourceFileString);
+		if (changePrior == false) {
+			identifier.findLocations(className, root, fixLocs, sourceFileString, changePrior);
+		} else {
+			identifier.findLocations(className, root, fixLocs, sourceFileString);
+		}
 		fixLocCount += fixLocs.size();
 		for(TargetLocation loc : fixLocs) {
 			CoveredLine cl = new CoveredLine(className, loc.node.startLine);
@@ -219,6 +225,48 @@ public class PatchStrategy {
 				}
 				currLocIndex = 0;
 				return selectLocation();
+			}
+			return null;
+		}
+	}
+
+	public TargetLocation selectLocation(boolean contextPrior) {
+		if (contextPrior == false) {
+			return selectLocation(0);
+		} else {
+			return selectLocation();
+		}
+	}
+
+	public TargetLocation selectLocation(int nomean) {
+		if(currLocIndex < locations.size()) {
+			LocEntry e = locations.get(currLocIndex);
+			if(e.changeIds == null) {
+				e.changeIds = findCandidateChanges(e.loc);
+				if(e.changeIds.size() > 0)
+					appendLoc(e);
+			}
+			if(e.changeIds.size() == 0){
+				currLocIndex++;
+				return selectLocation(0);
+			}
+			return e.loc;
+		} else {
+			if(++currLineIndex < coveredLines.size()) {
+				locations.clear();
+				CoveredLine cl = coveredLines.get(currLineIndex);
+				if(!patcherMap.containsKey(cl.className)) {
+					System.out.println("Loading Class - "+cl.className);
+					String source = PatchUtils.loadSource(sourceDir, cl.className);
+					ConcretizationStrategy cStrategy = StrategyFactory.getConcretizationStrategy(cStrategyKey, manager, cl.className, sourceDir, r);
+					Patcher patcher = new Patcher(cl.className, source, compileClassPathEntries, new String[] { sourceDir }, this, cStrategy);
+					patcherMap.put(cl.className, patcher);
+				}
+				if(lineLocMap.containsKey(currLineIndex)) {
+					locations.addAll(lineLocMap.get(currLineIndex));
+				}
+				currLocIndex = 0;
+				return selectLocation(0);
 			}
 			return null;
 		}

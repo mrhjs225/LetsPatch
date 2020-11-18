@@ -33,8 +33,8 @@ public class FLFreqPatchStrategy extends PatchStrategy {
 	}
 
 	public FLFreqPatchStrategy(CoverageManager manager, ChangePool pool, ContextIdentifier collector, Random r,
-			String flMetric, String cStrategyKey, String sourceDir, String[] compileClassPathEntries, int maxContextNum, int maxChangeNum) {
-		super(manager, pool, collector, r, flMetric, cStrategyKey, sourceDir, compileClassPathEntries, maxContextNum, maxChangeNum);
+			String flMetric, String cStrategyKey, String sourceDir, String[] compileClassPathEntries, int maxContextNum, int maxChangeNum, boolean changePrior) {
+		super(manager, pool, collector, r, flMetric, cStrategyKey, sourceDir, compileClassPathEntries, maxContextNum, maxChangeNum, changePrior);
 	}
 
 	@Override

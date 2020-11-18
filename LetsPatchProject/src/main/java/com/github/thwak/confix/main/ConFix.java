@@ -77,38 +77,49 @@ public class ConFix {
 	public static int maxCandidateContext;
 	public static int maxCandidateChange;
 	public static String resultPath;
+	public static boolean contextPrior;
+	public static boolean changePrior;
 
 	public static void main(String[] args) throws IOException {
-		//Load necessary information.
+		// Load necessary information.
 		loadProperties("confix.properties");
 		loadTests();
 		loadCoverage();
-		if(coverage == null || coverage.getNegCoveredClasses().size() == 0){
+		contextPrior = false;
+		changePrior = true;
+		// resultPath = "/home/hjs/experiment/result/closureResult.txt";
+		if (coverage == null || coverage.getNegCoveredClasses().size() == 0) {
 			System.out.println("No class/coverage information.");
 			return;
-		}else if(poolList.size() == 0){
+		} else if (poolList.size() == 0) {
 			System.out.println("No change pool is specified.");
 			return;
 		}
+
 		long startTime = System.currentTimeMillis();
 		seed = seed == -1 ? new Random(startTime).nextInt(100) : seed;
 		Random r = new Random(seed);
 		System.out.println("Random Seed:" + seed);
 
-		//For Loc Info collection.
+		// For Loc Info collection.
 		String oldLocKey = "";
 		String currentLocKey = null;
 		Change oldApplied = null;
 		String locPoolPath = "";
 		StringBuffer sbLoc = new StringBuffer("Pool,CheckedLines,CheckedLoc,CheckedChange,AppliedChange");
-		BufferedWriter recordResult = new BufferedWriter(new FileWriter(new File(resultPath), true));
+
+		BufferedWriter recordResult = new BufferedWriter(new FileWriter(
+				new File("/home/hjs/dldoldam/checkout/result/LetsPatch/LetsPatch_chartResult.txt"), true));
 		int totalCompileError = 0;
 		int totalTestFailure = 0;
 		int totalCandidateNum = 0;
+		poolList.clear();
+		// poolList.add("/home/hjs/dldoldam/jinfix_database/pool/poolNew_chart");
+		poolList.add("/home/hjs/dldoldam/jinfix_database/pool/poolTest");
 		for (String poolPath : poolList) {
 			loadChangePool(poolPath);
 			locPoolPath = poolPath;
-			//Initialize patcher and strategies.
+			// Initialize patcher and strategies.
 			int candidateNum = 1;
 			int compileError = 0;
 			int testFailure = 0;
@@ -122,45 +133,44 @@ public class ConFix {
 			Patcher patcher = null;
 			System.out.println("Preparing patch generation...");
 			PatchStrategy pStrategy = StrategyFactory.getPatchStrategy(pStrategyKey, coverage, pool, r, flMetric,
-					cStrategyKey, sourceDir, compileClassPathEntries, maxCandidateContext, maxCandidateChange);
+					cStrategyKey, sourceDir, compileClassPathEntries, maxCandidateContext, maxCandidateChange,
+					changePrior);
 			pStrategy.finishUpdate();
 			IOUtils.storeContent("coveredlines.txt", pStrategy.getLineInfo());
 			System.out.println("Done.");
-			
-			pool.poolName = poolPath.substring(poolPath.lastIndexOf('/')+1);
-			//Generating patch candidates.
-			while (candidateNum <= 5000) {
+
+			pool.poolName = poolPath.substring(poolPath.lastIndexOf('/') + 1);
+			// Generating patch candidates.
+			while (candidateNum <= 20000) {
 				int trial = 0;
 				int returnCode = -1;
-				TargetLocation loc = pStrategy.selectLocation();
+				TargetLocation loc = pStrategy.selectLocation(contextPrior);
 				targetClass = loc == null ? "" : loc.className;
 				currentLocKey = pStrategy.getCurrentLocKey();
-				if(!oldLocKey.equals(currentLocKey)) {
+				if (!oldLocKey.equals(currentLocKey)) {
 					oldLocKey = currentLocKey;
 					locNum++;
 					locChangeCount = 0;
 				}
-
 				patcher = pStrategy.patcher();
-				if(patcher == null)
+				if (patcher == null)
 					break;
 				Change change = pStrategy.selectChange();
-				if(change != null) {
+				if (change != null) {
 					changeNum++;
 					locChangeCount++;
 				}
-				if(locChangeCount > maxChangeCount) {
+				if (locChangeCount > maxChangeCount) {
 					pStrategy.nextLoc();
 					continue;
 				}
-
 				Set<String> candidates = new HashSet<>();
 				do {
 					PatchInfo info = new PatchInfo(targetClass, change, loc);
 					try {
 						returnCode = patcher.apply(loc, change, info);
 					} catch (Exception e) {
-						if(DEBUG) {
+						if (DEBUG) {
 							System.out.println("Change Application Error.");
 							System.out.println("Fix Location");
 							System.out.println(loc);
@@ -177,7 +187,7 @@ public class ConFix {
 					} else {
 						if (returnCode == Patcher.C_APPLIED) {
 							System.out.println("Patch Candidate-" + candidateNum + " is generated.");
-							if(change != null && !change.equals(oldApplied)) {
+							if (change != null && !change.equals(oldApplied)) {
 								oldApplied = change;
 								applied++;
 							}
@@ -190,7 +200,7 @@ public class ConFix {
 								String patchFileName = storePatch(newSource, editText, targetClass, change);
 								System.out.println("A Patch Found! - " + patchFileName);
 								System.out.println("Candidate Number:" + candidateNum);
-								String elapsedTime = PatchUtils.getElapsedTime(System.currentTimeMillis()-startTime);
+								String elapsedTime = PatchUtils.getElapsedTime(System.currentTimeMillis() - startTime);
 								totalCompileError += compileError;
 								totalTestFailure += testFailure;
 								totalCandidateNum += candidateNum;
@@ -234,49 +244,56 @@ public class ConFix {
 							break;
 						}
 					}
-					if(isTimeBudgetPassed(startTime)) {
+					if (isTimeBudgetPassed(startTime)) {
 						terminate = true;
 						System.out.println("Time Budget is passed.");
 						break;
 					}
 				} while (trial < maxTrials);
-				//Reset.
-				change = null; loc = null; candidates = null;
+				// Reset.
+				change = null;
+				loc = null;
+				candidates = null;
 				if (success || terminate || returnCode == Patcher.C_NO_FIXLOC)
 					break;
 			}
 			if (success || terminate) {
-				long elpasedTime = System.currentTimeMillis()-startTime;
-				System.out.println("Elapsed Time: "+PatchUtils.getElapsedTime(elpasedTime));
-				printLocInfo(pStrategy.getCurrentLineIndex()+1, locNum, changeNum, applied, locPoolPath, sbLoc);
-				System.out.println("Compile Errors:" + compileError);
-				System.out.println("Test Failures:" + testFailure);
-				IOUtils.storeContent("lines-"+pool.poolName+".txt", pStrategy.getLocInfo());
-				recordResult.write(projectName + "," + bugId + "," + "success," + String.valueOf(elpasedTime) + ",+" + candidateNum+ "\n");
+				long elapsedTime = System.currentTimeMillis() - startTime;
+				// System.out.println("Elapsed Time: "+PatchUtils.getElapsedTime(elapsedTime));
+				printLocInfo(pStrategy.getCurrentLineIndex() + 1, locNum, changeNum, applied, locPoolPath, sbLoc);
+				// System.out.println("Compile Errors:" + compileError);
+				// System.out.println("Test Failures:" + testFailure);
+				IOUtils.storeContent("lines-" + pool.poolName + ".txt", pStrategy.getLocInfo());
+				recordResult.write(projectName + "," + bugId + "," + "success," + " time: "
+						+ String.valueOf(elapsedTime) + "," + "num: " + candidateNum + ", compileerror:" + compileError
+						+ ", testfailure:" + testFailure + "\n");
 				break;
 			} else {
-				long elpasedTime = System.currentTimeMillis()-startTime;
-				System.out.println("No patch found.");
-				System.out.println("Elapsed Time: "+PatchUtils.getElapsedTime(elpasedTime));
-				System.out.println("Compile Errors:" + compileError);
-				System.out.println("Test Failures:" + testFailure);
+				long elapsedTime = System.currentTimeMillis() - startTime;
+				// System.out.println("No patch found.");
+				// System.out.println("Elapsed Time: "+PatchUtils.getElapsedTime(elapsedTime));
+				// System.out.println("Compile Errors:" + compileError);
+				// System.out.println("Test Failures:" + testFailure);
 				totalCompileError += compileError;
 				totalTestFailure += testFailure;
 				totalCandidateNum += candidateNum;
-				printLocInfo(pStrategy.getCurrentLineIndex()+1, locNum, changeNum, applied, locPoolPath, sbLoc);
-				IOUtils.storeContent("lines-"+pool.poolName+".txt", pStrategy.getLocInfo());
-				recordResult.write(projectName + "," + bugId + "," + "fail," + String.valueOf(elpasedTime) + "," + candidateNum + "\n");
+				printLocInfo(pStrategy.getCurrentLineIndex() + 1, locNum, changeNum, applied, locPoolPath, sbLoc);
+				IOUtils.storeContent("lines-" + pool.poolName + ".txt", pStrategy.getLocInfo());
+				recordResult.write(projectName + "," + bugId + "," + "fail," + " time: " + String.valueOf(elapsedTime)
+						+ "," + "num: " + candidateNum + ", compileerror:" + compileError + ", testfailure:"
+						+ testFailure + "\n");
 			}
 		}
 		recordResult.close();
 		IOUtils.storeContent("locinfo.csv", sbLoc.toString());
 	}
 
-	private static void printLocInfo(int lines, int locNum, int changeNum, int applied, String poolPath, StringBuffer sb) {
-		System.out.println("Checked Lines:"+lines);
-		System.out.println("Checked Fix Locs:"+locNum);
-		System.out.println("Checked Changes:"+changeNum);
-		System.out.println("Applied Changes:"+applied);
+	private static void printLocInfo(int lines, int locNum, int changeNum, int applied, String poolPath,
+			StringBuffer sb) {
+		System.out.println("Checked Lines:" + lines);
+		System.out.println("Checked Fix Locs:" + locNum);
+		System.out.println("Checked Changes:" + changeNum);
+		System.out.println("Applied Changes:" + applied);
 		sb.append("\n");
 		sb.append(poolPath);
 		sb.append(",");
@@ -290,7 +307,7 @@ public class ConFix {
 	}
 
 	private static boolean isTimeBudgetPassed(long startTime) {
-		if(timeBudget < 0)
+		if (timeBudget < 0)
 			return false;
 		long expire = startTime + (timeBudget * 60 * 60 * 1000);
 		return System.currentTimeMillis() >= expire;
@@ -303,38 +320,38 @@ public class ConFix {
 		Set<String> testSet = new HashSet<>();
 		String[] tests = trigger.split("\n");
 		numOfTriggers = tests.length;
-		for(String test : tests){
-			//Get the class name only for trigger tests.
-			if(!test.startsWith("#"))
+		for (String test : tests) {
+			// Get the class name only for trigger tests.
+			if (!test.startsWith("#"))
 				testSet.add(test.split("::")[0]);
 		}
 		triggerTests.addAll(testSet);
 		relTests.addAll(Arrays.asList(relevant.split("\n")));
 		allTests.addAll(Arrays.asList(all.split("\n")));
 		File f = new File("tests.broken");
-		if(f.exists()) {
+		if (f.exists()) {
 			String broken = IOUtils.readFile("tests.broken");
 			tests = broken.split("\n");
-			for(String t : tests)
+			for (String t : tests)
 				brokenTests.add(t.replace("::", "#"));
 		}
 	}
 
 	private static int verify(String patchFileName) {
-		//Compile a given patch candidate.
-		if(!compileCheck(patchFileName)){
+		// Compile a given patch candidate.
+		if (!compileCheck(patchFileName)) {
 			return COMPILE_ERROR;
-		}else{
+		} else {
 			return testCheck();
 		}
 	}
 
-	public static boolean compileCheck(String patchFileName){
+	public static boolean compileCheck(String patchFileName) {
 		File patchFile = new File(patchFileName);
 		Compiler compiler = new Compiler();
 		try {
 			boolean error = compiler.compile(patchFile, tempDir, compileClassPath, version, version);
-			if(error){
+			if (error) {
 				System.out.println("Compile error.");
 				return false;
 			}
@@ -346,10 +363,10 @@ public class ConFix {
 	}
 
 	private static void removeBrokenTests(TestResult result) {
-		if(result != null) {
+		if (result != null) {
 			Set<String> falseAlarm = new HashSet<>();
-			for(String test : result.failedTests) {
-				if(brokenTests.contains(test))
+			for (String test : result.failedTests) {
+				if (brokenTests.contains(test))
 					falseAlarm.add(test);
 			}
 			result.failedTests.removeAll(falseAlarm);
@@ -357,21 +374,20 @@ public class ConFix {
 		}
 	}
 
-	public static int testCheck(){
+	public static int testCheck() {
 		Tester tester = new Tester(jvm, timeout);
-		//Run failed tests.
+		// Run failed tests.
 		TestResult result = null;
 		String classPath = tempDir + File.pathSeparator + testClassPath;
 		try {
 			result = tester.runTestsWithJUnitCore(triggerTests, classPath);
 			removeBrokenTests(result);
-			if(result != null
-					&& result.failCnt > 0){
+			if (result != null && result.failCnt > 0) {
 				System.out.println("Trigger tests - " + result.failCnt + " Tests Failed.");
-				if(result.failCnt > numOfTriggers)
+				if (result.failCnt > numOfTriggers)
 					return BREAK_FUNC;
 				return TRIGGER_TEST_FAILURE;
-			}else if(result == null || result.runCnt == 0){
+			} else if (result == null || result.runCnt == 0) {
 				System.out.println("An error occurs while running trigger tests - no records.");
 				return TEST_TIMEOUT;
 			}
@@ -381,18 +397,15 @@ public class ConFix {
 			return TRIGGER_TEST_FAILURE;
 		}
 
-		//If passed, run relevant tests.
-		if(result != null
-				&& result.runCnt > 0
-				&& result.failCnt == 0){
+		// If passed, run relevant tests.
+		if (result != null && result.runCnt > 0 && result.failCnt == 0) {
 			try {
 				result = tester.runTestsWithJUnitCore(relTests, classPath);
 				removeBrokenTests(result);
-				if(result != null
-						&& result.failCnt > 0){
+				if (result != null && result.failCnt > 0) {
 					System.out.println("Relevant tests - " + result.failCnt + " Tests Failed.");
 					return RELEVANT_TEST_FAILURE;
-				}else if(result == null || result.runCnt == 0){
+				} else if (result == null || result.runCnt == 0) {
 					System.out.println("An error occurs while running relevant tests. - no records.");
 					return TEST_TIMEOUT;
 				}
@@ -403,18 +416,15 @@ public class ConFix {
 			}
 		}
 
-		//If passed, run all tests.
-		if(result != null
-				&& result.runCnt > 0
-				&& result.failCnt == 0){
+		// If passed, run all tests.
+		if (result != null && result.runCnt > 0 && result.failCnt == 0) {
 			try {
 				result = tester.runTestsWithJUnitCore(allTests, classPath);
 				removeBrokenTests(result);
-				if(result != null
-						&& result.failCnt > 0){
+				if (result != null && result.failCnt > 0) {
 					System.out.println("All tests - " + result.failCnt + " Tests Failed.");
 					return TEST_FAILURE;
-				}else if(result == null || result.runCnt == 0){
+				} else if (result == null || result.runCnt == 0) {
 					System.out.println("An error occurs while running all tests. - no records.");
 					return TEST_TIMEOUT;
 				}
@@ -425,12 +435,10 @@ public class ConFix {
 			}
 		}
 
-		//If passed, return true.
-		if(result != null
-				&& result.runCnt > 0
-				&& result.failCnt == 0){
+		// If passed, return true.
+		if (result != null && result.runCnt > 0 && result.failCnt == 0) {
 			return PASS;
-		}else{
+		} else {
 			return TEST_FAILURE;
 		}
 	}
@@ -438,7 +446,7 @@ public class ConFix {
 	private static String storePatch(String newSource, String patch, String targetClass, Change change) {
 		int lastDotIndex = targetClass.lastIndexOf('.');
 		String packageName = targetClass.substring(0, lastDotIndex);
-		String fileName = targetClass.substring(lastDotIndex+1) + ".java";
+		String fileName = targetClass.substring(lastDotIndex + 1) + ".java";
 		File dir = new File(patchDir);
 		File[] dirs = dir.listFiles(new FileFilter() {
 			@Override
@@ -448,9 +456,9 @@ public class ConFix {
 		});
 		int patchId = dirs == null ? 0 : dirs.length;
 		String patchPath = patchDir + File.separator + patchId + File.separator;
-		String packagePath = patchPath + packageName.replaceAll("\\.", File.separator+File.separator);
+		String packagePath = patchPath + packageName.replaceAll("\\.", File.separator + File.separator);
 		File packageDir = new File(packagePath);
-		if(!packageDir.exists())
+		if (!packageDir.exists())
 			packageDir.mkdirs();
 		String filePath = Paths.get(packagePath + File.separator + fileName).toString();
 		IOUtils.storeContent(filePath, newSource);
@@ -463,11 +471,11 @@ public class ConFix {
 	private static String storeCandidate(String newSource, String patch, String targetClass, Change change) {
 		int lastDotIndex = targetClass.lastIndexOf('.');
 		String packageName = targetClass.substring(0, lastDotIndex);
-		String fileName = targetClass.substring(lastDotIndex+1) + ".java";
+		String fileName = targetClass.substring(lastDotIndex + 1) + ".java";
 		String candidatePath = candidateDir + File.separator + "candidate" + File.separator;
-		String packagePath = candidatePath + packageName.replaceAll("\\.", File.separator+File.separator);
+		String packagePath = candidatePath + packageName.replaceAll("\\.", File.separator + File.separator);
 		File dir = new File(packagePath);
-		if(!dir.exists())
+		if (!dir.exists())
 			dir.mkdirs();
 		String filePath = Paths.get(packagePath + File.separator + fileName).toString();
 		IOUtils.storeContent(filePath, newSource);
@@ -483,7 +491,7 @@ public class ConFix {
 		pool.loadFrom(new File(poolPath));
 		pool.maxLoadCount = maxPoolLoad;
 		System.out.println("Done.");
-		System.out.println("Pool:"+poolPath);
+		System.out.println("Pool:" + poolPath);
 	}
 
 	private static void loadProperties(String fileName) {
@@ -502,8 +510,8 @@ public class ConFix {
 		testClassPath = PatchUtils.getStringProperty(props, "cp.test", "");
 		compileClassPath = PatchUtils.getStringProperty(props, "cp.compile", "");
 		String priority = PatchUtils.getStringProperty(props, "cp.test.priority", "local");
-		if(libClassPath.length() > 0) {
-			if("cfix".equals(priority)) {
+		if (libClassPath.length() > 0) {
+			if ("cfix".equals(priority)) {
 				testClassPath = libClassPath + File.pathSeparatorChar + testClassPath;
 			} else {
 				testClassPath = testClassPath + File.pathSeparatorChar + libClassPath;
@@ -517,7 +525,7 @@ public class ConFix {
 		poolList = PatchUtils.getListProperty(props, "pool.path", ",");
 		jvm = PatchUtils.getStringProperty(props, "jvm", "/usr/bin/java");
 		version = PatchUtils.getStringProperty(props, "version", "1.7");
-		timeout = Long.parseLong(PatchUtils.getStringProperty(props, "timeout", "10"))*1000;
+		timeout = Long.parseLong(PatchUtils.getStringProperty(props, "timeout", "10")) * 1000;
 		patchCount = Integer.parseInt(PatchUtils.getStringProperty(props, "patch.count", "20"));
 		maxTrials = Integer.parseInt(PatchUtils.getStringProperty(props, "max.trials", "10"));
 		maxChangeCount = Integer.parseInt(PatchUtils.getStringProperty(props, "max.change.count", "25"));
@@ -533,11 +541,22 @@ public class ConFix {
 		maxCandidateContext = Integer.parseInt(PatchUtils.getStringProperty(props, "max.candidate.context", "1"));
 		maxCandidateChange = Integer.parseInt(PatchUtils.getStringProperty(props, "max.candidate.change", "0"));
 		resultPath = PatchUtils.getStringProperty(props, "result.path", "");
+		if (PatchUtils.getStringProperty(props, "context.prior", "true").equals("false")) {
+			contextPrior = false;
+		} else {
+			contextPrior = true;
+		}
+		if (PatchUtils.getStringProperty(props, "change.prior", "true").equals("false")) {
+			changePrior = false;
+		} else {
+			changePrior = true;
+		}
+
 	}
 
-	private static void loadCoverage(){
+	private static void loadCoverage() {
 		System.out.print("Loading Coverage Information....");
-		coverage = (CoverageManager)IOUtils.readObject("coverage-info.obj");
+		coverage = (CoverageManager) IOUtils.readObject("coverage-info.obj");
 		System.out.println("Done.");
 	}
 }

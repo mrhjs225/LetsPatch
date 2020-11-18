@@ -14,26 +14,26 @@ public class StrategyFactory {
 	public static Map<String, CodePool> codePools = new HashMap<>();
 	public static Map<String, CodePool> pkgCodePools = new HashMap<>();
 
-	public static PatchStrategy getPatchStrategy(String key, CoverageManager coverage, ChangePool pool, Random r,
-			String flMetric, String cStrategyKey, String sourceDir, String[] compileClassPathEntries, int maxCandidateContext, int maxCandidateChange) {
+	public static PatchStrategy getPatchStrategy(String key, CoverageManager coverage, ChangePool pool, Random r, String flMetric,
+			String cStrategyKey, String sourceDir, String[] compileClassPathEntries, int maxCandidateContext, int maxCandidateChange, boolean changePrior) {
 		PatchStrategy strategy = null;
 		key = key.toLowerCase();
 		switch(key) {
 		case "flfreq":
 			strategy = new FLFreqPatchStrategy(coverage, pool, pool.getIdentifier(), r, flMetric, cStrategyKey,
-					sourceDir, compileClassPathEntries, maxCandidateContext, maxCandidateChange);
+					sourceDir, compileClassPathEntries, maxCandidateContext, maxCandidateChange, changePrior);
 			break;
 		case "tested-first":
 			strategy = new TestedFirstPatchStrategy(coverage, pool, pool.getIdentifier(), r, flMetric, cStrategyKey,
-					sourceDir, compileClassPathEntries, maxCandidateContext, maxCandidateChange);
+					sourceDir, compileClassPathEntries, maxCandidateContext, maxCandidateChange, changePrior);
 			break;
 		case "noctx":
 			strategy = new NoContextPatchStrategy(coverage, pool, pool.getIdentifier(), r, flMetric, cStrategyKey,
-					sourceDir, compileClassPathEntries, maxCandidateContext, maxCandidateChange);
+					sourceDir, compileClassPathEntries, maxCandidateContext, maxCandidateChange, changePrior);
 			break;
 		default:
 			strategy = new PatchStrategy(coverage, pool, pool.getIdentifier(), r, flMetric, cStrategyKey, sourceDir,
-					compileClassPathEntries, maxCandidateContext, maxCandidateChange);
+					compileClassPathEntries, maxCandidateContext, maxCandidateChange, changePrior);
 		}
 		return strategy;
 	}
