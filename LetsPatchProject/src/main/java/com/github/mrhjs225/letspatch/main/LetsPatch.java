@@ -181,7 +181,6 @@ public class LetsPatch {
 						break;
 					} else {
 						if (returnCode == Patcher.C_APPLIED) {
-							System.out.println("Patch Candidate-" + candidateNum + " is generated.");
 							if (change != null && !change.equals(oldApplied)) {
 								oldApplied = change;
 								applied++;
@@ -254,10 +253,7 @@ public class LetsPatch {
 			}
 			if (success || terminate) {
 				long elapsedTime = System.currentTimeMillis() - startTime;
-				// System.out.println("Elapsed Time: "+PatchUtils.getElapsedTime(elapsedTime));
 				printLocInfo(pStrategy.getCurrentLineIndex() + 1, locNum, changeNum, applied, locPoolPath, sbLoc);
-				// System.out.println("Compile Errors:" + compileError);
-				// System.out.println("Test Failures:" + testFailure);
 				IOUtils.storeContent("lines-" + pool.poolName + ".txt", pStrategy.getLocInfo());
 				recordResult.write(projectName + "," + bugId + "," + "success," + " time: "
 						+ String.valueOf(elapsedTime) + "," + "num: " + candidateNum + ", compileerror:" + compileError
@@ -265,10 +261,6 @@ public class LetsPatch {
 				break;
 			} else {
 				long elapsedTime = System.currentTimeMillis() - startTime;
-				// System.out.println("No patch found.");
-				// System.out.println("Elapsed Time: "+PatchUtils.getElapsedTime(elapsedTime));
-				// System.out.println("Compile Errors:" + compileError);
-				// System.out.println("Test Failures:" + testFailure);
 				totalCompileError += compileError;
 				totalTestFailure += testFailure;
 				totalCandidateNum += candidateNum;
@@ -347,11 +339,12 @@ public class LetsPatch {
 		try {
 			boolean error = compiler.compile(patchFile, tempDir, compileClassPath, version, version);
 			if (error) {
-				System.out.println("Compile error.");
+				// js: if you want to checking number of compile error's please see this method
+				// System.out.println("Compile error.");
 				return false;
 			}
 		} catch (Exception e) {
-			System.out.println("Compile error.");
+			// System.out.println("Compile error.");
 			return false;
 		}
 		return true;

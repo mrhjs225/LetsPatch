@@ -36,7 +36,7 @@ public class Compiler {
 	public List<IProblem> problems;
 	public String className;
 
-	public Compiler(){
+	public Compiler() {
 		problems = new ArrayList<>();
 		classes = new ArrayList<>();
 	}
@@ -45,7 +45,7 @@ public class Compiler {
 		URL[] urls = getUrls(classPath);
 		CustomClassLoader loader = new CustomClassLoader(urls, getClass().getClassLoader(), new ArrayList<ClassFile>());
 		String source = IOUtils.readFile(f);
-		Parser parser = new Parser(new String[]{}, new String[]{});
+		Parser parser = new Parser(new String[] {}, new String[] {});
 		CompilationUnit cu = parser.parse(source);
 		return compile(loader, source, cu, targetPath, true, version);
 	}
@@ -53,11 +53,11 @@ public class Compiler {
 	private URL[] getUrls(String classPath) throws MalformedURLException {
 		String[] classPaths = classPath.split(":");
 		List<URL> urlList = new ArrayList<>();
-		for(String cp : classPaths){
-			if(cp.toLowerCase().endsWith(".jar")){
-				urlList.add(new URL("jar:file://"+cp+"!/"));
-			}else{
-				urlList.add(new URL("file://"+cp+"/"));
+		for (String cp : classPaths) {
+			if (cp.toLowerCase().endsWith(".jar")) {
+				urlList.add(new URL("jar:file://" + cp + "!/"));
+			} else {
+				urlList.add(new URL("file://" + cp + "/"));
 			}
 		}
 		URL[] urls = new URL[urlList.size()];
@@ -83,44 +83,44 @@ public class Compiler {
 		command.append(f.getAbsolutePath());
 		String cmd = command.toString();
 		boolean error = !org.eclipse.jdt.core.compiler.batch.BatchCompiler.compile(cmd, outWriter, errWriter, null);
-		if(true) {
-			System.out.println(cmd);
-			System.out.println(out.toString());
-			System.out.println(err.toString());
-		}
+		// js: for checking command line
+		// if(true) {
+		// System.out.println(cmd);
+		// System.out.println(out.toString());
+		// System.out.println(err.toString());
+		// }
 		return error;
 	}
 
-	public boolean compile(String source, CompilationUnit unit, String path, boolean writeDown, String version) throws IOException, FileNotFoundException{
+	public boolean compile(String source, CompilationUnit unit, String path, boolean writeDown, String version)
+			throws IOException, FileNotFoundException {
 		return compile(getClass().getClassLoader(), source, unit, path, writeDown, version);
 	}
 
-	public boolean compile(ClassLoader loader, String source, CompilationUnit unit, String path, boolean writeDown, String version) throws IOException, FileNotFoundException{
+	public boolean compile(ClassLoader loader, String source, CompilationUnit unit, String path, boolean writeDown,
+			String version) throws IOException, FileNotFoundException {
 
 		CompilationUnitImpl cu = new CompilationUnitImpl(unit);
-		org.eclipse.jdt.internal.compiler.batch.CompilationUnit newUnit =
-				new org.eclipse.jdt.internal.compiler.batch.CompilationUnit(
-						source.toCharArray(), new String(cu.getFileName()), "UTF8");
+		org.eclipse.jdt.internal.compiler.batch.CompilationUnit newUnit = new org.eclipse.jdt.internal.compiler.batch.CompilationUnit(
+				source.toCharArray(), new String(cu.getFileName()), "UTF8");
 
 		className = CharOperation.toString(cu.getPackageName()) + "." + new String(cu.getMainTypeName());
 
 		CompilationProgress progress = null;
 		CompilerRequestorImpl requestor = new CompilerRequestorImpl();
 		CompilerOptions options = new CompilerOptions();
-		Map<String,String> optionsMap = new HashMap<>();
+		Map<String, String> optionsMap = new HashMap<>();
 		optionsMap.put(CompilerOptions.OPTION_Compliance, version);
 		optionsMap.put(CompilerOptions.OPTION_Source, version);
-		optionsMap.put(CompilerOptions.OPTION_LineNumberAttribute,CompilerOptions.GENERATE);
-		optionsMap.put(CompilerOptions.OPTION_SourceFileAttribute,CompilerOptions.GENERATE);
+		optionsMap.put(CompilerOptions.OPTION_LineNumberAttribute, CompilerOptions.GENERATE);
+		optionsMap.put(CompilerOptions.OPTION_SourceFileAttribute, CompilerOptions.GENERATE);
 
 		options.set(optionsMap);
 
-		org.eclipse.jdt.internal.compiler.Compiler compiler =
-				new org.eclipse.jdt.internal.compiler.Compiler(new NameEnvironmentImpl(loader, newUnit),
-						DefaultErrorHandlingPolicies.proceedWithAllProblems(),
-						options,requestor,new DefaultProblemFactory(Locale.getDefault()),
-						null, progress);
-		compiler.compile(new ICompilationUnit[]{ newUnit });
+		org.eclipse.jdt.internal.compiler.Compiler compiler = new org.eclipse.jdt.internal.compiler.Compiler(
+				new NameEnvironmentImpl(loader, newUnit), DefaultErrorHandlingPolicies.proceedWithAllProblems(),
+				options, requestor, new DefaultProblemFactory(Locale.getDefault()), null, progress);
+		compiler.compile(new ICompilationUnit[] { newUnit });
 
 		classes = requestor.getClasses();
 		problems = requestor.getProblems();
@@ -128,7 +128,7 @@ public class Compiler {
 		boolean error = false;
 		for (Iterator<IProblem> it = problems.iterator(); it.hasNext();) {
 			IProblem problem = it.next();
-			if(problem.isError()){
+			if (problem.isError()) {
 				error = true;
 				break;
 			}
@@ -136,10 +136,10 @@ public class Compiler {
 
 		if (writeDown) {
 			for (ClassFile cf : classes) {
-				String filePath	= CharOperation.charToString(cf.fileName());
-				String packagePath = path + File.separator + filePath.substring(0, filePath.lastIndexOf("/")+1);
+				String filePath = CharOperation.charToString(cf.fileName());
+				String packagePath = path + File.separator + filePath.substring(0, filePath.lastIndexOf("/") + 1);
 				File packageDir = new File(packagePath);
-				if(!packageDir.exists()){
+				if (!packageDir.exists()) {
 					packageDir.mkdirs();
 				}
 				File f = new File(path + File.separator + filePath + ".class");

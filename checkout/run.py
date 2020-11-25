@@ -10,14 +10,14 @@ for project_name in project:
     buggy_list = []
 
     if project_name.lower() == 'chart':
-        buggy_list = [1, 11, 24]
+        buggy_list = [1, 10, 11, 24]
         buggy_list = [11]
     elif project_name.lower() == 'closure':
-        buggy_list = [1, 11, 38, 92, 109]
+        buggy_list = [1, 11, 14, 38, 73, 92, 93, 109]
     elif project_name.lower() == 'lang':
-        buggy_list = [6, 24, 26, 43, 51]
+        buggy_list = [6, 24, 26, 43, 51, 57, 87]
     elif project_name.lower() == 'math':
-        buggy_list = [5, 30, 33, 59, 70, 75]
+        buggy_list = [5, 30, 33, 34, 59, 70, 75]
     elif project_name.lower() == 'time':
         buggy_list = [7, 19]
 
