@@ -2,15 +2,16 @@ import os
 os.system('export DEFECTS4J_HOME=/home/hjs/dldoldam/defects4j')
 
 project = ['Chart', 'Closure', 'Lang', 'Math', 'Time']
-
-basic_checkout_dir = '/home/hjs/dldoldam/checkout/'
-jar_dir = '/home/hjs/dldoldam/checkout/jarfolder/LetsPatch/lets_chart3.jar'
+project = ['Chart']
+basic_checkout_dir = '/home/hjs/dldoldam/gitclone/LetsPatch/checkout/'
+jar_dir = '/home/hjs/dldoldam/gitclone/LetsPatch/LetsPatchProject/target/letspatch.jar'
 for project_name in project:
     checkout_dir = basic_checkout_dir + project_name.lower()
     buggy_list = []
 
     if project_name.lower() == 'chart':
         buggy_list = [1, 11, 24]
+        buggy_list = [11]
     elif project_name.lower() == 'closure':
         buggy_list = [1, 11, 38, 92, 109]
     elif project_name.lower() == 'lang':
