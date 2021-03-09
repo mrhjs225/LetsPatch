@@ -85,7 +85,6 @@ public class LetsPatch {
 		loadProperties("confix.properties");
 		loadTests();
 		loadCoverage();
-
 		if (coverage == null || coverage.getNegCoveredClasses().size() == 0) {
 			System.out.println("No class/coverage information.");
 			return;
@@ -110,7 +109,7 @@ public class LetsPatch {
 		int totalCompileError = 0;
 		int totalTestFailure = 0;
 		int totalCandidateNum = 0;
-
+		changePrior = false;
 		for (String poolPath : poolList) {
 			loadChangePool(poolPath);
 			locPoolPath = poolPath;
@@ -159,6 +158,7 @@ public class LetsPatch {
 					pStrategy.nextLoc();
 					continue;
 				}
+				System.out.println("now:" + locChangeCount);
 				Set<String> candidates = new HashSet<>();
 				do {
 					PatchInfo info = new PatchInfo(targetClass, change, loc);
@@ -228,7 +228,6 @@ public class LetsPatch {
 								}
 							}
 							candidateNum++;
-							System.out.println();
 							if (candidateNum > patchCount || result == TEST_TIMEOUT || result == BREAK_FUNC
 									|| !candidates.add(editText))
 								break;
@@ -257,7 +256,8 @@ public class LetsPatch {
 				IOUtils.storeContent("lines-" + pool.poolName + ".txt", pStrategy.getLocInfo());
 				recordResult.write(projectName + "," + bugId + "," + "success," + " time: "
 						+ String.valueOf(elapsedTime) + "," + "num: " + candidateNum + ", compileerror:" + compileError
-						+ ", testfailure:" + testFailure + "\n");
+						+ ", testfailure:" + testFailure + ", checklines:" + pStrategy.getCurrentLineIndex()
+						+ ", checklocus:" + locNum + ", checkchange:" + changeNum + ", locchange:" + locChangeCount + "\n");
 				break;
 			} else {
 				long elapsedTime = System.currentTimeMillis() - startTime;
@@ -266,9 +266,10 @@ public class LetsPatch {
 				totalCandidateNum += candidateNum;
 				printLocInfo(pStrategy.getCurrentLineIndex() + 1, locNum, changeNum, applied, locPoolPath, sbLoc);
 				IOUtils.storeContent("lines-" + pool.poolName + ".txt", pStrategy.getLocInfo());
-				recordResult.write(projectName + "," + bugId + "," + "fail," + " time: " + String.valueOf(elapsedTime)
-						+ "," + "num: " + candidateNum + ", compileerror:" + compileError + ", testfailure:"
-						+ testFailure + "\n");
+				recordResult.write(projectName + "," + bugId + "," + "success," + " time: "
+						+ String.valueOf(elapsedTime) + "," + "num: " + candidateNum + ", compileerror:" + compileError
+						+ ", testfailure:" + testFailure + ", checklines:" + pStrategy.getCurrentLineIndex()
+						+ ", checklocus:" + locNum + ", checkchange:" + changeNum + ", locchange:" + locChangeCount + "\n");
 			}
 		}
 		recordResult.close();

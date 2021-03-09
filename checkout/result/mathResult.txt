@@ -1,0 +1,3 @@
+math,5,success, time: 61479,num: 1756, compileerror:1550, testfailure:205, checklines:19, checklocus:88, checkchange:557, locchange:0
+math,30,success, time: 745712,num: 10636, compileerror:6916, testfailure:3719, checklines:322, checklocus:1222, checkchange:8087, locchange:0
+math,33,success, time: 1408275,num: 10694, compileerror:7793, testfailure:2900, checklines:361, checklocus:1357, checkchange:7709, locchange:0

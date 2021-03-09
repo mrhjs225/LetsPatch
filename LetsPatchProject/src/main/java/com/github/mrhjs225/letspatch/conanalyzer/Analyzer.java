@@ -51,15 +51,14 @@ public class Analyzer {
 		JinContextAnalyzer jinContextAnalyzer = new JinContextAnalyzer(maxPoolLoad);
 		String path = "/home/hjs/dldoldam/gitclone/LetsPatch/LetsPatch_database/changedfile";
 		String basicPath = "/home/hjs/dldoldam/gitclone/LetsPatch/LetsPatch_database/project/";
-		String poolPath = "/home/hjs/dldoldam/gitclone/LetsPatch/LetsPatch_database/pool/poolTest";
+		String poolPath = "/home/hjs/dldoldam/gitclone/confix2019result/pool/plrt";
 		System.out.println("start!");
-
-		JinGenerateChangePool.testgenerateChangePool(path, basicPath, poolPath);
-		// try {
-		// jinContextAnalyzer.getStatisticsContext("/home/hjs/dldoldam/jinfix_database/pool/poolNew_closure");
-		// } catch(Exception e) {
-		// e.printStackTrace();
-		// }
+		// JinGenerateChangePool.testgenerateChangePool(path, basicPath, poolPath);
+		try {
+			jinContextAnalyzer.getStatisticsContext(poolPath);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		System.out.println("done");
 	}
 

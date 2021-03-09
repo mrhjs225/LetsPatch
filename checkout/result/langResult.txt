@@ -1,0 +1,5 @@
+lang,6,success, time: 413856,num: 4261, compileerror:2833, testfailure:1427, checklines:93, checklocus:574, checkchange:2803, locchange:1
+lang,24,success, time: 261995,num: 4980, compileerror:3460, testfailure:1519, checklines:160, checklocus:636, checkchange:3913, locchange:0
+lang,26,success, time: 36276,num: 89, compileerror:57, testfailure:31, checklines:6, checklocus:23, checkchange:49, locchange:1
+lang,43,success, time: 67077,num: 15, compileerror:9, testfailure:5, checklines:0, checklocus:2, checkchange:6, locchange:5
+lang,51,success, time: 28816,num: 226, compileerror:149, testfailure:76, checklines:7, checklocus:23, checkchange:161, locchange:1

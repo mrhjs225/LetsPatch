@@ -1,0 +1,456 @@
+Loading Coverage Information....Done.
+Random Seed:54
+Loading Change Pool...Done.
+Pool:/home/hjs/dldoldam/gitclone/LetsPatch/LetsPatch_database/pool/letspatch_pool
+Preparing patch generation...
+Done.
+Loading Class - org.jfree.chart.renderer.category.AbstractCategoryItemRenderer
+now:1
+now:2
+Trigger tests - 1 Tests Failed.
+Trigger tests - 1 Tests Failed.
+Trigger tests - 1 Tests Failed.
+Trigger tests - 1 Tests Failed.
+Trigger tests - 1 Tests Failed.
+now:3
+now:4
+now:5
+now:6
+now:7
+now:8
+now:9
+now:1
+now:1
+Trigger tests - 1 Tests Failed.
+Trigger tests - 1 Tests Failed.
+Trigger tests - 1 Tests Failed.
+Trigger tests - 1 Tests Failed.
+now:2
+now:1
+now:1
+now:2
+now:3
+Trigger tests - 1 Tests Failed.
+Trigger tests - 1 Tests Failed.
+Trigger tests - 1 Tests Failed.
+now:4
+now:5
+Trigger tests - 1 Tests Failed.
+Trigger tests - 1 Tests Failed.
+Trigger tests - 1 Tests Failed.
+Trigger tests - 1 Tests Failed.
+Trigger tests - 1 Tests Failed.
+now:6
+now:7
+Trigger tests - 1 Tests Failed.
+Trigger tests - 1 Tests Failed.
+Trigger tests - 1 Tests Failed.
+now:8
+now:9
+now:10
+now:11
+now:12
+now:13
+now:14
+now:15
+now:16
+now:17
+now:18
+now:19
+now:20
+now:21
+now:22
+now:23
+now:24
+now:25
+now:1
+Trigger tests - 1 Tests Failed.
+Trigger tests - 1 Tests Failed.
+now:1
+now:2
+now:3
+now:4
+now:5
+Trigger tests - 1 Tests Failed.
+Trigger tests - 1 Tests Failed.
+Trigger tests - 1 Tests Failed.
+now:6
+now:7
+now:8
+now:9
+now:10
+now:11
+now:12
+now:13
+now:14
+now:15
+now:16
+Trigger tests - 1 Tests Failed.
+now:17
+now:18
+now:19
+now:20
+now:21
+now:22
+now:23
+Trigger tests - 1 Tests Failed.
+Trigger tests - 1 Tests Failed.
+Trigger tests - 1 Tests Failed.
+Trigger tests - 1 Tests Failed.
+now:24
+now:25
+Trigger tests - 1 Tests Failed.
+Trigger tests - 1 Tests Failed.
+Trigger tests - 1 Tests Failed.
+Trigger tests - 1 Tests Failed.
+Trigger tests - 1 Tests Failed.
+now:1
+now:1
+Trigger tests - 1 Tests Failed.
+Trigger tests - 1 Tests Failed.
+Trigger tests - 1 Tests Failed.
+Trigger tests - 1 Tests Failed.
+now:2
+Trigger tests - 1 Tests Failed.
+Trigger tests - 1 Tests Failed.
+Trigger tests - 1 Tests Failed.
+now:1
+now:2
+now:3
+now:4
+now:5
+now:6
+Trigger tests - 1 Tests Failed.
+Trigger tests - 1 Tests Failed.
+now:7
+now:8
+now:9
+now:10
+now:11
+now:12
+now:13
+now:14
+now:15
+now:16
+now:17
+now:18
+now:19
+now:20
+now:21
+now:22
+Trigger tests - 1 Tests Failed.
+Trigger tests - 1 Tests Failed.
+Trigger tests - 1 Tests Failed.
+Trigger tests - 1 Tests Failed.
+Trigger tests - 1 Tests Failed.
+now:23
+now:24
+Trigger tests - 1 Tests Failed.
+Trigger tests - 1 Tests Failed.
+Trigger tests - 1 Tests Failed.
+now:25
+now:1
+now:2
+now:3
+now:4
+now:5
+now:6
+now:7
+now:8
+now:9
+now:10
+now:11
+now:12
+now:13
+now:14
+now:15
+now:16
+now:17
+now:18
+now:19
+Trigger tests - 1 Tests Failed.
+now:20
+now:21
+now:22
+now:23
+now:24
+now:25
+now:1
+Trigger tests - 1 Tests Failed.
+Trigger tests - 1 Tests Failed.
+Trigger tests - 1 Tests Failed.
+Trigger tests - 1 Tests Failed.
+Trigger tests - 1 Tests Failed.
+now:1
+Trigger tests - 1 Tests Failed.
+Trigger tests - 1 Tests Failed.
+now:2
+now:3
+now:4
+now:5
+now:6
+now:7
+now:8
+now:9
+Trigger tests - 1 Tests Failed.
+Trigger tests - 1 Tests Failed.
+now:10
+now:11
+now:12
+now:13
+now:14
+now:15
+now:16
+now:17
+now:18
+now:19
+now:20
+now:21
+now:22
+now:23
+now:24
+Trigger tests - 1 Tests Failed.
+Trigger tests - 1 Tests Failed.
+Trigger tests - 1 Tests Failed.
+Trigger tests - 1 Tests Failed.
+Trigger tests - 1 Tests Failed.
+now:25
+Trigger tests - 1 Tests Failed.
+Trigger tests - 1 Tests Failed.
+Trigger tests - 1 Tests Failed.
+now:1
+now:2
+now:3
+now:4
+Trigger tests - 1 Tests Failed.
+Trigger tests - 1 Tests Failed.
+now:5
+now:6
+now:7
+now:8
+now:9
+now:10
+now:11
+now:12
+now:13
+now:14
+now:15
+now:16
+now:17
+now:18
+now:19
+now:20
+now:21
+now:22
+now:23
+now:24
+now:25
+now:1
+now:2
+now:3
+now:4
+now:5
+now:6
+now:7
+now:8
+now:9
+now:10
+now:11
+now:12
+Trigger tests - 1 Tests Failed.
+now:13
+now:14
+now:15
+now:16
+now:17
+now:18
+Trigger tests - 1 Tests Failed.
+Trigger tests - 1 Tests Failed.
+Trigger tests - 1 Tests Failed.
+now:19
+now:20
+Trigger tests - 1 Tests Failed.
+Trigger tests - 1 Tests Failed.
+Trigger tests - 1 Tests Failed.
+Trigger tests - 1 Tests Failed.
+Trigger tests - 1 Tests Failed.
+now:21
+now:22
+Trigger tests - 1 Tests Failed.
+Trigger tests - 1 Tests Failed.
+Trigger tests - 1 Tests Failed.
+now:23
+now:24
+now:25
+now:1
+now:1
+now:2
+now:3
+now:4
+now:5
+now:6
+now:7
+now:8
+now:9
+now:10
+Trigger tests - 1 Tests Failed.
+Trigger tests - 1 Tests Failed.
+now:11
+now:12
+now:13
+now:14
+now:15
+now:16
+now:17
+now:18
+now:19
+now:20
+now:21
+now:22
+now:23
+Trigger tests - 1 Tests Failed.
+Trigger tests - 1 Tests Failed.
+Trigger tests - 1 Tests Failed.
+Trigger tests - 1 Tests Failed.
+Trigger tests - 1 Tests Failed.
+now:24
+Trigger tests - 1 Tests Failed.
+Trigger tests - 1 Tests Failed.
+Trigger tests - 1 Tests Failed.
+now:25
+now:1
+now:2
+now:3
+now:4
+Trigger tests - 1 Tests Failed.
+now:5
+now:6
+now:7
+now:8
+now:9
+now:10
+now:11
+now:12
+now:13
+now:14
+now:15
+now:16
+now:17
+now:18
+now:19
+now:20
+now:21
+now:22
+now:23
+now:24
+now:25
+now:1
+now:2
+now:3
+now:4
+now:5
+now:6
+now:7
+now:8
+now:9
+now:10
+now:11
+now:12
+now:13
+Trigger tests - 1 Tests Failed.
+now:14
+now:15
+now:16
+now:17
+now:18
+Trigger tests - 1 Tests Failed.
+Trigger tests - 1 Tests Failed.
+Trigger tests - 1 Tests Failed.
+now:19
+now:20
+Trigger tests - 1 Tests Failed.
+Trigger tests - 1 Tests Failed.
+Trigger tests - 1 Tests Failed.
+Trigger tests - 1 Tests Failed.
+Trigger tests - 1 Tests Failed.
+now:21
+now:22
+Trigger tests - 1 Tests Failed.
+Trigger tests - 1 Tests Failed.
+Trigger tests - 1 Tests Failed.
+now:23
+now:24
+now:25
+now:1
+A Patch Found! - patches/10/org/jfree/chart/renderer/category/AbstractCategoryItemRenderer.java
+Candidate Number:443
+Checked Lines:5
+Checked Fix Locs:20
+Checked Changes:280
+Applied Changes:119
+Loading Coverage Information....Done.
+Random Seed:65
+Loading Change Pool...Done.
+Pool:/home/hjs/dldoldam/gitclone/LetsPatch/LetsPatch_database/pool/letspatch_pool
+Preparing patch generation...
+Done.
+Loading Class - org.jfree.chart.imagemap.StandardToolTipTagFragmentGenerator
+now:1
+now:1
+Trigger tests - 1 Tests Failed.
+Trigger tests - 1 Tests Failed.
+now:1
+Trigger tests - 1 Tests Failed.
+now:2
+Trigger tests - 1 Tests Failed.
+Trigger tests - 1 Tests Failed.
+Trigger tests - 1 Tests Failed.
+now:3
+Trigger tests - 1 Tests Failed.
+Trigger tests - 1 Tests Failed.
+now:1
+now:1
+Trigger tests - 1 Tests Failed.
+Trigger tests - 1 Tests Failed.
+Trigger tests - 1 Tests Failed.
+now:1
+now:2
+now:3
+now:4
+Trigger tests - 1 Tests Failed.
+Trigger tests - 1 Tests Failed.
+now:5
+now:6
+now:7
+now:8
+Trigger tests - 1 Tests Failed.
+Trigger tests - 1 Tests Failed.
+now:9
+now:10
+now:11
+now:12
+now:13
+now:14
+Trigger tests - 1 Tests Failed.
+now:15
+now:16
+now:17
+now:18
+Trigger tests - 1 Tests Failed.
+Trigger tests - 1 Tests Failed.
+now:19
+Trigger tests - 1 Tests Failed.
+Trigger tests - 1 Tests Failed.
+now:20
+now:21
+now:1
+now:2
+now:3
+now:4
+now:5
+now:6
+now:7
+Checked Lines:3
+Checked Fix Locs:8
+Checked Changes:35
+Applied Changes:18
