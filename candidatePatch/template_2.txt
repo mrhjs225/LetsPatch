@@ -1,0 +1,4 @@
+replace
+var0
+with
+Type0.method0(var0)

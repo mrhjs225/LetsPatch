@@ -1,0 +1,4 @@
+replace
+var0
+with
+var0.method0()
