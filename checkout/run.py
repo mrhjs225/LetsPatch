@@ -10,8 +10,8 @@ for project_name in project:
     buggy_list = []
 
     if project_name.lower() == 'chart':
-        # buggy_list = [1, 10, 11, 24]
-        buggy_list = [1, 10]
+        buggy_list = [1, 10, 11, 24]
+        buggy_list = [1]
     elif project_name.lower() == 'closure':
         buggy_list = [1, 11, 38, 92, 93, 109]
     elif project_name.lower() == 'lang':

@@ -1,0 +1,3 @@
+closure,11,success, time: 4254735,num: 7890, compileerror:6644, testfailure:1245, checklines:101, checklocus:449, checkchange:2876, locchange:1
+closure,92,success, time: 138164,num: 154, compileerror:120, testfailure:33, checklines:4, checklocus:14, checkchange:53, locchange:1
+closure,109,success, time: 304600,num: 139, compileerror:95, testfailure:43, checklines:3, checklocus:14, checkchange:58, locchange:1

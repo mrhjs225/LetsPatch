@@ -139,6 +139,7 @@ public class TestContextIdentifier extends ContextIdentifier {
 			}
 
 			contextNodeList.clear();
+			System.out.println(left == null);
 			if (left != null && additionalLeftContext.size() != 0) {
 				c.leftRelatedStatement = getNormalizedStatement(additionalLeftContext, beforeFileLine, beforeTree);
 			}

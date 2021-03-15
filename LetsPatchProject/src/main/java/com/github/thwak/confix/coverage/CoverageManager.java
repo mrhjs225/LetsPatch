@@ -56,6 +56,10 @@ public class CoverageManager implements Serializable {
 		return info.get(className);
 	}
 
+	public Map<String, CoverageInfo> getInfo() {
+		return info;
+	}
+
 	public void add(String className, CoverageInfo covInfo) {
 		info.put(className, covInfo);
 	}
