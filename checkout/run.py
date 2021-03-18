@@ -1,17 +1,17 @@
 import os
-os.system('export DEFECTS4J_HOME=/home/hjs/dldoldam/defects4j')
+os.system('export DEFECTS4J_HOME=/root/defects4j')
 
 project = ['Chart', 'Closure', 'Lang', 'Math', 'Time']
 project = ['Chart']
-basic_checkout_dir = '/home/hjs/dldoldam/gitclone/LetsPatch/checkout/'
-jar_dir = '/home/hjs/dldoldam/gitclone/LetsPatch/LetsPatchProject/target/confix-0.0.1-SNAPSHOT-jar-with-dependencies.jar'
+basic_checkout_dir = '/root/LetsPatch/checkout/'
+jar_dir = '/root/LetsPatch/LetsPatchProject/target/confix-0.0.1-SNAPSHOT-jar-with-dependencies.jar'
 for project_name in project:
     checkout_dir = basic_checkout_dir + project_name.lower()
     buggy_list = []
 
     if project_name.lower() == 'chart':
         buggy_list = [1, 10, 11, 24]
-        buggy_list = [1]
+        buggy_list = [10]
     elif project_name.lower() == 'closure':
         buggy_list = [1, 11, 38, 92, 93, 109]
     elif project_name.lower() == 'lang':
