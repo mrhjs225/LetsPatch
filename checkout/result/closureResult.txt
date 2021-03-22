@@ -1,3 +1,6 @@
-closure,11,success, time: 4254735,num: 7890, compileerror:6644, testfailure:1245, checklines:101, checklocus:449, checkchange:2876, locchange:1
-closure,92,success, time: 138164,num: 154, compileerror:120, testfailure:33, checklines:4, checklocus:14, checkchange:53, locchange:1
-closure,109,success, time: 304600,num: 139, compileerror:95, testfailure:43, checklines:3, checklocus:14, checkchange:58, locchange:1
+closure,1,fail, time: 18670507,num: 20001, compileerror:14228, testfailure:5772, checklines:301, checklocus:1088, checkchange:8699, locchange:16
+closure,11,fail, time: 9829170,num: 20001, compileerror:14793, testfailure:5207, checklines:233, checklocus:1018, checkchange:7054, locchange:21
+closure,38,fail, time: 4569755,num: 20001, compileerror:14876, testfailure:5124, checklines:325, checklocus:1153, checkchange:8671, locchange:8
+closure,92,fail, time: 3201450,num: 20001, compileerror:14760, testfailure:5240, checklines:354, checklocus:1273, checkchange:7296, locchange:17
+closure,93,fail, time: 3463026,num: 20001, compileerror:14753, testfailure:5247, checklines:361, checklocus:1284, checkchange:7321, locchange:4
+closure,109,fail, time: 4657427,num: 20001, compileerror:14179, testfailure:5821, checklines:406, checklocus:1435, checkchange:10934, locchange:17

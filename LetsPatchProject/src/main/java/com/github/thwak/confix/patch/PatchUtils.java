@@ -108,12 +108,13 @@ public class PatchUtils {
 		return sb.toString();
 	}
 
-	public static String getInfoText(PatchInfo info) {
+	public static String getCandidateText(PatchInfo info) {
 		StringBuffer sb = new StringBuffer();
-		for(RepairAction ra : info.repairs){
-			sb.append("change_start:\n" + ra.change + "\nchange_end\n");
-			sb.append("leftRS:" + ra.change.leftRelatedStatement + "\n");
-			sb.append("rightRS:" + ra.change.rightRelatedStatement);
+		for(RepairAction ra : info.repairs) {
+			sb.append("-change-\n" + ra.change + "\n");
+			sb.append("-context-\n" + ra.loc.context + "\n");
+			sb.append("-leftRS-\n" + ra.change.leftRelatedStatement + "\n");
+			sb.append("-rightRS-\n" + ra.change.rightRelatedStatement);
 		}
 		return sb.toString();
 	}

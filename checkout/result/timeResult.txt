@@ -1,1 +1,2 @@
-time,7,success, time: 80010,num: 199, compileerror:143, testfailure:55, checklines:2, checklocus:23, checkchange:140, locchange:1
+time,7,fail, time: 3106369,num: 20001, compileerror:16720, testfailure:3280, checklines:724, checklocus:2427, checkchange:18503, locchange:6
+time,19,fail, time: 35839404,num: 20001, compileerror:14283, testfailure:5717, checklines:464, checklocus:1641, checkchange:14300, locchange:1

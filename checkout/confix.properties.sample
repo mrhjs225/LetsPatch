@@ -1,6 +1,6 @@
 jvm=/usr/bin/java
 version=1.7
-pool.path=/root/LetsPatch_database/pool/letspatch_pool
+pool.path=../../../LetsPatch_database/pool/letspatch_pool
 cp.lib=../../confix-ami.jar
 patch.count=20000
 max.change.count=25

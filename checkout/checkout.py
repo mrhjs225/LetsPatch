@@ -25,7 +25,7 @@ for project_name in project:
             str(temp_buggy_num) + '_buggy'
         if not os.path.exists(final_checkout_dir):
             os.mkdir(final_checkout_dir)
-        cmd ='defects4j checkout -p ' + project_name + ' -v ' + \
+        cmd = 'defects4j checkout -p ' + project_name + ' -v ' + \
             str(temp_buggy_num) + 'b -w ' + final_checkout_dir
         os.system(cmd)
         os.chdir(final_checkout_dir)

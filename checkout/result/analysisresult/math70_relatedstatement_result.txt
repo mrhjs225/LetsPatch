@@ -1,0 +1,833 @@
+Loading Change Pool...Loading Class - org.apache.commons.math.analysis.solvers.BisectionSolver
+===buggy===
+-statement-
+solve
+-leftRS-
+[]
+-rightRS-
+[]
+===Candidate===
+-change-
+update
+method0
+to
+method0
+-context-
+P:MethodInvocation{name},L:,R:SimpleName{arguments}
+-leftRS-
+[]
+-rightRS-
+[]
+result:fail
+===Candidate===
+-change-
+update
+method0
+to
+method0
+-context-
+P:MethodInvocation{name},L:,R:SimpleName{arguments}
+-leftRS-
+[]
+-rightRS-
+[]
+result:fail
+===buggy===
+-statement-
+min
+-leftRS-
+[]
+-rightRS-
+[]
+===Candidate===
+-change-
+insert
+var0
+-context-
+P:MethodInvocation{arguments},L:SimpleName{arguments},R:SimpleName{arguments}
+-leftRS-
+[]
+-rightRS-
+[]
+result:fail
+===Candidate===
+-change-
+insert
+var0
+-context-
+P:MethodInvocation{arguments},L:SimpleName{arguments},R:SimpleName{arguments}
+-leftRS-
+[]
+-rightRS-
+[]
+result:fail
+===Candidate===
+-change-
+insert
+var0
+-context-
+P:MethodInvocation{arguments},L:SimpleName{arguments},R:SimpleName{arguments}
+-leftRS-
+[]
+-rightRS-
+[]
+result:fail
+===Candidate===
+-change-
+insert
+var0
+-context-
+P:MethodInvocation{arguments},L:SimpleName{arguments},R:SimpleName{arguments}
+-leftRS-
+[]
+-rightRS-
+[]
+result:fail
+===Candidate===
+-change-
+insert
+var0
+-context-
+P:MethodInvocation{arguments},L:SimpleName{arguments},R:SimpleName{arguments}
+-leftRS-
+[]
+-rightRS-
+[]
+result:fail
+===buggy===
+-statement-
+min
+-leftRS-
+[]
+-rightRS-
+[]
+===Candidate===
+-change-
+insert
+(Type0)var0
+-context-
+P:MethodInvocation{arguments},L:SimpleName{arguments},R:SimpleName{arguments}
+-leftRS-
+[]
+-rightRS-
+[]
+result:fail
+===Candidate===
+-change-
+insert
+(Type0)var0
+-context-
+P:MethodInvocation{arguments},L:SimpleName{arguments},R:SimpleName{arguments}
+-leftRS-
+[]
+-rightRS-
+[]
+result:fail
+===Candidate===
+-change-
+insert
+(Type0)var0
+-context-
+P:MethodInvocation{arguments},L:SimpleName{arguments},R:SimpleName{arguments}
+-leftRS-
+[]
+-rightRS-
+[]
+result:fail
+===Candidate===
+-change-
+insert
+(Type0)var0
+-context-
+P:MethodInvocation{arguments},L:SimpleName{arguments},R:SimpleName{arguments}
+-leftRS-
+[]
+-rightRS-
+[]
+result:fail
+===Candidate===
+-change-
+insert
+(Type0)var0
+-context-
+P:MethodInvocation{arguments},L:SimpleName{arguments},R:SimpleName{arguments}
+-leftRS-
+[]
+-rightRS-
+[]
+result:fail
+===buggy===
+-statement-
+min
+-leftRS-
+[]
+-rightRS-
+[]
+===buggy===
+-statement-
+min
+-leftRS-
+[]
+-rightRS-
+[]
+===Candidate===
+-change-
+insert
+var0 - 2
+-context-
+P:MethodInvocation{arguments},L:SimpleName{arguments},R:SimpleName{arguments}
+-leftRS-
+[]
+-rightRS-
+[]
+result:fail
+===Candidate===
+-change-
+insert
+var0 - 2
+-context-
+P:MethodInvocation{arguments},L:SimpleName{arguments},R:SimpleName{arguments}
+-leftRS-
+[]
+-rightRS-
+[]
+result:fail
+===buggy===
+-statement-
+min
+-leftRS-
+[]
+-rightRS-
+[]
+===Candidate===
+-change-
+insert
+var0.method0()
+-context-
+P:MethodInvocation{arguments},L:SimpleName{arguments},R:SimpleName{arguments}
+-leftRS-
+[]
+-rightRS-
+[Type0 var0 = method0();, Type0 var0 = var1.method0();, var0.method0(str0
+                         +var1+str1+var2+str2+var3), var0.method0(str0
+          +var1+str1+var2+str2+var3), var0.method0(str0
+          +var1+str1+var2), var0.method0(str0 + var1
+          + str1 + var2
+          + str2 + var3.method1(var4)
+          + str3 + var3.method1(var5)
+          + str4 + var6
+          + str5 + var7), var0.method0(str0
+          + var1 + str1 + var2), var0.method0(str0 + var1 + str1 + var2), var0.method0(str0 + var1
+          + str1 + var2), var0.method0(str0 + var1), var0.method0(str0
+           + str1 + var1.method1() + str2 + var2.method2()
+           + str3), var0.method0(str0
+          +str1+var1.method1()+str2+var2
+          +str3)]
+result:fail
+===Candidate===
+-change-
+insert
+var0.method0()
+-context-
+P:MethodInvocation{arguments},L:SimpleName{arguments},R:SimpleName{arguments}
+-leftRS-
+[]
+-rightRS-
+[Type0 var0 = method0();, Type0 var0 = var1.method0();, var0.method0(str0
+                         +var1+str1+var2+str2+var3), var0.method0(str0
+          +var1+str1+var2+str2+var3), var0.method0(str0
+          +var1+str1+var2), var0.method0(str0 + var1
+          + str1 + var2
+          + str2 + var3.method1(var4)
+          + str3 + var3.method1(var5)
+          + str4 + var6
+          + str5 + var7), var0.method0(str0
+          + var1 + str1 + var2), var0.method0(str0 + var1 + str1 + var2), var0.method0(str0 + var1
+          + str1 + var2), var0.method0(str0 + var1), var0.method0(str0
+           + str1 + var1.method1() + str2 + var2.method2()
+           + str3), var0.method0(str0
+          +str1+var1.method1()+str2+var2
+          +str3)]
+result:fail
+===Candidate===
+-change-
+insert
+var0.method0()
+-context-
+P:MethodInvocation{arguments},L:SimpleName{arguments},R:SimpleName{arguments}
+-leftRS-
+[]
+-rightRS-
+[Type0 var0 = method0();, Type0 var0 = var1.method0();, var0.method0(str0
+                         +var1+str1+var2+str2+var3), var0.method0(str0
+          +var1+str1+var2+str2+var3), var0.method0(str0
+          +var1+str1+var2), var0.method0(str0 + var1
+          + str1 + var2
+          + str2 + var3.method1(var4)
+          + str3 + var3.method1(var5)
+          + str4 + var6
+          + str5 + var7), var0.method0(str0
+          + var1 + str1 + var2), var0.method0(str0 + var1 + str1 + var2), var0.method0(str0 + var1
+          + str1 + var2), var0.method0(str0 + var1), var0.method0(str0
+           + str1 + var1.method1() + str2 + var2.method2()
+           + str3), var0.method0(str0
+          +str1+var1.method1()+str2+var2
+          +str3)]
+result:fail
+===Candidate===
+-change-
+insert
+var0.method0()
+-context-
+P:MethodInvocation{arguments},L:SimpleName{arguments},R:SimpleName{arguments}
+-leftRS-
+[]
+-rightRS-
+[Type0 var0 = method0();, Type0 var0 = var1.method0();, var0.method0(str0
+                         +var1+str1+var2+str2+var3), var0.method0(str0
+          +var1+str1+var2+str2+var3), var0.method0(str0
+          +var1+str1+var2), var0.method0(str0 + var1
+          + str1 + var2
+          + str2 + var3.method1(var4)
+          + str3 + var3.method1(var5)
+          + str4 + var6
+          + str5 + var7), var0.method0(str0
+          + var1 + str1 + var2), var0.method0(str0 + var1 + str1 + var2), var0.method0(str0 + var1
+          + str1 + var2), var0.method0(str0 + var1), var0.method0(str0
+           + str1 + var1.method1() + str2 + var2.method2()
+           + str3), var0.method0(str0
+          +str1+var1.method1()+str2+var2
+          +str3)]
+result:fail
+===Candidate===
+-change-
+insert
+var0.method0()
+-context-
+P:MethodInvocation{arguments},L:SimpleName{arguments},R:SimpleName{arguments}
+-leftRS-
+[]
+-rightRS-
+[Type0 var0 = method0();, Type0 var0 = var1.method0();, var0.method0(str0
+                         +var1+str1+var2+str2+var3), var0.method0(str0
+          +var1+str1+var2+str2+var3), var0.method0(str0
+          +var1+str1+var2), var0.method0(str0 + var1
+          + str1 + var2
+          + str2 + var3.method1(var4)
+          + str3 + var3.method1(var5)
+          + str4 + var6
+          + str5 + var7), var0.method0(str0
+          + var1 + str1 + var2), var0.method0(str0 + var1 + str1 + var2), var0.method0(str0 + var1
+          + str1 + var2), var0.method0(str0 + var1), var0.method0(str0
+           + str1 + var1.method1() + str2 + var2.method2()
+           + str3), var0.method0(str0
+          +str1+var1.method1()+str2+var2
+          +str3)]
+result:fail
+===buggy===
+-statement-
+min
+-leftRS-
+[]
+-rightRS-
+[]
+===Candidate===
+-change-
+insert
+var0
+-context-
+P:MethodInvocation{arguments},L:SimpleName{arguments},R:SimpleName{arguments}
+-leftRS-
+[]
+-rightRS-
+[]
+result:fail
+===Candidate===
+-change-
+insert
+var0
+-context-
+P:MethodInvocation{arguments},L:SimpleName{arguments},R:SimpleName{arguments}
+-leftRS-
+[]
+-rightRS-
+[]
+result:fail
+===Candidate===
+-change-
+insert
+var0
+-context-
+P:MethodInvocation{arguments},L:SimpleName{arguments},R:SimpleName{arguments}
+-leftRS-
+[]
+-rightRS-
+[]
+result:fail
+===Candidate===
+-change-
+insert
+var0
+-context-
+P:MethodInvocation{arguments},L:SimpleName{arguments},R:SimpleName{arguments}
+-leftRS-
+[]
+-rightRS-
+[]
+result:fail
+===Candidate===
+-change-
+insert
+var0
+-context-
+P:MethodInvocation{arguments},L:SimpleName{arguments},R:SimpleName{arguments}
+-leftRS-
+[]
+-rightRS-
+[]
+result:fail
+===buggy===
+-statement-
+max
+-leftRS-
+[]
+-rightRS-
+[]
+===Candidate===
+-change-
+insert
+var0
+-context-
+P:MethodInvocation{arguments},L:SimpleName{arguments},R:SimpleName{arguments}
+-leftRS-
+[]
+-rightRS-
+[]
+result:fail
+===Candidate===
+-change-
+insert
+var0
+-context-
+P:MethodInvocation{arguments},L:SimpleName{arguments},R:SimpleName{arguments}
+-leftRS-
+[]
+-rightRS-
+[]
+result:fail
+===Candidate===
+-change-
+insert
+var0
+-context-
+P:MethodInvocation{arguments},L:SimpleName{arguments},R:SimpleName{arguments}
+-leftRS-
+[]
+-rightRS-
+[]
+result:fail
+===Candidate===
+-change-
+insert
+var0
+-context-
+P:MethodInvocation{arguments},L:SimpleName{arguments},R:SimpleName{arguments}
+-leftRS-
+[]
+-rightRS-
+[]
+result:fail
+===Candidate===
+-change-
+insert
+var0
+-context-
+P:MethodInvocation{arguments},L:SimpleName{arguments},R:SimpleName{arguments}
+-leftRS-
+[]
+-rightRS-
+[]
+result:fail
+===buggy===
+-statement-
+max
+-leftRS-
+[]
+-rightRS-
+[]
+===Candidate===
+-change-
+insert
+(Type0)var0
+-context-
+P:MethodInvocation{arguments},L:SimpleName{arguments},R:SimpleName{arguments}
+-leftRS-
+[]
+-rightRS-
+[]
+result:fail
+===Candidate===
+-change-
+insert
+(Type0)var0
+-context-
+P:MethodInvocation{arguments},L:SimpleName{arguments},R:SimpleName{arguments}
+-leftRS-
+[]
+-rightRS-
+[]
+result:fail
+===Candidate===
+-change-
+insert
+(Type0)var0
+-context-
+P:MethodInvocation{arguments},L:SimpleName{arguments},R:SimpleName{arguments}
+-leftRS-
+[]
+-rightRS-
+[]
+result:fail
+===Candidate===
+-change-
+insert
+(Type0)var0
+-context-
+P:MethodInvocation{arguments},L:SimpleName{arguments},R:SimpleName{arguments}
+-leftRS-
+[]
+-rightRS-
+[]
+result:fail
+===Candidate===
+-change-
+insert
+(Type0)var0
+-context-
+P:MethodInvocation{arguments},L:SimpleName{arguments},R:SimpleName{arguments}
+-leftRS-
+[]
+-rightRS-
+[]
+result:fail
+===buggy===
+-statement-
+max
+-leftRS-
+[]
+-rightRS-
+[]
+===buggy===
+-statement-
+max
+-leftRS-
+[]
+-rightRS-
+[]
+===Candidate===
+-change-
+insert
+var0 - 2
+-context-
+P:MethodInvocation{arguments},L:SimpleName{arguments},R:SimpleName{arguments}
+-leftRS-
+[]
+-rightRS-
+[]
+result:fail
+===Candidate===
+-change-
+insert
+var0 - 2
+-context-
+P:MethodInvocation{arguments},L:SimpleName{arguments},R:SimpleName{arguments}
+-leftRS-
+[]
+-rightRS-
+[]
+result:fail
+===buggy===
+-statement-
+max
+-leftRS-
+[]
+-rightRS-
+[]
+===Candidate===
+-change-
+insert
+var0.method0()
+-context-
+P:MethodInvocation{arguments},L:SimpleName{arguments},R:SimpleName{arguments}
+-leftRS-
+[]
+-rightRS-
+[Type0 var0 = method0();, Type0 var0 = var1.method0();, var0.method0(str0
+                         +var1+str1+var2+str2+var3), var0.method0(str0
+          +var1+str1+var2+str2+var3), var0.method0(str0
+          +var1+str1+var2), var0.method0(str0 + var1
+          + str1 + var2
+          + str2 + var3.method1(var4)
+          + str3 + var3.method1(var5)
+          + str4 + var6
+          + str5 + var7), var0.method0(str0
+          + var1 + str1 + var2), var0.method0(str0 + var1 + str1 + var2), var0.method0(str0 + var1
+          + str1 + var2), var0.method0(str0 + var1), var0.method0(str0
+           + str1 + var1.method1() + str2 + var2.method2()
+           + str3), var0.method0(str0
+          +str1+var1.method1()+str2+var2
+          +str3)]
+result:fail
+===Candidate===
+-change-
+insert
+var0.method0()
+-context-
+P:MethodInvocation{arguments},L:SimpleName{arguments},R:SimpleName{arguments}
+-leftRS-
+[]
+-rightRS-
+[Type0 var0 = method0();, Type0 var0 = var1.method0();, var0.method0(str0
+                         +var1+str1+var2+str2+var3), var0.method0(str0
+          +var1+str1+var2+str2+var3), var0.method0(str0
+          +var1+str1+var2), var0.method0(str0 + var1
+          + str1 + var2
+          + str2 + var3.method1(var4)
+          + str3 + var3.method1(var5)
+          + str4 + var6
+          + str5 + var7), var0.method0(str0
+          + var1 + str1 + var2), var0.method0(str0 + var1 + str1 + var2), var0.method0(str0 + var1
+          + str1 + var2), var0.method0(str0 + var1), var0.method0(str0
+           + str1 + var1.method1() + str2 + var2.method2()
+           + str3), var0.method0(str0
+          +str1+var1.method1()+str2+var2
+          +str3)]
+result:fail
+===Candidate===
+-change-
+insert
+var0.method0()
+-context-
+P:MethodInvocation{arguments},L:SimpleName{arguments},R:SimpleName{arguments}
+-leftRS-
+[]
+-rightRS-
+[Type0 var0 = method0();, Type0 var0 = var1.method0();, var0.method0(str0
+                         +var1+str1+var2+str2+var3), var0.method0(str0
+          +var1+str1+var2+str2+var3), var0.method0(str0
+          +var1+str1+var2), var0.method0(str0 + var1
+          + str1 + var2
+          + str2 + var3.method1(var4)
+          + str3 + var3.method1(var5)
+          + str4 + var6
+          + str5 + var7), var0.method0(str0
+          + var1 + str1 + var2), var0.method0(str0 + var1 + str1 + var2), var0.method0(str0 + var1
+          + str1 + var2), var0.method0(str0 + var1), var0.method0(str0
+           + str1 + var1.method1() + str2 + var2.method2()
+           + str3), var0.method0(str0
+          +str1+var1.method1()+str2+var2
+          +str3)]
+result:fail
+===Candidate===
+-change-
+insert
+var0.method0()
+-context-
+P:MethodInvocation{arguments},L:SimpleName{arguments},R:SimpleName{arguments}
+-leftRS-
+[]
+-rightRS-
+[Type0 var0 = method0();, Type0 var0 = var1.method0();, var0.method0(str0
+                         +var1+str1+var2+str2+var3), var0.method0(str0
+          +var1+str1+var2+str2+var3), var0.method0(str0
+          +var1+str1+var2), var0.method0(str0 + var1
+          + str1 + var2
+          + str2 + var3.method1(var4)
+          + str3 + var3.method1(var5)
+          + str4 + var6
+          + str5 + var7), var0.method0(str0
+          + var1 + str1 + var2), var0.method0(str0 + var1 + str1 + var2), var0.method0(str0 + var1
+          + str1 + var2), var0.method0(str0 + var1), var0.method0(str0
+           + str1 + var1.method1() + str2 + var2.method2()
+           + str3), var0.method0(str0
+          +str1+var1.method1()+str2+var2
+          +str3)]
+result:fail
+===Candidate===
+-change-
+insert
+var0.method0()
+-context-
+P:MethodInvocation{arguments},L:SimpleName{arguments},R:SimpleName{arguments}
+-leftRS-
+[]
+-rightRS-
+[Type0 var0 = method0();, Type0 var0 = var1.method0();, var0.method0(str0
+                         +var1+str1+var2+str2+var3), var0.method0(str0
+          +var1+str1+var2+str2+var3), var0.method0(str0
+          +var1+str1+var2), var0.method0(str0 + var1
+          + str1 + var2
+          + str2 + var3.method1(var4)
+          + str3 + var3.method1(var5)
+          + str4 + var6
+          + str5 + var7), var0.method0(str0
+          + var1 + str1 + var2), var0.method0(str0 + var1 + str1 + var2), var0.method0(str0 + var1
+          + str1 + var2), var0.method0(str0 + var1), var0.method0(str0
+           + str1 + var1.method1() + str2 + var2.method2()
+           + str3), var0.method0(str0
+          +str1+var1.method1()+str2+var2
+          +str3)]
+result:fail
+===buggy===
+-statement-
+max
+-leftRS-
+[]
+-rightRS-
+[]
+===Candidate===
+-change-
+insert
+var0
+-context-
+P:MethodInvocation{arguments},L:SimpleName{arguments},R:SimpleName{arguments}
+-leftRS-
+[]
+-rightRS-
+[]
+result:fail
+===Candidate===
+-change-
+insert
+var0
+-context-
+P:MethodInvocation{arguments},L:SimpleName{arguments},R:SimpleName{arguments}
+-leftRS-
+[]
+-rightRS-
+[]
+result:fail
+===Candidate===
+-change-
+insert
+var0
+-context-
+P:MethodInvocation{arguments},L:SimpleName{arguments},R:SimpleName{arguments}
+-leftRS-
+[]
+-rightRS-
+[]
+result:fail
+===Candidate===
+-change-
+insert
+var0
+-context-
+P:MethodInvocation{arguments},L:SimpleName{arguments},R:SimpleName{arguments}
+-leftRS-
+[]
+-rightRS-
+[]
+result:fail
+===Candidate===
+-change-
+insert
+var0
+-context-
+P:MethodInvocation{arguments},L:SimpleName{arguments},R:SimpleName{arguments}
+-leftRS-
+[]
+-rightRS-
+[]
+result:fail
+===buggy===
+-statement-
+min
+-leftRS-
+[]
+-rightRS-
+[]
+===Candidate===
+-change-
+update
+var0
+to
+var0
+-context-
+P:MethodInvocation{arguments},L:SimpleName{name},R:SimpleName{arguments}
+-leftRS-
+[]
+-rightRS-
+[final long var0 = var1 - var2.method0();, var0 = var1 + var2.method0()]
+result:fail
+===Candidate===
+-change-
+update
+var0
+to
+var0
+-context-
+P:MethodInvocation{arguments},L:SimpleName{name},R:SimpleName{arguments}
+-leftRS-
+[]
+-rightRS-
+[final long var0 = var1 - var2.method0();, var0 = var1 + var2.method0()]
+result:fail
+===Candidate===
+-change-
+update
+var0
+to
+var0
+-context-
+P:MethodInvocation{arguments},L:SimpleName{name},R:SimpleName{arguments}
+-leftRS-
+[]
+-rightRS-
+[final long var0 = var1 - var2.method0();, var0 = var1 + var2.method0()]
+result:fail
+===Candidate===
+-change-
+update
+var0
+to
+var0
+-context-
+P:MethodInvocation{arguments},L:SimpleName{name},R:SimpleName{arguments}
+-leftRS-
+[]
+-rightRS-
+[final long var0 = var1 - var2.method0();, var0 = var1 + var2.method0()]
+result:fail
+===Candidate===
+-change-
+update
+var0
+to
+var0
+-context-
+P:MethodInvocation{arguments},L:SimpleName{name},R:SimpleName{arguments}
+-leftRS-
+[]
+-rightRS-
+[final long var0 = var1 - var2.method0();, var0 = var1 + var2.method0()]
+result:fail
+===buggy===
+-statement-
+min
+-leftRS-
+[]
+-rightRS-
+[]
+===Candidate===
+-change-
+insert
+var0
+-context-
+P:MethodInvocation{arguments},L:SimpleName{name},R:SimpleName{arguments}
+-leftRS-
+[]
+-rightRS-
+[]
+result:pass
+math70_done

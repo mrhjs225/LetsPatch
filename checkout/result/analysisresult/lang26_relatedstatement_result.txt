@@ -1,0 +1,1486 @@
+Loading Change Pool...Loading Class - org.apache.commons.lang3.time.FastDateFormat
+===buggy===
+-statement-
+rule
+-leftRS-
+[]
+-rightRS-
+[]
+===buggy===
+-statement-
+Calendar.WEEK_OF_YEAR
+-leftRS-
+[]
+-rightRS-
+[]
+===Candidate===
+-change-
+update
+var0
+to
+var0
+-context-
+P:MethodInvocation{arguments},L:SimpleName{name},R:SimpleName{arguments}
+-leftRS-
+[]
+-rightRS-
+[]
+result:fail
+===Candidate===
+-change-
+update
+var0
+to
+var0
+-context-
+P:MethodInvocation{arguments},L:SimpleName{name},R:SimpleName{arguments}
+-leftRS-
+[]
+-rightRS-
+[]
+result:fail
+===Candidate===
+-change-
+update
+var0
+to
+var0
+-context-
+P:MethodInvocation{arguments},L:SimpleName{name},R:SimpleName{arguments}
+-leftRS-
+[]
+-rightRS-
+[]
+result:fail
+===Candidate===
+-change-
+update
+var0
+to
+var0
+-context-
+P:MethodInvocation{arguments},L:SimpleName{name},R:SimpleName{arguments}
+-leftRS-
+[]
+-rightRS-
+[]
+result:fail
+===Candidate===
+-change-
+update
+var0
+to
+var0
+-context-
+P:MethodInvocation{arguments},L:SimpleName{name},R:SimpleName{arguments}
+-leftRS-
+[]
+-rightRS-
+[]
+result:fail
+===buggy===
+-statement-
+break;
+
+-leftRS-
+[Type0 var0;, int var0 = var1.method0();, var0 = method0(var1, var2), var0 = new Type0(method0(var1, var2))]
+-rightRS-
+[]
+===Candidate===
+-change-
+insert
+method0()
+-context-
+P:SwitchCase{statements},L:Assignment{statements},R:BreakStatement{statements}
+-leftRS-
+[!var0.method0()]
+-rightRS-
+[var0.method0(str0), var0.method0(str0 + var1, var2)]
+result:fail
+===Candidate===
+-change-
+insert
+method0()
+-context-
+P:SwitchCase{statements},L:Assignment{statements},R:BreakStatement{statements}
+-leftRS-
+[!var0.method0()]
+-rightRS-
+[var0.method0(str0), var0.method0(str0 + var1, var2)]
+result:fail
+===Candidate===
+-change-
+insert
+method0()
+-context-
+P:SwitchCase{statements},L:Assignment{statements},R:BreakStatement{statements}
+-leftRS-
+[!var0.method0()]
+-rightRS-
+[var0.method0(str0), var0.method0(str0 + var1, var2)]
+result:fail
+===buggy===
+-statement-
+get
+-leftRS-
+[]
+-rightRS-
+[]
+===Candidate===
+-change-
+update
+method0
+to
+method0
+-context-
+P:MethodInvocation{name},L:SimpleName{expression},R:SimpleName{arguments}
+-leftRS-
+[]
+-rightRS-
+[]
+result:fail
+===Candidate===
+-change-
+update
+method0
+to
+method0
+-context-
+P:MethodInvocation{name},L:SimpleName{expression},R:SimpleName{arguments}
+-leftRS-
+[]
+-rightRS-
+[]
+result:fail
+===buggy===
+-statement-
+mField
+-leftRS-
+[]
+-rightRS-
+[]
+===Candidate===
+-change-
+update
+var0
+to
+var0
+-context-
+P:MethodInvocation{arguments},L:SimpleName{name},R:
+-leftRS-
+[]
+-rightRS-
+[final long var0 = var1 - var2.method0();, var0 = var1 + var2.method0()]
+result:fail
+===Candidate===
+-change-
+update
+var0
+to
+var0
+-context-
+P:MethodInvocation{arguments},L:SimpleName{name},R:
+-leftRS-
+[]
+-rightRS-
+[final long var0 = var1 - var2.method0();, var0 = var1 + var2.method0()]
+result:fail
+===Candidate===
+-change-
+update
+var0
+to
+var0
+-context-
+P:MethodInvocation{arguments},L:SimpleName{name},R:
+-leftRS-
+[]
+-rightRS-
+[final long var0 = var1 - var2.method0();, var0 = var1 + var2.method0()]
+result:fail
+===Candidate===
+-change-
+update
+var0
+to
+var0
+-context-
+P:MethodInvocation{arguments},L:SimpleName{name},R:
+-leftRS-
+[]
+-rightRS-
+[final long var0 = var1 - var2.method0();, var0 = var1 + var2.method0()]
+result:fail
+===Candidate===
+-change-
+update
+var0
+to
+var0
+-context-
+P:MethodInvocation{arguments},L:SimpleName{name},R:
+-leftRS-
+[]
+-rightRS-
+[final long var0 = var1 - var2.method0();, var0 = var1 + var2.method0()]
+result:fail
+===buggy===
+-statement-
+buffer
+-leftRS-
+[]
+-rightRS-
+[]
+===Candidate===
+-change-
+update
+var0
+to
+var0
+-context-
+P:MethodInvocation{expression},L:,R:SimpleName{name}
+-leftRS-
+[]
+-rightRS-
+[final long var0 = var1 - var2.method0();, var0 = var1 + var2.method0()]
+result:fail
+===Candidate===
+-change-
+update
+var0
+to
+var0
+-context-
+P:MethodInvocation{expression},L:,R:SimpleName{name}
+-leftRS-
+[]
+-rightRS-
+[final long var0 = var1 - var2.method0();, var0 = var1 + var2.method0()]
+result:fail
+===buggy===
+-statement-
+buffer
+-leftRS-
+[]
+-rightRS-
+[]
+===buggy===
+-statement-
+calendar
+-leftRS-
+[]
+-rightRS-
+[]
+===Candidate===
+-change-
+update
+var0
+to
+var0
+-context-
+P:MethodInvocation{expression},L:,R:SimpleName{name}
+-leftRS-
+[]
+-rightRS-
+[final long var0 = var1 - var2.method0();, var0 = var1 + var2.method0()]
+result:fail
+===buggy===
+-statement-
+calendar
+-leftRS-
+[]
+-rightRS-
+[]
+===buggy===
+-statement-
+append
+-leftRS-
+[]
+-rightRS-
+[]
+===buggy===
+-statement-
+mValue
+-leftRS-
+[]
+-rightRS-
+[]
+===Candidate===
+-change-
+update
+var0
+to
+var0
+-context-
+P:MethodInvocation{arguments},L:SimpleName{name},R:
+-leftRS-
+[]
+-rightRS-
+[final long var0 = var1 - var2.method0();, var0 = var1 + var2.method0()]
+result:fail
+===Candidate===
+-change-
+update
+var0
+to
+var0
+-context-
+P:MethodInvocation{arguments},L:SimpleName{name},R:
+-leftRS-
+[]
+-rightRS-
+[final long var0 = var1 - var2.method0();, var0 = var1 + var2.method0()]
+result:fail
+===Candidate===
+-change-
+update
+var0
+to
+var0
+-context-
+P:MethodInvocation{arguments},L:SimpleName{name},R:
+-leftRS-
+[]
+-rightRS-
+[final long var0 = var1 - var2.method0();, var0 = var1 + var2.method0()]
+result:fail
+===Candidate===
+-change-
+update
+var0
+to
+var0
+-context-
+P:MethodInvocation{arguments},L:SimpleName{name},R:
+-leftRS-
+[]
+-rightRS-
+[final long var0 = var1 - var2.method0();, var0 = var1 + var2.method0()]
+result:fail
+===Candidate===
+-change-
+update
+var0
+to
+var0
+-context-
+P:MethodInvocation{arguments},L:SimpleName{name},R:
+-leftRS-
+[]
+-rightRS-
+[final long var0 = var1 - var2.method0();, var0 = var1 + var2.method0()]
+result:fail
+===buggy===
+-statement-
+buffer
+-leftRS-
+[]
+-rightRS-
+[]
+===Candidate===
+-change-
+update
+var0
+to
+var0
+-context-
+P:MethodInvocation{expression},L:,R:SimpleName{name}
+-leftRS-
+[]
+-rightRS-
+[final long var0 = var1 - var2.method0();, var0 = var1 + var2.method0()]
+result:fail
+===Candidate===
+-change-
+update
+var0
+to
+var0
+-context-
+P:MethodInvocation{expression},L:,R:SimpleName{name}
+-leftRS-
+[]
+-rightRS-
+[final long var0 = var1 - var2.method0();, var0 = var1 + var2.method0()]
+result:fail
+===buggy===
+-statement-
+buffer
+-leftRS-
+[]
+-rightRS-
+[]
+===buggy===
+-statement-
+applyRules
+-leftRS-
+[]
+-rightRS-
+[]
+===Candidate===
+-change-
+update
+method0
+to
+method0
+-context-
+P:MethodInvocation{name},L:,R:SimpleName{arguments}
+-leftRS-
+[]
+-rightRS-
+[]
+result:fail
+===buggy===
+-statement-
+c
+-leftRS-
+[]
+-rightRS-
+[]
+===Candidate===
+-change-
+update
+var0
+to
+var0
+-context-
+P:MethodInvocation{arguments},L:SimpleName{name},R:ClassInstanceCreation{arguments}
+-leftRS-
+[]
+-rightRS-
+[final long var0 = var1 - var2.method0();, var0 = var1 + var2.method0()]
+result:fail
+===buggy===
+-statement-
+toString
+-leftRS-
+[char var0 = var1.method0(0);, char var0 = var1.method0(var2);, Type0 var0 = new Type1(var1);, method0(var0, new Type0(var1)), method0(var0, var1)]
+-rightRS-
+[]
+===buggy===
+-statement-
+toString
+-leftRS-
+[char var0 = var1.method0(0);, char var0 = var1.method0(var2);, Type0 var0 = new Type1(var1);, method0(var0, new Type0(var1)), method0(var0, var1)]
+-rightRS-
+[]
+===buggy===
+-statement-
+StringBuffer
+-leftRS-
+[]
+-rightRS-
+[]
+===Candidate===
+-change-
+update
+Type0
+to
+Type0
+-context-
+P:ClassInstanceCreation{type},L:,R:SimpleName{arguments}
+-leftRS-
+[]
+-rightRS-
+[Type0 var0 = var1.method0(var2);, this(var0.method0(var1), var1);, Type0 var0 = new Type0(var1.method0(var2.method1(), var3), var3);]
+result:fail
+===Candidate===
+-change-
+update
+Type0
+to
+Type0
+-context-
+P:ClassInstanceCreation{type},L:,R:SimpleName{arguments}
+-leftRS-
+[]
+-rightRS-
+[Type0 var0 = var1.method0(var2);, this(var0.method0(var1), var1);, Type0 var0 = new Type0(var1.method0(var2.method1(), var3), var3);]
+result:fail
+===buggy===
+-statement-
+mMaxLengthEstimate
+-leftRS-
+[]
+-rightRS-
+[]
+===Candidate===
+-change-
+update
+var0
+to
+var0
+-context-
+P:ClassInstanceCreation{arguments},L:SimpleType{type},R:
+-leftRS-
+[]
+-rightRS-
+[final long var0 = var1 - var2.method0();, var0 = var1 + var2.method0()]
+result:fail
+===Candidate===
+-change-
+update
+var0
+to
+var0
+-context-
+P:ClassInstanceCreation{arguments},L:SimpleType{type},R:
+-leftRS-
+[]
+-rightRS-
+[final long var0 = var1 - var2.method0();, var0 = var1 + var2.method0()]
+result:fail
+===Candidate===
+-change-
+update
+var0
+to
+var0
+-context-
+P:ClassInstanceCreation{arguments},L:SimpleType{type},R:
+-leftRS-
+[]
+-rightRS-
+[final long var0 = var1 - var2.method0();, var0 = var1 + var2.method0()]
+result:fail
+===Candidate===
+-change-
+update
+var0
+to
+var0
+-context-
+P:ClassInstanceCreation{arguments},L:SimpleType{type},R:
+-leftRS-
+[]
+-rightRS-
+[final long var0 = var1 - var2.method0();, var0 = var1 + var2.method0()]
+result:fail
+===Candidate===
+-change-
+update
+var0
+to
+var0
+-context-
+P:ClassInstanceCreation{arguments},L:SimpleType{type},R:
+-leftRS-
+[]
+-rightRS-
+[final long var0 = var1 - var2.method0();, var0 = var1 + var2.method0()]
+result:fail
+===buggy===
+-statement-
+return applyRules(c,new StringBuffer(mMaxLengthEstimate)).toString();
+
+-leftRS-
+[char var0 = var1.method0(0);, char var0 = var1.method0(var2);, Type0 var0 = new Type1(var1);, var0.method0(var1)]
+-rightRS-
+[]
+===buggy===
+-statement-
+return applyRules(c,new StringBuffer(mMaxLengthEstimate)).toString();
+
+-leftRS-
+[char var0 = var1.method0(0);, char var0 = var1.method0(var2);, Type0 var0 = new Type1(var1);, var0.method0(var1)]
+-rightRS-
+[]
+===Candidate===
+-change-
+insert
+Type0<Type1> var0 = method0();
+-context-
+P:MethodDeclaration{statements},L:MethodInvocation{statements},R:ReturnStatement{statements}
+-leftRS-
+[var0.method0(var1), Type0 var0 = this.var1.method0();, Type0 var0 = var1.method0(Type0.class);, Type0 var0 = method0();]
+-rightRS-
+[]
+result:fail
+===Candidate===
+-change-
+insert
+Type0<Type1> var0 = method0();
+-context-
+P:MethodDeclaration{statements},L:MethodInvocation{statements},R:ReturnStatement{statements}
+-leftRS-
+[var0.method0(var1), Type0 var0 = this.var1.method0();, Type0 var0 = var1.method0(Type0.class);, Type0 var0 = method0();]
+-rightRS-
+[]
+result:fail
+===Candidate===
+-change-
+insert
+Type0<Type1> var0 = method0();
+-context-
+P:MethodDeclaration{statements},L:MethodInvocation{statements},R:ReturnStatement{statements}
+-leftRS-
+[var0.method0(var1), Type0 var0 = this.var1.method0();, Type0 var0 = var1.method0(Type0.class);, Type0 var0 = method0();]
+-rightRS-
+[]
+result:fail
+===buggy===
+-statement-
+return applyRules(c,new StringBuffer(mMaxLengthEstimate)).toString();
+
+-leftRS-
+[char var0 = var1.method0(0);, char var0 = var1.method0(var2);, Type0 var0 = new Type1(var1);, var0.method0(var1)]
+-rightRS-
+[]
+===buggy===
+-statement-
+return applyRules(c,new StringBuffer(mMaxLengthEstimate)).toString();
+
+-leftRS-
+[char var0 = var1.method0(0);, char var0 = var1.method0(var2);, Type0 var0 = new Type1(var1);, var0.method0(var1)]
+-rightRS-
+[]
+===buggy===
+-statement-
+return applyRules(c,new StringBuffer(mMaxLengthEstimate)).toString();
+
+-leftRS-
+[char var0 = var1.method0(0);, char var0 = var1.method0(var2);, Type0 var0 = new Type1(var1);, var0.method0(var1)]
+-rightRS-
+[]
+===Candidate===
+-change-
+insert
+Type0[] var0 = var1.method0();
+-context-
+P:MethodDeclaration{statements},L:MethodInvocation{statements},R:ReturnStatement{statements}
+-leftRS-
+[var0.method0(var1.method1()), var0.method0(0)]
+-rightRS-
+[]
+result:fail
+===Candidate===
+-change-
+insert
+Type0[] var0 = var1.method0();
+-context-
+P:MethodDeclaration{statements},L:MethodInvocation{statements},R:ReturnStatement{statements}
+-leftRS-
+[var0.method0(var1.method1()), var0.method0(0)]
+-rightRS-
+[]
+result:fail
+===Candidate===
+-change-
+insert
+Type0[] var0 = var1.method0();
+-context-
+P:MethodDeclaration{statements},L:MethodInvocation{statements},R:ReturnStatement{statements}
+-leftRS-
+[var0.method0(var1.method1()), var0.method0(0)]
+-rightRS-
+[]
+result:fail
+===Candidate===
+-change-
+insert
+Type0[] var0 = var1.method0();
+-context-
+P:MethodDeclaration{statements},L:MethodInvocation{statements},R:ReturnStatement{statements}
+-leftRS-
+[var0.method0(var1.method1()), var0.method0(0)]
+-rightRS-
+[]
+result:fail
+===Candidate===
+-change-
+insert
+Type0[] var0 = var1.method0();
+-context-
+P:MethodDeclaration{statements},L:MethodInvocation{statements},R:ReturnStatement{statements}
+-leftRS-
+[var0.method0(var1.method1()), var0.method0(0)]
+-rightRS-
+[]
+result:fail
+===buggy===
+-statement-
+return applyRules(c,new StringBuffer(mMaxLengthEstimate)).toString();
+
+-leftRS-
+[char var0 = var1.method0(0);, char var0 = var1.method0(var2);, Type0 var0 = new Type1(var1);, var0.method0(var1)]
+-rightRS-
+[]
+===buggy===
+-statement-
+return applyRules(c,new StringBuffer(mMaxLengthEstimate)).toString();
+
+-leftRS-
+[char var0 = var1.method0(0);, char var0 = var1.method0(var2);, Type0 var0 = new Type1(var1);, var0.method0(var1)]
+-rightRS-
+[]
+===buggy===
+-statement-
+return applyRules(c,new StringBuffer(mMaxLengthEstimate)).toString();
+
+-leftRS-
+[char var0 = var1.method0(0);, char var0 = var1.method0(var2);, Type0 var0 = new Type1(var1);, var0.method0(var1)]
+-rightRS-
+[]
+===Candidate===
+-change-
+insert
+Type0 var0 = var1.method0();
+-context-
+P:MethodDeclaration{statements},L:MethodInvocation{statements},R:ReturnStatement{statements}
+-leftRS-
+[]
+-rightRS-
+[]
+result:fail
+===Candidate===
+-change-
+insert
+Type0 var0 = var1.method0();
+-context-
+P:MethodDeclaration{statements},L:MethodInvocation{statements},R:ReturnStatement{statements}
+-leftRS-
+[]
+-rightRS-
+[]
+result:fail
+===buggy===
+-statement-
+return applyRules(c,new StringBuffer(mMaxLengthEstimate)).toString();
+
+-leftRS-
+[char var0 = var1.method0(0);, char var0 = var1.method0(var2);, Type0 var0 = new Type1(var1);, var0.method0(var1)]
+-rightRS-
+[]
+===Candidate===
+-change-
+insert
+Type0 var0 = var1.method0(var2);
+-context-
+P:MethodDeclaration{statements},L:MethodInvocation{statements},R:ReturnStatement{statements}
+-leftRS-
+[]
+-rightRS-
+[]
+result:fail
+===Candidate===
+-change-
+insert
+Type0 var0 = var1.method0(var2);
+-context-
+P:MethodDeclaration{statements},L:MethodInvocation{statements},R:ReturnStatement{statements}
+-leftRS-
+[]
+-rightRS-
+[]
+result:fail
+===Candidate===
+-change-
+insert
+Type0 var0 = var1.method0(var2);
+-context-
+P:MethodDeclaration{statements},L:MethodInvocation{statements},R:ReturnStatement{statements}
+-leftRS-
+[]
+-rightRS-
+[]
+result:fail
+===Candidate===
+-change-
+insert
+Type0 var0 = var1.method0(var2);
+-context-
+P:MethodDeclaration{statements},L:MethodInvocation{statements},R:ReturnStatement{statements}
+-leftRS-
+[]
+-rightRS-
+[]
+result:fail
+===Candidate===
+-change-
+insert
+Type0 var0 = var1.method0(var2);
+-context-
+P:MethodDeclaration{statements},L:MethodInvocation{statements},R:ReturnStatement{statements}
+-leftRS-
+[]
+-rightRS-
+[]
+result:fail
+===buggy===
+-statement-
+return applyRules(c,new StringBuffer(mMaxLengthEstimate)).toString();
+
+-leftRS-
+[char var0 = var1.method0(0);, char var0 = var1.method0(var2);, Type0 var0 = new Type1(var1);, var0.method0(var1)]
+-rightRS-
+[]
+===buggy===
+-statement-
+return applyRules(c,new StringBuffer(mMaxLengthEstimate)).toString();
+
+-leftRS-
+[char var0 = var1.method0(0);, char var0 = var1.method0(var2);, Type0 var0 = new Type1(var1);, var0.method0(var1)]
+-rightRS-
+[]
+===buggy===
+-statement-
+return applyRules(c,new StringBuffer(mMaxLengthEstimate)).toString();
+
+-leftRS-
+[char var0 = var1.method0(0);, char var0 = var1.method0(var2);, Type0 var0 = new Type1(var1);, var0.method0(var1)]
+-rightRS-
+[]
+===buggy===
+-statement-
+return applyRules(c,new StringBuffer(mMaxLengthEstimate)).toString();
+
+-leftRS-
+[char var0 = var1.method0(0);, char var0 = var1.method0(var2);, Type0 var0 = new Type1(var1);, var0.method0(var1)]
+-rightRS-
+[]
+===Candidate===
+-change-
+insert
+var0.method0()
+-context-
+P:MethodDeclaration{statements},L:MethodInvocation{statements},R:ReturnStatement{statements}
+-leftRS-
+[]
+-rightRS-
+[]
+result:fail
+===Candidate===
+-change-
+insert
+var0.method0()
+-context-
+P:MethodDeclaration{statements},L:MethodInvocation{statements},R:ReturnStatement{statements}
+-leftRS-
+[]
+-rightRS-
+[]
+result:fail
+===buggy===
+-statement-
+return applyRules(c,new StringBuffer(mMaxLengthEstimate)).toString();
+
+-leftRS-
+[char var0 = var1.method0(0);, char var0 = var1.method0(var2);, Type0 var0 = new Type1(var1);, var0.method0(var1)]
+-rightRS-
+[]
+===buggy===
+-statement-
+return applyRules(c,new StringBuffer(mMaxLengthEstimate)).toString();
+
+-leftRS-
+[char var0 = var1.method0(0);, char var0 = var1.method0(var2);, Type0 var0 = new Type1(var1);, var0.method0(var1)]
+-rightRS-
+[]
+===buggy===
+-statement-
+return applyRules(c,new StringBuffer(mMaxLengthEstimate)).toString();
+
+-leftRS-
+[char var0 = var1.method0(0);, char var0 = var1.method0(var2);, Type0 var0 = new Type1(var1);, var0.method0(var1)]
+-rightRS-
+[]
+===Candidate===
+-change-
+insert
+var0.method0(var1)
+-context-
+P:MethodDeclaration{statements},L:MethodInvocation{statements},R:ReturnStatement{statements}
+-leftRS-
+[]
+-rightRS-
+[]
+result:fail
+===Candidate===
+-change-
+insert
+var0.method0(var1)
+-context-
+P:MethodDeclaration{statements},L:MethodInvocation{statements},R:ReturnStatement{statements}
+-leftRS-
+[]
+-rightRS-
+[]
+result:fail
+===Candidate===
+-change-
+insert
+var0.method0(var1)
+-context-
+P:MethodDeclaration{statements},L:MethodInvocation{statements},R:ReturnStatement{statements}
+-leftRS-
+[]
+-rightRS-
+[]
+result:fail
+===Candidate===
+-change-
+insert
+var0.method0(var1)
+-context-
+P:MethodDeclaration{statements},L:MethodInvocation{statements},R:ReturnStatement{statements}
+-leftRS-
+[]
+-rightRS-
+[]
+result:fail
+===Candidate===
+-change-
+insert
+var0.method0(var1)
+-context-
+P:MethodDeclaration{statements},L:MethodInvocation{statements},R:ReturnStatement{statements}
+-leftRS-
+[]
+-rightRS-
+[]
+result:fail
+===buggy===
+-statement-
+return applyRules(c,new StringBuffer(mMaxLengthEstimate)).toString();
+
+-leftRS-
+[char var0 = var1.method0(0);, char var0 = var1.method0(var2);, Type0 var0 = new Type1(var1);, var0.method0(var1)]
+-rightRS-
+[]
+===Candidate===
+-change-
+insert
+var0.method0(str0)
+-context-
+P:MethodDeclaration{statements},L:MethodInvocation{statements},R:ReturnStatement{statements}
+-leftRS-
+[method0(var0, var1)]
+-rightRS-
+[try {
+      var0.method0();
+    } catch (Type0 var1) {
+      throw new Type1(var1.method1());
+    }, new Type0(var0.method0()), Type0 var0 = var1.method0().method1(var2);, var0.method0()]
+result:fail
+===Candidate===
+-change-
+insert
+var0.method0(str0)
+-context-
+P:MethodDeclaration{statements},L:MethodInvocation{statements},R:ReturnStatement{statements}
+-leftRS-
+[method0(var0, var1)]
+-rightRS-
+[try {
+      var0.method0();
+    } catch (Type0 var1) {
+      throw new Type1(var1.method1());
+    }, new Type0(var0.method0()), Type0 var0 = var1.method0().method1(var2);, var0.method0()]
+result:fail
+===Candidate===
+-change-
+insert
+var0.method0(str0)
+-context-
+P:MethodDeclaration{statements},L:MethodInvocation{statements},R:ReturnStatement{statements}
+-leftRS-
+[method0(var0, var1)]
+-rightRS-
+[try {
+      var0.method0();
+    } catch (Type0 var1) {
+      throw new Type1(var1.method1());
+    }, new Type0(var0.method0()), Type0 var0 = var1.method0().method1(var2);, var0.method0()]
+result:fail
+===Candidate===
+-change-
+insert
+var0.method0(str0)
+-context-
+P:MethodDeclaration{statements},L:MethodInvocation{statements},R:ReturnStatement{statements}
+-leftRS-
+[method0(var0, var1)]
+-rightRS-
+[try {
+      var0.method0();
+    } catch (Type0 var1) {
+      throw new Type1(var1.method1());
+    }, new Type0(var0.method0()), Type0 var0 = var1.method0().method1(var2);, var0.method0()]
+result:fail
+===Candidate===
+-change-
+insert
+var0.method0(str0)
+-context-
+P:MethodDeclaration{statements},L:MethodInvocation{statements},R:ReturnStatement{statements}
+-leftRS-
+[method0(var0, var1)]
+-rightRS-
+[try {
+      var0.method0();
+    } catch (Type0 var1) {
+      throw new Type1(var1.method1());
+    }, new Type0(var0.method0()), Type0 var0 = var1.method0().method1(var2);, var0.method0()]
+result:fail
+===buggy===
+-statement-
+return applyRules(c,new StringBuffer(mMaxLengthEstimate)).toString();
+
+-leftRS-
+[char var0 = var1.method0(0);, char var0 = var1.method0(var2);, Type0 var0 = new Type1(var1);, var0.method0(var1)]
+-rightRS-
+[]
+===Candidate===
+-change-
+insert
+var0.method0()
+-context-
+P:MethodDeclaration{statements},L:MethodInvocation{statements},R:ReturnStatement{statements}
+-leftRS-
+[]
+-rightRS-
+[Type0 var0 = method0();, Type0 var0 = var1.method0();, var0.method0(str0
+                         +var1+str1+var2+str2+var3), var0.method0(str0
+          +var1+str1+var2+str2+var3), var0.method0(str0
+          +var1+str1+var2), var0.method0(str0 + var1
+          + str1 + var2
+          + str2 + var3.method1(var4)
+          + str3 + var3.method1(var5)
+          + str4 + var6
+          + str5 + var7), var0.method0(str0
+          + var1 + str1 + var2), var0.method0(str0 + var1 + str1 + var2), var0.method0(str0 + var1
+          + str1 + var2), var0.method0(str0 + var1), var0.method0(str0
+           + str1 + var1.method1() + str2 + var2.method2()
+           + str3), var0.method0(str0
+          +str1+var1.method1()+str2+var2
+          +str3)]
+result:fail
+===Candidate===
+-change-
+insert
+var0.method0()
+-context-
+P:MethodDeclaration{statements},L:MethodInvocation{statements},R:ReturnStatement{statements}
+-leftRS-
+[]
+-rightRS-
+[Type0 var0 = method0();, Type0 var0 = var1.method0();, var0.method0(str0
+                         +var1+str1+var2+str2+var3), var0.method0(str0
+          +var1+str1+var2+str2+var3), var0.method0(str0
+          +var1+str1+var2), var0.method0(str0 + var1
+          + str1 + var2
+          + str2 + var3.method1(var4)
+          + str3 + var3.method1(var5)
+          + str4 + var6
+          + str5 + var7), var0.method0(str0
+          + var1 + str1 + var2), var0.method0(str0 + var1 + str1 + var2), var0.method0(str0 + var1
+          + str1 + var2), var0.method0(str0 + var1), var0.method0(str0
+           + str1 + var1.method1() + str2 + var2.method2()
+           + str3), var0.method0(str0
+          +str1+var1.method1()+str2+var2
+          +str3)]
+result:fail
+===Candidate===
+-change-
+insert
+var0.method0()
+-context-
+P:MethodDeclaration{statements},L:MethodInvocation{statements},R:ReturnStatement{statements}
+-leftRS-
+[]
+-rightRS-
+[Type0 var0 = method0();, Type0 var0 = var1.method0();, var0.method0(str0
+                         +var1+str1+var2+str2+var3), var0.method0(str0
+          +var1+str1+var2+str2+var3), var0.method0(str0
+          +var1+str1+var2), var0.method0(str0 + var1
+          + str1 + var2
+          + str2 + var3.method1(var4)
+          + str3 + var3.method1(var5)
+          + str4 + var6
+          + str5 + var7), var0.method0(str0
+          + var1 + str1 + var2), var0.method0(str0 + var1 + str1 + var2), var0.method0(str0 + var1
+          + str1 + var2), var0.method0(str0 + var1), var0.method0(str0
+           + str1 + var1.method1() + str2 + var2.method2()
+           + str3), var0.method0(str0
+          +str1+var1.method1()+str2+var2
+          +str3)]
+result:fail
+===Candidate===
+-change-
+insert
+var0.method0()
+-context-
+P:MethodDeclaration{statements},L:MethodInvocation{statements},R:ReturnStatement{statements}
+-leftRS-
+[]
+-rightRS-
+[Type0 var0 = method0();, Type0 var0 = var1.method0();, var0.method0(str0
+                         +var1+str1+var2+str2+var3), var0.method0(str0
+          +var1+str1+var2+str2+var3), var0.method0(str0
+          +var1+str1+var2), var0.method0(str0 + var1
+          + str1 + var2
+          + str2 + var3.method1(var4)
+          + str3 + var3.method1(var5)
+          + str4 + var6
+          + str5 + var7), var0.method0(str0
+          + var1 + str1 + var2), var0.method0(str0 + var1 + str1 + var2), var0.method0(str0 + var1
+          + str1 + var2), var0.method0(str0 + var1), var0.method0(str0
+           + str1 + var1.method1() + str2 + var2.method2()
+           + str3), var0.method0(str0
+          +str1+var1.method1()+str2+var2
+          +str3)]
+result:fail
+===Candidate===
+-change-
+insert
+var0.method0()
+-context-
+P:MethodDeclaration{statements},L:MethodInvocation{statements},R:ReturnStatement{statements}
+-leftRS-
+[]
+-rightRS-
+[Type0 var0 = method0();, Type0 var0 = var1.method0();, var0.method0(str0
+                         +var1+str1+var2+str2+var3), var0.method0(str0
+          +var1+str1+var2+str2+var3), var0.method0(str0
+          +var1+str1+var2), var0.method0(str0 + var1
+          + str1 + var2
+          + str2 + var3.method1(var4)
+          + str3 + var3.method1(var5)
+          + str4 + var6
+          + str5 + var7), var0.method0(str0
+          + var1 + str1 + var2), var0.method0(str0 + var1 + str1 + var2), var0.method0(str0 + var1
+          + str1 + var2), var0.method0(str0 + var1), var0.method0(str0
+           + str1 + var1.method1() + str2 + var2.method2()
+           + str3), var0.method0(str0
+          +str1+var1.method1()+str2+var2
+          +str3)]
+result:fail
+===buggy===
+-statement-
+return applyRules(c,new StringBuffer(mMaxLengthEstimate)).toString();
+
+-leftRS-
+[char var0 = var1.method0(0);, char var0 = var1.method0(var2);, Type0 var0 = new Type1(var1);, var0.method0(var1)]
+-rightRS-
+[]
+===buggy===
+-statement-
+return applyRules(c,new StringBuffer(mMaxLengthEstimate)).toString();
+
+-leftRS-
+[char var0 = var1.method0(0);, char var0 = var1.method0(var2);, Type0 var0 = new Type1(var1);, var0.method0(var1)]
+-rightRS-
+[]
+===buggy===
+-statement-
+return applyRules(c,new StringBuffer(mMaxLengthEstimate)).toString();
+
+-leftRS-
+[char var0 = var1.method0(0);, char var0 = var1.method0(var2);, Type0 var0 = new Type1(var1);, var0.method0(var1)]
+-rightRS-
+[]
+===Candidate===
+-change-
+insert
+var0.method0(',')
+-context-
+P:MethodDeclaration{statements},L:MethodInvocation{statements},R:ReturnStatement{statements}
+-leftRS-
+[this.var0 = var0, this.var0.var1 = true, this.var0 != var0, this.var0 = var1.method0(), var0.method0(this.var1), var0.method0(str0)]
+-rightRS-
+[var0.method0(), Type0 var0 = new Type0(str0);]
+result:fail
+===Candidate===
+-change-
+insert
+var0.method0(',')
+-context-
+P:MethodDeclaration{statements},L:MethodInvocation{statements},R:ReturnStatement{statements}
+-leftRS-
+[this.var0 = var0, this.var0.var1 = true, this.var0 != var0, this.var0 = var1.method0(), var0.method0(this.var1), var0.method0(str0)]
+-rightRS-
+[var0.method0(), Type0 var0 = new Type0(str0);]
+result:fail
+===Candidate===
+-change-
+insert
+var0.method0(',')
+-context-
+P:MethodDeclaration{statements},L:MethodInvocation{statements},R:ReturnStatement{statements}
+-leftRS-
+[this.var0 = var0, this.var0.var1 = true, this.var0 != var0, this.var0 = var1.method0(), var0.method0(this.var1), var0.method0(str0)]
+-rightRS-
+[var0.method0(), Type0 var0 = new Type0(str0);]
+result:fail
+===Candidate===
+-change-
+insert
+var0.method0(',')
+-context-
+P:MethodDeclaration{statements},L:MethodInvocation{statements},R:ReturnStatement{statements}
+-leftRS-
+[this.var0 = var0, this.var0.var1 = true, this.var0 != var0, this.var0 = var1.method0(), var0.method0(this.var1), var0.method0(str0)]
+-rightRS-
+[var0.method0(), Type0 var0 = new Type0(str0);]
+result:fail
+===Candidate===
+-change-
+insert
+var0.method0(',')
+-context-
+P:MethodDeclaration{statements},L:MethodInvocation{statements},R:ReturnStatement{statements}
+-leftRS-
+[this.var0 = var0, this.var0.var1 = true, this.var0 != var0, this.var0 = var1.method0(), var0.method0(this.var1), var0.method0(str0)]
+-rightRS-
+[var0.method0(), Type0 var0 = new Type0(str0);]
+result:fail
+===buggy===
+-statement-
+setTime
+-leftRS-
+[]
+-rightRS-
+[]
+===buggy===
+-statement-
+date
+-leftRS-
+[]
+-rightRS-
+[]
+===buggy===
+-statement-
+c
+-leftRS-
+[]
+-rightRS-
+[]
+===Candidate===
+-change-
+update
+var0
+to
+var0
+-context-
+P:MethodInvocation{expression},L:,R:SimpleName{name}
+-leftRS-
+[]
+-rightRS-
+[final long var0 = var1 - var2.method0();, var0 = var1 + var2.method0()]
+result:fail
+===buggy===
+-statement-
+c
+-leftRS-
+[]
+-rightRS-
+[]
+===buggy===
+-statement-
+c=new GregorianCalendar(mTimeZone)
+-leftRS-
+[]
+-rightRS-
+[]
+===Candidate===
+-change-
+insert
+var0
+-context-
+P:VariableDeclarationStatement{fragments},L:VariableDeclarationFragment{fragments},R:
+-leftRS-
+[]
+-rightRS-
+[]
+result:fail
+===Candidate===
+-change-
+insert
+var0
+-context-
+P:VariableDeclarationStatement{fragments},L:VariableDeclarationFragment{fragments},R:
+-leftRS-
+[]
+-rightRS-
+[]
+result:fail
+===Candidate===
+-change-
+insert
+var0
+-context-
+P:VariableDeclarationStatement{fragments},L:VariableDeclarationFragment{fragments},R:
+-leftRS-
+[]
+-rightRS-
+[]
+result:fail
+===Candidate===
+-change-
+insert
+var0
+-context-
+P:VariableDeclarationStatement{fragments},L:VariableDeclarationFragment{fragments},R:
+-leftRS-
+[]
+-rightRS-
+[]
+result:fail
+===Candidate===
+-change-
+insert
+var0
+-context-
+P:VariableDeclarationStatement{fragments},L:VariableDeclarationFragment{fragments},R:
+-leftRS-
+[]
+-rightRS-
+[]
+result:fail
+===buggy===
+-statement-
+c=new GregorianCalendar(mTimeZone)
+-leftRS-
+[]
+-rightRS-
+[]
+===Candidate===
+-change-
+insert
+var0 = 0
+-context-
+P:VariableDeclarationStatement{fragments},L:VariableDeclarationFragment{fragments},R:
+-leftRS-
+[long var0 = 0, var1 = 0, var2 = 0;]
+-rightRS-
+[]
+result:fail
+===Candidate===
+-change-
+insert
+var0 = 0
+-context-
+P:VariableDeclarationStatement{fragments},L:VariableDeclarationFragment{fragments},R:
+-leftRS-
+[long var0 = 0, var1 = 0, var2 = 0;]
+-rightRS-
+[]
+result:fail
+===Candidate===
+-change-
+insert
+var0 = 0
+-context-
+P:VariableDeclarationStatement{fragments},L:VariableDeclarationFragment{fragments},R:
+-leftRS-
+[long var0 = 0, var1 = 0, var2 = 0;]
+-rightRS-
+[]
+result:fail
+===Candidate===
+-change-
+insert
+var0 = 0
+-context-
+P:VariableDeclarationStatement{fragments},L:VariableDeclarationFragment{fragments},R:
+-leftRS-
+[long var0 = 0, var1 = 0, var2 = 0;]
+-rightRS-
+[]
+result:fail
+===Candidate===
+-change-
+insert
+var0 = 0
+-context-
+P:VariableDeclarationStatement{fragments},L:VariableDeclarationFragment{fragments},R:
+-leftRS-
+[long var0 = 0, var1 = 0, var2 = 0;]
+-rightRS-
+[]
+result:fail
+===buggy===
+-statement-
+GregorianCalendar
+-leftRS-
+[]
+-rightRS-
+[]
+===Candidate===
+-change-
+update
+Type0
+to
+Type0
+-context-
+P:ClassInstanceCreation{type},L:,R:SimpleName{arguments}
+-leftRS-
+[]
+-rightRS-
+[Type0 var0 = var1.method0(var2);, this(var0.method0(var1), var1);, Type0 var0 = new Type0(var1.method0(var2.method1(), var3), var3);]
+result:fail
+===Candidate===
+-change-
+update
+Type0
+to
+Type0
+-context-
+P:ClassInstanceCreation{type},L:,R:SimpleName{arguments}
+-leftRS-
+[]
+-rightRS-
+[Type0 var0 = var1.method0(var2);, this(var0.method0(var1), var1);, Type0 var0 = new Type0(var1.method0(var2.method1(), var3), var3);]
+result:fail
+===buggy===
+-statement-
+Calendar
+-leftRS-
+[]
+-rightRS-
+[]
+===Candidate===
+-change-
+update
+Type0
+to
+Type0
+-context-
+P:VariableDeclarationStatement{type},L:,R:VariableDeclarationFragment{fragments}
+-leftRS-
+[]
+-rightRS-
+[Type0 var0 = var1.method0(var2);, this(var0.method0(var1), var1);, Type0 var0 = new Type0(var1.method0(var2.method1(), var3), var3);]
+result:fail
+===Candidate===
+-change-
+update
+Type0
+to
+Type0
+-context-
+P:VariableDeclarationStatement{type},L:,R:VariableDeclarationFragment{fragments}
+-leftRS-
+[]
+-rightRS-
+[Type0 var0 = var1.method0(var2);, this(var0.method0(var1), var1);, Type0 var0 = new Type0(var1.method0(var2.method1(), var3), var3);]
+result:fail
+===buggy===
+-statement-
+mTimeZone
+-leftRS-
+[]
+-rightRS-
+[]
+===Candidate===
+-change-
+insert
+var0
+-context-
+P:ClassInstanceCreation{arguments},L:SimpleName{arguments},R:
+-leftRS-
+[]
+-rightRS-
+[]
+result:pass
+lang26_done
