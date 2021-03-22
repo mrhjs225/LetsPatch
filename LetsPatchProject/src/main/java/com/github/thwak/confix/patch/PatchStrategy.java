@@ -190,10 +190,10 @@ public class PatchStrategy {
 	public void updateLocations(String className, Node root, FixLocationIdentifier identifier,
 			String sourceFileString) {
 		List<TargetLocation> fixLocs = new ArrayList<>();
-		if (changePrior == false) {
-			identifier.findLocations(className, root, fixLocs, sourceFileString, changePrior);
-		} else {
+		if (changePrior == true) {
 			identifier.findLocations(className, root, fixLocs, sourceFileString);
+		} else {
+			identifier.findLocations(className, root, fixLocs, sourceFileString, changePrior);
 		}
 		fixLocCount += fixLocs.size();
 		for (TargetLocation loc : fixLocs) {
@@ -457,6 +457,7 @@ public class PatchStrategy {
 	private List<Integer> rankingByRStatement(TargetLocation loc, HashMap<Integer, Integer> changeHashMap) {
 		Set<Integer> changeIter = changeHashMap.keySet();
 		// update the score
+		// System.out.println("===targetloc===\nleftRS:" + loc.leftRelatedStatement + "\nrightRS:" + loc.rightRelatedStatement);
 		for (Integer changeId : changeIter) {
 			Change c = pool.getChange(changeId);
 			int tempScore = 0;

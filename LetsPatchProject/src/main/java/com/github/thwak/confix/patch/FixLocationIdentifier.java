@@ -139,6 +139,12 @@ public class FixLocationIdentifier {
 				}
 			}
 		}
+		// System.out.println("===buggy===");
+		// for (TargetLocation loc : fixLocs) {
+		// 	System.out.println("---loc---");
+		// 	System.out.println("leftRS:" + loc.leftRelatedStatement);
+		// 	System.out.println("rightRS:" + loc.rightRelatedStatement);
+		// }
 	}
 
 	public void findLocations(String className, Node root, List<TargetLocation> fixLocs, String sourceFileString, boolean changePrior){

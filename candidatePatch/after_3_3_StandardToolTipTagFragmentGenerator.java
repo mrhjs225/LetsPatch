@@ -41,8 +41,6 @@
  
 package org.jfree.chart.imagemap;
 
-import java.net.InetAddress;
-
 /**
  * Generates tooltips using the HTML title attribute for image map area tags.
  */
@@ -64,7 +62,7 @@ public class StandardToolTipTagFragmentGenerator
      * @return The formatted HTML area tag attribute(s).
      */
     public String generateToolTipFragment(String toolTipText) {
-        return " title=\"" + input(length)
+        return " title=\"" + input.length()
             + "\" alt=\"\"";
     }
 

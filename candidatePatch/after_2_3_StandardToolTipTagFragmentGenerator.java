@@ -62,7 +62,7 @@ public class StandardToolTipTagFragmentGenerator
      * @return The formatted HTML area tag attribute(s).
      */
     public String generateToolTipFragment(String toolTipText) {
-        return " title=\"" + input.length()
+        return " title=\"" + result.append(c)
             + "\" alt=\"\"";
     }
 

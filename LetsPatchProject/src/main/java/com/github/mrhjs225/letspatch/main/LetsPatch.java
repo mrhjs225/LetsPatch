@@ -1,11 +1,13 @@
 package com.github.mrhjs225.letspatch.main;
 
 import java.io.BufferedWriter;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
+import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -15,6 +17,7 @@ import java.util.List;
 import java.util.Properties;
 import java.util.Random;
 import java.util.Set;
+import java.util.Map;
 
 import com.github.thwak.confix.compiler.Compiler;
 import com.github.thwak.confix.coverage.CoverageManager;
@@ -29,6 +32,7 @@ import com.github.thwak.confix.patch.TargetLocation;
 import com.github.thwak.confix.pool.Change;
 import com.github.thwak.confix.pool.ChangePool;
 import com.github.thwak.confix.util.IOUtils;
+import com.github.thwak.confix.coverage.CoverageInfo;
 
 public class LetsPatch {
 
@@ -79,12 +83,30 @@ public class LetsPatch {
 	public static String resultPath;
 	public static boolean contextPrior;
 	public static boolean changePrior;
+	public static String answerClass;
 
 	public static void main(String[] args) throws IOException {
 		// Load necessary information.
 		loadProperties("confix.properties");
 		loadTests();
 		loadCoverage();
+/*
+		BufferedReader answerBr = new BufferedReader(new FileReader(new File("../../BugPositions.txt")));
+		String line = "";
+		String bugName = projectName + "_" + bugId;
+		while((line = answerBr.readLine()) != null) {
+			String[] lines = line.split("@");
+			if (lines[0].toLowerCase().equals(bugName)) {
+				answerClass = lines[1].replace("/", ".");
+				break;
+			}
+		}
+		answerBr.close();
+		*/
+		// for coverage
+		Map<String, CoverageInfo> testInfo = coverage.getInfo();
+		System.out.println(testInfo.size());
+
 		if (coverage == null || coverage.getNegCoveredClasses().size() == 0) {
 			//System.out.println("No class/coverage information.");
 			return;
@@ -92,7 +114,6 @@ public class LetsPatch {
 			//System.out.println("No change pool is specified.");
 			return;
 		}
-
 		long startTime = System.currentTimeMillis();
 		seed = seed == -1 ? new Random(startTime).nextInt(100) : seed;
 		Random r = new Random(seed);
@@ -146,25 +167,30 @@ public class LetsPatch {
 
 				targetClass = loc == null ? "" : loc.className;
 				currentLocKey = pStrategy.getCurrentLocKey();
+				System.out.println("test1.1");
 				if (!oldLocKey.equals(currentLocKey)) {
 					oldLocKey = currentLocKey;
 					locNum++;
 					locChangeCount = 0;
 				}
+				System.out.println("test1.2");
 				patcher = pStrategy.patcher();
 				if (patcher == null)
 					break;
+				System.out.println("test1.21");
 				Change change = pStrategy.selectChange();
 				if (change != null) {
 					changeNum++;
 					locChangeCount++;
 				}
+				System.out.println("test1.3");
 				if (locChangeCount > maxChangeCount) {
 					pStrategy.nextLoc();
 					continue;
 				}
 				Set<String> candidates = new HashSet<>();
 				do {
+					System.out.println("test2");
 					PatchInfo info = new PatchInfo(targetClass, change, loc);
 					try {
 						returnCode = patcher.apply(loc, change, info);
@@ -181,6 +207,7 @@ public class LetsPatch {
 						break;
 					}
 					trial++;
+					System.out.println("test3");
 					if (returnCode == Patcher.C_NOT_INST) {
 						break;
 					} else {
@@ -193,6 +220,7 @@ public class LetsPatch {
 							String candidateText = PatchUtils.getCandidateText(info);
 							String newSource = patcher.getNewSource();
 							String candidateFileName = storeCandidate(newSource, editText, targetClass, change);
+							System.out.println("test4");
 							IOUtils.delete(new File(tempDir));
 							int result = verify(candidateFileName);
 							System.out.println("===Candidate===\n" + candidateText);
@@ -350,11 +378,11 @@ public class LetsPatch {
 			boolean error = compiler.compile(patchFile, tempDir, compileClassPath, version, version);
 			if (error) {
 				// js: if you want to checking number of compile error's please see this method
-				// System.out.println("Compile error.");
+				System.out.println("Compile error.");
 				return false;
 			}
 		} catch (Exception e) {
-			// System.out.println("Compile error.");
+			System.out.println("Compile error.");
 			return false;
 		}
 		return true;

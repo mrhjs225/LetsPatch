@@ -1,27 +1,26 @@
 import os
 
 project = ['Chart', 'Closure', 'Lang', 'Math', 'Time']
-project = ['Closure', 'Lang', 'Math', 'Time']
+project = ['Chart']
 basic_checkout_dir = './'
 # letspatch needs defects4j 1.1.0
-defects4j_dir = '/root/defects4j'
-print('test')
 for project_name in project:
     checkout_dir = basic_checkout_dir + project_name.lower()
-    buggy_list = []
+    buggy_num = []
 
     if project_name.lower() == 'chart':
-        buggy_list = [1, 10, 11, 24]
+        buggy_num = [1, 10, 11, 24]
+        buggy_num = [1, 10]
     elif project_name.lower() == 'closure':
-        buggy_list = [1, 11, 38, 92, 93, 109]
+        buggy_num = [133]
     elif project_name.lower() == 'lang':
-        buggy_list = [6, 24, 26, 43, 51]
+        buggy_num = [65]
     elif project_name.lower() == 'math':
-        buggy_list = [5, 30 ,33, 59, 70, 75]
+        buggy_num = [106]
     elif project_name.lower() == 'time':
-        buggy_list = [7, 19]
+        buggy_num = [27]
 
-    for temp_buggy_num in buggy_list:
+    for temp_buggy_num in buggy_num:
         final_checkout_dir = checkout_dir + '/' + project_name.lower() + '_' + \
             str(temp_buggy_num) + '_buggy'
         if not os.path.exists(final_checkout_dir):

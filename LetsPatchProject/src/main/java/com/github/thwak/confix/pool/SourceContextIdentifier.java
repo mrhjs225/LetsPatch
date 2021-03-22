@@ -145,13 +145,11 @@ public class SourceContextIdentifier extends ContextIdentifier {
 		if(left != null) {
 			addNodeType(left, sb);
 			extractNameinContext(left, leftNameList);
-			System.out.println("workl?");
 		}
 		sb.append(",R:");
 		if(right != null) {
 			addNodeType(right, sb);
 			extractNameinContext(right, rightNameList);
-			System.out.println("workr?");
 		}
 
 		normlized(sFile, sourceTree, left, right, leftNameList, rightNameList, leftRelated, rightRelated, null);
@@ -188,7 +186,10 @@ public class SourceContextIdentifier extends ContextIdentifier {
 			addNodeType(right, sb);
 		}
 		Context tempContext = new Context(sb.toString());
+		// System.out.println("===before normalized===");
 		normlized(sFile, sourceTree, left, right, leftNameList, rightNameList, leftRelated, rightRelated, tempContext);
+		// System.out.println("===after normalized===");
+		// System.out.println("====\nleft:" + tempContext.sleftRelatedStatement + "\nright:" + tempContext.srightRelatedStatement + "\nhash:" + tempContext.toString() + "\n====");
 		return tempContext;
 	}
 
