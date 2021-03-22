@@ -86,17 +86,17 @@ public class LetsPatch {
 		loadTests();
 		loadCoverage();
 		if (coverage == null || coverage.getNegCoveredClasses().size() == 0) {
-			System.out.println("No class/coverage information.");
+			//System.out.println("No class/coverage information.");
 			return;
 		} else if (poolList.size() == 0) {
-			System.out.println("No change pool is specified.");
+			//System.out.println("No change pool is specified.");
 			return;
 		}
 
 		long startTime = System.currentTimeMillis();
 		seed = seed == -1 ? new Random(startTime).nextInt(100) : seed;
 		Random r = new Random(seed);
-		System.out.println("Random Seed:" + seed);
+		//System.out.println("Random Seed:" + seed);
 
 		// For Loc Info collection.
 		String oldLocKey = "";
@@ -125,13 +125,13 @@ public class LetsPatch {
 			boolean terminate = false;
 			String targetClass = null;
 			Patcher patcher = null;
-			System.out.println("Preparing patch generation...");
+			//System.out.println("Preparing patch generation...");
 			PatchStrategy pStrategy = StrategyFactory.getPatchStrategy(pStrategyKey, coverage, pool, r, flMetric,
 					cStrategyKey, sourceDir, compileClassPathEntries, maxCandidateContext, maxCandidateChange,
 					changePrior);
 			pStrategy.finishUpdate();
 			IOUtils.storeContent("coveredlines.txt", pStrategy.getLineInfo());
-			System.out.println("Done.");
+			//System.out.println("Done.");
 
 			pool.poolName = poolPath.substring(poolPath.lastIndexOf('/') + 1);
 			// Generating patch candidates.
@@ -139,6 +139,11 @@ public class LetsPatch {
 				int trial = 0;
 				int returnCode = -1;
 				TargetLocation loc = pStrategy.selectLocation(contextPrior);
+				System.out.println("===buggy===");
+				System.out.println("-statement-\n" + loc.node.astNode);
+				System.out.println("-leftRS-\n" + loc.leftRelatedStatement);
+				System.out.println("-rightRS-\n" + loc.rightRelatedStatement);
+
 				targetClass = loc == null ? "" : loc.className;
 				currentLocKey = pStrategy.getCurrentLocKey();
 				if (!oldLocKey.equals(currentLocKey)) {
@@ -165,11 +170,11 @@ public class LetsPatch {
 						returnCode = patcher.apply(loc, change, info);
 					} catch (Exception e) {
 						if (DEBUG) {
-							System.out.println("Change Application Error.");
-							System.out.println("Fix Location");
-							System.out.println(loc);
-							System.out.println("Applied Change");
-							System.out.println(change);
+							//System.out.println("Change Application Error.");
+							//System.out.println("Fix Location");
+							//System.out.println(loc);
+							//System.out.println("Applied Change");
+							//System.out.println(change);
 							e.printStackTrace();
 						}
 						returnCode = Patcher.C_NOT_APPLIED;
@@ -185,15 +190,17 @@ public class LetsPatch {
 								applied++;
 							}
 							String editText = PatchUtils.getEditText(info, pool);
+							String candidateText = PatchUtils.getCandidateText(info);
 							String newSource = patcher.getNewSource();
 							String candidateFileName = storeCandidate(newSource, editText, targetClass, change);
 							IOUtils.delete(new File(tempDir));
 							int result = verify(candidateFileName);
+							System.out.println("===Candidate===\n" + candidateText);
 							if (result == PASS) {
-								System.out.println("pass!");
+								System.out.println("result:pass");
 								String patchFileName = storePatch(newSource, editText, targetClass, change);
-								System.out.println("A Patch Found! - " + patchFileName);
-								System.out.println("Candidate Number:" + candidateNum);
+								//System.out.println("A Patch Found! - " + patchFileName);
+								//System.out.println("Candidate Number:" + candidateNum);
 								String elapsedTime = PatchUtils.getElapsedTime(System.currentTimeMillis() - startTime);
 								totalCompileError += compileError;
 								totalTestFailure += testFailure;
@@ -220,7 +227,7 @@ public class LetsPatch {
 								success = true;
 								break;
 							} else {
-								System.out.println("fail");
+								System.out.println("result:fail");
 								if (result == COMPILE_ERROR) {
 									compileError++;
 								} else if (result == TEST_FAILURE || result == TEST_TIMEOUT || result == BREAK_FUNC
@@ -240,7 +247,7 @@ public class LetsPatch {
 					}
 					if (isTimeBudgetPassed(startTime)) {
 						terminate = true;
-						System.out.println("Time Budget is passed.");
+						//System.out.println("Time Budget is passed.");
 						break;
 					}
 				} while (trial < maxTrials);
@@ -274,15 +281,16 @@ public class LetsPatch {
 			}
 		}
 		recordResult.close();
-		IOUtils.storeContent("locinfo.csv", sbLoc.toString());
+		//IOUtils.storeContent("locinfo.csv", sbLoc.toString());
+		System.out.println(projectName + bugId + "_done");
 	}
 
 	private static void printLocInfo(int lines, int locNum, int changeNum, int applied, String poolPath,
 			StringBuffer sb) {
-		System.out.println("Checked Lines:" + lines);
-		System.out.println("Checked Fix Locs:" + locNum);
-		System.out.println("Checked Changes:" + changeNum);
-		System.out.println("Applied Changes:" + applied);
+		//System.out.println("Checked Lines:" + lines);
+		//System.out.println("Checked Fix Locs:" + locNum);
+		//System.out.println("Checked Changes:" + changeNum);
+		//System.out.println("Applied Changes:" + applied);
 		sb.append("\n");
 		sb.append(poolPath);
 		sb.append(",");
@@ -373,17 +381,17 @@ public class LetsPatch {
 			result = tester.runTestsWithJUnitCore(triggerTests, classPath);
 			removeBrokenTests(result);
 			if (result != null && result.failCnt > 0) {
-				System.out.println("Trigger tests - " + result.failCnt + " Tests Failed.");
+				//System.out.println("Trigger tests - " + result.failCnt + " Tests Failed.");
 				if (result.failCnt > numOfTriggers)
 					return BREAK_FUNC;
 				return TRIGGER_TEST_FAILURE;
 			} else if (result == null || result.runCnt == 0) {
-				System.out.println("An error occurs while running trigger tests - no records.");
+				//System.out.println("An error occurs while running trigger tests - no records.");
 				return TEST_TIMEOUT;
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
-			System.out.println("An error occurs while running trigger tests.");
+			//System.out.println("An error occurs while running trigger tests.");
 			return TRIGGER_TEST_FAILURE;
 		}
 
@@ -393,15 +401,15 @@ public class LetsPatch {
 				result = tester.runTestsWithJUnitCore(relTests, classPath);
 				removeBrokenTests(result);
 				if (result != null && result.failCnt > 0) {
-					System.out.println("Relevant tests - " + result.failCnt + " Tests Failed.");
+					//System.out.println("Relevant tests - " + result.failCnt + " Tests Failed.");
 					return RELEVANT_TEST_FAILURE;
 				} else if (result == null || result.runCnt == 0) {
-					System.out.println("An error occurs while running relevant tests. - no records.");
+					//System.out.println("An error occurs while running relevant tests. - no records.");
 					return TEST_TIMEOUT;
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
-				System.out.println("An error occurs while running relevant tests.");
+				//System.out.println("An error occurs while running relevant tests.");
 				return RELEVANT_TEST_FAILURE;
 			}
 		}
@@ -412,15 +420,15 @@ public class LetsPatch {
 				result = tester.runTestsWithJUnitCore(allTests, classPath);
 				removeBrokenTests(result);
 				if (result != null && result.failCnt > 0) {
-					System.out.println("All tests - " + result.failCnt + " Tests Failed.");
+					//System.out.println("All tests - " + result.failCnt + " Tests Failed.");
 					return TEST_FAILURE;
 				} else if (result == null || result.runCnt == 0) {
-					System.out.println("An error occurs while running all tests. - no records.");
+					//System.out.println("An error occurs while running all tests. - no records.");
 					return TEST_TIMEOUT;
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
-				System.out.println("An error occurs while running all tests.");
+				//System.out.println("An error occurs while running all tests.");
 				return TEST_FAILURE;
 			}
 		}
@@ -480,8 +488,8 @@ public class LetsPatch {
 		pool = new ChangePool();
 		pool.loadFrom(new File(poolPath));
 		pool.maxLoadCount = maxPoolLoad;
-		System.out.println("Done.");
-		System.out.println("Pool:" + poolPath);
+		//System.out.println("Done.");
+		//System.out.println("Pool:" + poolPath);
 	}
 
 	private static void loadProperties(String fileName) {
@@ -545,8 +553,8 @@ public class LetsPatch {
 	}
 
 	private static void loadCoverage() {
-		System.out.print("Loading Coverage Information....");
+		//System.out.print("Loading Coverage Information....");
 		coverage = (CoverageManager) IOUtils.readObject("coverage-info.obj");
-		System.out.println("Done.");
+		//System.out.println("Done.");
 	}
 }

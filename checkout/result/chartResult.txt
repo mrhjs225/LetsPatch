@@ -1,2 +1,5 @@
 chart,1,success, time: 95796,num: 443, compileerror:335, testfailure:107, checklines:4, checklocus:20, checkchange:280, locchange:1
 chart,10,fail, time: 3618,num: 47, compileerror:25, testfailure:21, checklines:2, checklocus:8, checkchange:35, locchange:0
+chart,1,success, time: 97285,num: 438, compileerror:329, testfailure:108, checklines:4, checklocus:20, checkchange:280, locchange:1
+chart,11,success, time: 84093,num: 428, compileerror:322, testfailure:105, checklines:6, checklocus:49, checkchange:279, locchange:1
+chart,24,success, time: 50916,num: 104, compileerror:76, testfailure:27, checklines:1, checklocus:8, checkchange:54, locchange:1
